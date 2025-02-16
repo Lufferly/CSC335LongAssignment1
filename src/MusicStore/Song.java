@@ -1,18 +1,15 @@
 package MusicStore;
 
 public class Song {
-	/// The name of the song
-	private String name;
 	
-	// The author of the song
-	private String author;
+	private String name;		// The name of the song
 	
-	// Whether the song is favorite or not
-	private boolean favorite;
+	private String author;		// The author of the song
+	
+	private boolean favorite; 	// Whether the song is favorite or not
 	
 	// Make rating a String to not deal with doubles when possible (simpler than enum)
 	private String rating;
-	
 	
 	public Song(String songName, String authorName) {
 		name = songName;
@@ -22,7 +19,6 @@ public class Song {
 	
 	public String getName() { return name; } // Returns name of the song
 	
-	// Returns the name of the author
 	public String getAuthor() { return author; }	// Returns name of the author
 	
 	public void makeFavorite() { this.favorite = true; }	// Makes a song favorite	

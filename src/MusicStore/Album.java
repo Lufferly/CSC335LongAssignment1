@@ -26,7 +26,7 @@ public class Album {
 	
 	public int getYear() { return year; }		// year getter
 	
-	/* Getter method to return Array List with string representation of songs (immutable) */
+	// Getter method to return Array List with string representation of songs (immutable)
 	public ArrayList<String> getSongs() {
 		ArrayList<String> newList = new ArrayList<String>();
 		for (int i = 0; i < songs.size(); i++) {
@@ -34,5 +34,6 @@ public class Album {
 		}
 		return newList;		// Return list with strings, instead of song objects
 	}
+	
 	
 }
