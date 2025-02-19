@@ -25,4 +25,9 @@ public class Song {
 	public String getAuthor() {
 		return author;
 	}
+
+	// Prints out the name of the song
+	public void print() {
+		System.out.print(name);
+	}
 }
