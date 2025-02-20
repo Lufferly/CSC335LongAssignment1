@@ -70,6 +70,15 @@ public class Album {
 		return genre;
 	}
 	
+	public int getYear() { return year; }		// year getter
+	
+	// Getter method to return Array List with string representation of songs (immutable)
+	public ArrayList<String> getSongs() {
+		ArrayList<String> newList = new ArrayList<String>();
+		for (int i = 0; i < songs.size(); i++) {
+			newList.add(songs.get(i).toString()); //Add String representation to new list
+		}
+		return newList;		// Return list with strings, instead of song objects
 	public String getYear() {
 		return year;
 	}
