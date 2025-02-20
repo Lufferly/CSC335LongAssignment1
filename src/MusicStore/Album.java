@@ -1,15 +1,18 @@
 package MusicStore;
 
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Album {
 	private String name;
 	private String author;
 	private String genre;
-	private int year;
+	private String year;
 	private ArrayList<Song> songs;
 	
-	public Album(String name, String author, String genre, int year,
+	public Album(String name, String author, String genre, String year,
 			ArrayList<Song> songs) {
 		this.name = name;
 		this.author = author;
@@ -17,12 +20,55 @@ public class Album {
 		this.year = year;
 		this.songs = new ArrayList<Song> (songs);
 	}
+
+	// Overloaded constructor for creating an album based on a given File
+	//	this will also create song objects based on the file
+	public Album(String fileName) {
+		// Read in the file
+		File albumFile = new File(fileName);
+		Scanner scanner;
+		try {
+			scanner = new Scanner(albumFile);
+		} catch (Exception e) {
+			System.out.print("Error! Album Constructor was given a file path that does not exist!");
+			System.out.println(fileName);
+			System.exit(1); // Probably a better way to do this, better ask teach
+			return; // So that the ide does not complain
+		}
+		
+
+		// Fill in the fields as given by the file
+		// First line contains all the information other than the songs, comma seperated
+		String[] firstLine = scanner.nextLine().split(",");
+		this.name = firstLine[0];
+		this.author = firstLine[1];
+		this.genre = firstLine[2];
+		this.year = firstLine[3];
+
+		// Fill in the songs from the rest of the file
+		this.songs = new ArrayList<Song>();
+		String thisLine;
+		while (scanner.hasNext()) {  // Check to see if we hit the end of the file
+			// Every line is a song
+			thisLine = scanner.nextLine();
+			songs.add(new Song(thisLine, this.author));
+		}
+
+		// We are done with the file
+		scanner.close();
+	}
 	
-	public String getName() { return name; }	// Name getter
+	public String getName() {
+		return name;
+	}
 	
-	public String getAuthor() { return author; }	// author getter
+	public String getAuthor() {
+		return author;
+	}
 	
-	public String getGenre() { return genre; }		// genre getter
+	public String getGenre() {
+		return genre;
+	}
 	
 	public int getYear() { return year; }		// year getter
 	
@@ -33,7 +79,21 @@ public class Album {
 			newList.add(songs.get(i).toString()); //Add String representation to new list
 		}
 		return newList;		// Return list with strings, instead of song objects
+	public String getYear() {
+		return year;
 	}
 	
+	// Prints out a representation of the object
+	public void print() {
+		System.out.println("Author:" + author + 
+			"\nName: " + name + 
+			"\nGenre: " + genre +
+			"\nYear: " + year);
+		for (Song song : songs) {
+			song.print();
+			System.out.print("|");
+		}
+		System.out.println();
+	}
 	
 }

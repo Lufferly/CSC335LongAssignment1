@@ -42,4 +42,9 @@ public class Song {
 	public String toString() {
 		return name + ", " + author; 
 	}
+
+	// Prints out the name of the song
+	public void print() {
+		System.out.print(name);
+	}
 }
