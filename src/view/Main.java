@@ -12,7 +12,7 @@ public class Main {
         /* String test = new File("src").getAbsolutePath();
         System.out.print(test); */
 
-        File dataFile = new File("CSC335LongAssignment1/data");
+        File dataFile = new File("data");
         File[] allDataFiles = dataFile.listFiles();
         ArrayList<Album> allAlbums = new ArrayList<Album>();
         for (File file : allDataFiles) {
