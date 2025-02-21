@@ -21,17 +21,12 @@ public class Playlist {
         songList.add(newSong);
     }
 
-    // Remove song by passing Song object
-    public void removeSong(Song song) {
-        this.songList.remove(song);
-    }
-
     // Remove song by passing name and author
     public void removeSong(String songName, String author) {
-        // alternative (looks better): songList.removeIf(song -> song.getName().equals(songName) && song.getAuthor().equals(author));
         for (int i = songList.size() - 1; i >= 0; i--) {
             if (songList.get(i).getName().equals(songName) && songList.get(i).getAuthor().equals(author)) {
                 this.songList.remove(i);
+                break;
             }
         }
     }
