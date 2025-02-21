@@ -29,14 +29,13 @@ public class Album {
 		Scanner scanner;
 		try {
 			scanner = new Scanner(albumFile);
-		} catch (Exception e) {
+		} catch (Exception FileNotFoundException) {
 			System.out.print("Error! Album Constructor was given a file path that does not exist!");
 			System.out.println(fileName);
 			System.exit(1); // Probably a better way to do this, better ask teach
 			return; // So that the ide does not complain
 		}
 		
-
 		// Fill in the fields as given by the file
 		// First line contains all the information other than the songs, comma seperated
 		String[] firstLine = scanner.nextLine().split(",");
