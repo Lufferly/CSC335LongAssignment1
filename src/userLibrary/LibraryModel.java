@@ -28,7 +28,7 @@ public class LibraryModel {
     public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
 
     public String getUsername() { return this.username; }    // Get username
-    public void setUsername(String newUsername) { this.username = newUsername; }      // give option to change username
+    public void setUsername(String newUsername) { this.username = newUsername; }      // Give option to change username
 
     public void createPlaylist(String playlistName) {       // Create playlist and add to library
         for (Playlist playlist: userLibrary) {
