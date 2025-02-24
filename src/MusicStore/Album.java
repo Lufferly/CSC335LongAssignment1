@@ -30,9 +30,8 @@ public class Album {
 		try {
 			scanner = new Scanner(albumFile);
 		} catch (Exception FileNotFoundException) {
-			System.out.print("Error! Album Constructor was given a file path that does not exist! : ");
+			System.out.print("Error! Album Constructor was given a file path that does not exist!");
 			System.out.println(fileName);
-			System.out.println("[!] Exiting...");
 			System.exit(1); // Probably a better way to do this, better ask teach
 			return; // So that the ide does not complain
 		}
