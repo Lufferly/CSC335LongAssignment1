@@ -94,5 +94,8 @@ public class Album {
 		}
 		System.out.println();
 	}
-	
+
+	public String toString() {
+		return this.name + ", " + this.author;
+	}
 }
