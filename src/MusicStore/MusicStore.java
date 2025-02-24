@@ -7,14 +7,14 @@ import java.util.Scanner;
 // The music store class. A repository for all the albums (and therefore songs) a user can get.
 //  Esentially an information getting class for the view.
 public class MusicStore {
-    private ArrayList<Album> allAlbums;
+    private static ArrayList<Album> albums; 
 
     // The constructor, given the location for the albums.txt file, reads it and creates all the albums
-    //  from it.
+    // from it.
     public MusicStore(String albumFilePath) {
         // Create all of the albums
         File albumDataFile = new File(albumFilePath);
-        allAlbums = new ArrayList<Album>();
+        ArrayList<Album> allAlbums = new ArrayList<Album>();
         Scanner scanner;
         try {
 			scanner = new Scanner(albumDataFile);
@@ -36,30 +36,43 @@ public class MusicStore {
             String filePath = "data/" + thisLine[0] + "_" + thisLine[1] + ".txt";
             allAlbums.add(new Album(filePath));
         }
-
+        albums = allAlbums;     // Make list of all albums static
         scanner.close();
     } 
 
     // Given an album name (or part of one), returns an array of strings containing all of the found
     //  albums whose name match the given query.
-    public ArrayList<String> searchForAlbumByName(String query) {
+    public ArrayList<String> searchForAlbumByName(String albumName) {
         ArrayList<String> foundAlbums = new ArrayList<String>();
-
-        for (Album album : allAlbums) {
-            
+        for (Album album: albums) {
+            if (album.getName().equals(albumName)) {
+                foundAlbums.add(album.toString());
+            }
         }
-
         return foundAlbums;
     }
 
-    public ArrayList<String> searchForAlbumByAuthor() {
-        return null;
+    public ArrayList<String> searchForAlbumByAuthor(String authorName) {
+        ArrayList<String> foundAlbums = new ArrayList<String>();
+        for (Album album: albums) {
+            if (album.getAuthor().equals(authorName)) {
+                foundAlbums.add(album.toString());
+            }
+        }
+        return foundAlbums;
     }
 
+    public static ArrayList<String> getAllAlbums() {        // Get all albums as Strings
+        ArrayList<String> albumStrings = new ArrayList<String>();
+        for (Album album: albums) {
+            albumStrings.add(album.toString());
+        }
+        return albumStrings;
+    }
 
     // Print all the albums in the music store, a debugging function
     public void printAlbums() {
-        for (Album album : allAlbums) {
+        for (Album album : albums) {
             album.print();
         }
     }
