@@ -31,8 +31,12 @@ public class Main {
                 System.out.println("searching...");
                 System.out.println(view.search(userInput, musicStore));
             }
+            // Buy an album functionality
+            // should be in format:
+            //  >buy [album or song] thing to buy
             if (userInput.get(0).equals("buy")) {
                 System.out.println("buying...");
+                System.out.println("[!] Not implemented!");
             }
         }
     }
