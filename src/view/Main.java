@@ -25,6 +25,8 @@ public class Main {
             }
 
             // Search functionality
+            // should be in format:
+            // >search [album or song] [name or author] query
             if (userInput.get(0).equals("search")) {
                 System.out.println("searching...");
                 System.out.println(view.search(userInput, musicStore));

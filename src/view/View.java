@@ -68,11 +68,11 @@ public class View {
     //  The third element in the userInput determines if we search by name or author, an the fourth
     //  element is the query we are searching for
     private ArrayList<String> songSearch(ArrayList<String> userInput, MusicStore musicStore) {
-        // Search for albums by name
+        // Search for songs by name
         if (userInput.get(2).equals("name")) {
             return musicStore.searchForSongsByName(userInput.get(3));
         }
-        // Search for albums by author
+        // Search for songs by author
         if (userInput.get(2).equals("author")) {
             return musicStore.searchForSongsByAuthor(userInput.get(3));
         }
