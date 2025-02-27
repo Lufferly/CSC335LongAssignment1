@@ -41,25 +41,65 @@ public class MusicStore {
     } 
 
     // Given an album name (or part of one), returns an array of strings containing all of the found
-    //  albums whose name match the given query.
+    //  albums whose name has the given query.
+    // Ignores case
     public ArrayList<String> searchForAlbumByName(String albumName) {
         ArrayList<String> foundAlbums = new ArrayList<String>();
         for (Album album: albums) {
-            if (album.getName().equals(albumName)) {
+            if (album.getName().toLowerCase().contains(albumName)) {
                 foundAlbums.add(album.toString());
             }
         }
         return foundAlbums;
     }
 
+    // Given an album name (or part of one), returns an array of strings containing all of the found
+    //  albums whose name has the given query.
+    // Ignores case
     public ArrayList<String> searchForAlbumByAuthor(String authorName) {
         ArrayList<String> foundAlbums = new ArrayList<String>();
         for (Album album: albums) {
-            if (album.getAuthor().equals(authorName)) {
+            if (album.getAuthor().toLowerCase().contains(authorName)) {
                 foundAlbums.add(album.toString());
             }
         }
         return foundAlbums;
+    }
+
+    // Given a query for an author, search for and return every song (in the form of an array of strings)
+    //  whose author name contains the author query
+    // Ignores case
+    public ArrayList<String> searchForSongsByAuthor(String authorQuery) {
+        ArrayList<String> foundSongs = new ArrayList<String>();
+        // Search through every Album's author, if the author has the author query, add
+        //  all of their songs to the foundSongs list
+        for (Album album : albums) {
+            if (album.getAuthor().toLowerCase().contains(authorQuery)) {
+                for (String song : album.getSongs()) {
+                    foundSongs.add(song);
+                }
+            }
+        }
+
+        return foundSongs;
+    }
+
+    // Given a query for an song, search for and return every song (in the form of an array of strings)
+    //  whose name contains the name query
+    // Ignores case
+    public ArrayList<String> searchForSongsByName(String songQuery) {
+        ArrayList<String> foundSongs = new ArrayList<String>();
+        // Search through every Album's songs, if that song's name contains the song query, add
+        //  it to the foundSongs list
+        for (Album album : albums) {
+            for (String song : album.getSongs()) {
+                if (song.toLowerCase().contains(songQuery)) {
+                    foundSongs.add(song);
+                }
+            }
+        }
+
+        return foundSongs;
     }
 
     public static ArrayList<String> getAllAlbums() {        // Get all albums as Strings
