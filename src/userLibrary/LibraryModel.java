@@ -37,24 +37,22 @@ public class LibraryModel {
                 return "Album bought!";
             }
         }
-        return "[!] Error, this album doesn't exist in Music Library";
+        return "[!] Error, this album doesn't exist in Music Library";      // Couldn't find album
     }
 
-    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought FIX THIS METHOD
-        ArrayList<String> foundSongs = new ArrayList<String>(MusicStore.searchForSongsByName(songName));
-        for (String song: foundSongs) {
-            String author = song.split(",")[1];
-            if (userSongs.contains(song)) {        // Check if user alredy owns song
-                return "You already own this song";
-            }
-            else if (author.trim().equals(songAuthor)) {    // Check if user alredy owns song
-                userSongs.add(song);
-                return "Song bought!";
+    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
+        for (Album album: MusicStore.getAlbumObjects()) {       // Iterate over album objects (deep copy of actual list)
+            for (Song song: album.getSongObjects()) {           // Iterate over each song in each album
+                if (userSongs.contains(song)) {         // If song is in userSongs, user already owns it
+                    return "You already own this song!";
+                } else if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {    // If song matches name and author
+                    userSongs.add(song);        // Buy song
+                    return "Song Bought!";
+                }
             }
         }
-        return "[!] Error, this song doesn't exist in Music Library";
+        return "[!] Error, this song doesn't exist in Music Library";       // Couldn't find song
     }
-
     public String favouriteSong(String songName, String songAuthor) {
         for (Song song: userSongs) {
             if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
