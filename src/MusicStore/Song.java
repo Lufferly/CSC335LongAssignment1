@@ -26,6 +26,8 @@ public class Song {
 	public String getAuthor() { return author; }	// Returns name of the author
 	
 	public void makeFavorite() { this.favorite = true; }	// Makes a song favorite	
+
+	public boolean isFavourite() { return this.favorite; }	// Returns if song is favorite
 	
 	public void unfavorite() { this.favorite = false; }		// Makes song not favorite
 	

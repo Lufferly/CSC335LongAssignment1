@@ -11,7 +11,6 @@ public class LibraryModel {
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
     private ArrayList<String> boughtAlbums;     // Use toString() of albums for this
-    private ArrayList<String> favourites;       // fav song list
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -41,7 +40,7 @@ public class LibraryModel {
         return "[!] Error, this album doesn't exist in Music Library";
     }
 
-    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought
+    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought FIX THIS METHOD
         ArrayList<String> foundSongs = new ArrayList<String>(MusicStore.searchForSongsByName(songName));
         for (String song: foundSongs) {
             String author = song.split(",")[1];
@@ -56,8 +55,24 @@ public class LibraryModel {
         return "[!] Error, this song doesn't exist in Music Library";
     }
 
-    public void favouriteSong(String songName, String songAuthor) {
+    public String favouriteSong(String songName, String songAuthor) {
+        for (Song song: userSongs) {
+            if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
+                song.makeFavorite();
+                return "Song favourited!";
+            }
+        }
+        return "You don't have this song or it doesn't exist";
+    }
 
+    public ArrayList<String> getFavourites() {
+        ArrayList<String> favStrings = new ArrayList<String>();
+        for (Song song: userSongs) {
+            if (song.isFavourite()) {
+                favStrings.add(song.toString());
+            }
+        }
+        return favStrings;
     }
 
     public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
@@ -92,14 +107,14 @@ public class LibraryModel {
     public String getUsername() { return this.username; }    // Get username
     public void setUsername(String newUsername) { this.username = newUsername; }      // Give option to change username
 
-    public void createPlaylist(String playlistName) {       // Create playlist and add to library
+    public String createPlaylist(String playlistName) {       // Create playlist and add to library
         for (Playlist playlist: userPlaylists) {
             if (playlist.getName().equals(playlistName)){       // Make sure name is unique for each playlist
-                System.out.println("The name " + playlistName + " has already been used. Choose another one.");
-                return;
+                return "The name " + playlistName + " has already been used. Choose another one.";
             }
         }
         userPlaylists.add(new Playlist(playlistName)); 
+        return "Playlist '" + playlistName + "' created";
     }    
 
     public void removePlaylist(String playlistName) {       // Removes playlist given a PLaylist Name
