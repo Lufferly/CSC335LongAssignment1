@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import MusicStore.Album;
 import MusicStore.MusicStore;
+import MusicStore.Song;
 
 public class LibraryModel {
-    private ArrayList<String> userSongs;        // SongList
+    private ArrayList<Song> userSongs;        // SongList
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
     private ArrayList<String> boughtAlbums;     // Use toString() of albums for this
+    private ArrayList<String> favourites;       // fav song list
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -26,8 +28,8 @@ public class LibraryModel {
                 return "You already own this album";
             }
             else if (name.trim().equals(albumName) && author.trim().equals(albumAuthor)) {
-                ArrayList<String> albumSongs = new ArrayList<String>(album.getSongs());
-                for (String song: albumSongs){          // Iterate over each song in album
+                ArrayList<Song> albumSongs = new ArrayList<Song>(album.getSongObjects());
+                for (Song song: albumSongs){          // Iterate over each song in album
                     if (!userSongs.contains(song)){        // If user hasnt bought song before
                         userSongs.add(song);        // Add each song in album to songlist
                     }
@@ -54,18 +56,37 @@ public class LibraryModel {
         return "[!] Error, this song doesn't exist in Music Library";
     }
 
+    public void favouriteSong(String songName, String songAuthor) {
+
+    }
+
     public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
-    public ArrayList<String> getBoughtSongs() { return new ArrayList<String>(userSongs); }     // Return copy of userSongs list (bought songs)
+
+    public ArrayList<String> getBoughtSongs() {     // Return deep copy of userSongs list (bought songs)
+        ArrayList<String> songStrings = new ArrayList<String>();
+        for (Song song: userSongs) {
+            songStrings.add(song.toString());
+        }
+        return songStrings;
+    }
 
     public ArrayList<String> getAuthorsInLibrary() {    // Return list of authors of all songs in the list
         ArrayList<String> authors = new ArrayList<String>();
-        for (String song: userSongs) {
-            String author = song.split(",")[1];
-            if (!authors.contains(author.trim())) {     // Avoid duplicates
+        for (Song song: userSongs) {
+            String author = song.getAuthor();
+            if (!authors.contains(author)) {     // Avoid duplicates
                 authors.add(author.trim());
             }
         }
         return authors;
+    }
+
+    // @Override from object class
+    public boolean contains(Song newSong) {
+        for (Song song: userSongs){
+            if (song.equals(newSong)) return true;
+        }
+        return false;
     }
 
     public String getUsername() { return this.username; }    // Get username
