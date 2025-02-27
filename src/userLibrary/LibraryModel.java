@@ -65,14 +65,17 @@ public class LibraryModel {
         return "You don't have this song or it doesn't exist";
     }
 
-    public ArrayList<String> getFavourites() {
-        ArrayList<String> favStrings = new ArrayList<String>();
+    public String rateSong(String songName, String songAuthor, String newRating) {
         for (Song song: userSongs) {
-            if (song.isFavourite()) {
-                favStrings.add(song.toString());
-            }
+            if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
+                song.setRating(newRating);
+                if (newRating.equals("5")){
+                    song.makeFavorite();
+                }
+                return "Song rated!";
+            }   
         }
-        return favStrings;
+        return "You don't own this song, or the song doesn't exist";
     }
 
     public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
@@ -83,6 +86,16 @@ public class LibraryModel {
             songStrings.add(song.toString());
         }
         return songStrings;
+    }
+
+    public ArrayList<String> getFavourites() {      // Get the list of favorite songs as Strings
+        ArrayList<String> favStrings = new ArrayList<String>();
+        for (Song song: userSongs) {
+            if (song.isFavourite()) {
+                favStrings.add(song.toString());
+            }
+        }
+        return favStrings;
     }
 
     public ArrayList<String> getAuthorsInLibrary() {    // Return list of authors of all songs in the list
@@ -96,7 +109,7 @@ public class LibraryModel {
         return authors;
     }
 
-    // @Override from object class
+    // @Override from object class, helper to compare song objects in userSongs
     public boolean contains(Song newSong) {
         for (Song song: userSongs){
             if (song.equals(newSong)) return true;
