@@ -34,10 +34,46 @@ public class Main {
             // Buy an album functionality
             // should be in format:
             //  >buy [album or song] thing to buy
-            if (userInput.get(0).equals("buy")) {
+            else if (userInput.get(0).equals("buy")) {
                 System.out.println("buying...");
                 System.out.println("[!] Not implemented!");
             }
+            // View functionality
+            // should be in the format:
+            //  >view [musicstore or library] [song(s)/artist(s)/album(s)/playlist(s)/favorite(s)]
+            else if (userInput.get(0).equals("view")) {
+                System.out.println("viewing...");
+                System.out.println("[!] Not implemented!");
+            }
+            // playlist functionality
+            // should be in in the format
+            //  >playlist create playlist_name  # for creating
+            //  >playlist add playlist_name song_name   # for adding songs to a playlist
+            else if (userInput.get(0).equals("playlist")) {
+                if (userInput.get(1).equals("create")) {    // For creating a playlist
+                    System.out.println("creating...");
+                    System.out.println("[!] Not implemented!");
+                }
+                if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
+                    System.out.println("adding...");
+                    System.out.println("[!] Not implemented!");
+                }
+            }
+            // help functionality
+            // Prints out a help method with all the commands
+            // should be in the formate:
+            //  >help
+            else if (userInput.get(0).equals("help")) {
+                print_help();
+            }
+            else {  // Command not recognized
+                System.out.println("[!] Error! Command not recognized!");
+                System.out.println("[!] Please use the \"help\" command for a list of commands!");
+            }
         }
+    }
+
+    private static void print_help() {
+        System.out.println("Here is how to use the music store:");
     }
 }
