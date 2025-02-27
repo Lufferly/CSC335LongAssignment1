@@ -12,13 +12,14 @@ public class Album {
 	private String year;
 	private ArrayList<Song> songs;
 	
-	public Album(String name, String author, String genre, String year,
-			ArrayList<Song> songs) {
-		this.name = name;
-		this.author = author;
-		this.genre = genre;
-		this.year = year;
-		this.songs = new ArrayList<Song> (songs);
+	public Album(Album album) {
+		this.name = album.getName();
+		this.author = album.getAuthor();
+		this.genre = album.getGenre();
+		this.year = album.getYear();
+		for (Song song: album.getSongObjects()){
+			this.songs.add(song);
+		}
 	}
 
 	// Overloaded constructor for creating an album based on a given File
@@ -74,6 +75,15 @@ public class Album {
 		ArrayList<String> newList = new ArrayList<String>();
 		for (int i = 0; i < songs.size(); i++) {
 			newList.add(songs.get(i).toString()); //Add String representation to new list
+		}
+		return newList;		// Return list with strings, instead of song objects
+	}
+
+	// Getter method to return Array List with Song objects
+	public ArrayList<Song> getSongObjects() {
+		ArrayList<Song> newList = new ArrayList<Song>();
+		for (int i = 0; i < songs.size(); i++) {
+			newList.add(new Song(songs.get(i))); // Add copy of Song object to new list
 		}
 		return newList;		// Return list with strings, instead of song objects
 	}
