@@ -148,7 +148,32 @@ public class View {
 
     // Search for songs insie of the user's library based on the searchQuery
     public ArrayList<String> searchLibrarySongs(String searchType, String searchQuery, LibraryModel userLibrary) {
-        return null;
+        ArrayList<String> foundSongs = new ArrayList<String>();
+
+        // Decide what index of a split album string we are comparing to the searchQuery
+        int searchIndex;
+        if (searchType.equals("name")) {  // Searching by name
+            searchIndex = 0;
+        } else if (searchType.equals("author")) {  // Searching by author
+            searchIndex = 1;
+        } else {  // Unrecognized input
+            System.out.println("[!] Error! Invalid library search command!");
+            System.out.println("[!] You must choose to search by name or author!");
+            System.out.println("[!] Proper format is >library search [album(s) or song(s)] [name or author] searchQuery!");
+            return null;
+        }
+
+        for (String song : userLibrary.getAllSongs()) {
+            // Split the album into its data
+            String[] albumData = song.split(",");
+            // Check if the wanted data type contains the search query
+            if (albumData[searchIndex].toLowerCase().contains(searchQuery)) {
+                // Add this album to the found albums
+                foundSongs.add(song);
+            }
+        }
+
+        return foundSongs;
     }
 
     // Given a userInput containing info on what they want to buy, buy the album/song in the uerLibrary
