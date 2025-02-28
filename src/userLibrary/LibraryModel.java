@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import MusicStore.Album;
 import MusicStore.MusicStore;
+import MusicStore.Song;
 
 public class LibraryModel {
-    private ArrayList<String> userSongs;        // SongList
+    private ArrayList<Song> userSongs;        // SongList
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
     private ArrayList<String> boughtAlbums;     // Use toString() of albums for this
@@ -26,8 +27,8 @@ public class LibraryModel {
                 return "You already own this album";
             }
             else if (name.trim().equals(albumName) && author.trim().equals(albumAuthor)) {
-                ArrayList<String> albumSongs = new ArrayList<String>(album.getSongs());
-                for (String song: albumSongs){          // Iterate over each song in album
+                ArrayList<Song> albumSongs = new ArrayList<Song>(album.getSongObjects());
+                for (Song song: albumSongs){          // Iterate over each song in album
                     if (!userSongs.contains(song)){        // If user hasnt bought song before
                         userSongs.add(song);        // Add each song in album to songlist
                     }
@@ -36,49 +37,95 @@ public class LibraryModel {
                 return "Album bought!";
             }
         }
-        return "[!] Error, this album doesn't exist in Music Library";
+        return "[!] Error, this album doesn't exist in Music Library";      // Couldn't find album
     }
 
-    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought
-        ArrayList<String> foundSongs = new ArrayList<String>(MusicStore.searchForSongsByName(songName));
-        for (String song: foundSongs) {
-            String author = song.split(",")[1];
-            if (userSongs.contains(song)) {        // Check if user alredy owns song
-                return "You already own this song";
-            }
-            else if (author.trim().equals(songAuthor)) {    // Check if user alredy owns song
-                userSongs.add(song);
-                return "Song bought!";
+    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
+        for (Album album: MusicStore.getAlbumObjects()) {       // Iterate over album objects (deep copy of actual list)
+            for (Song song: album.getSongObjects()) {           // Iterate over each song in each album
+                if (userSongs.contains(song)) {         // If song is in userSongs, user already owns it
+                    return "You already own this song!";
+                } else if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {    // If song matches name and author
+                    userSongs.add(song);        // Buy song
+                    return "Song Bought!";
+                }
             }
         }
-        return "[!] Error, this song doesn't exist in Music Library";
+        return "[!] Error, this song doesn't exist in Music Library";       // Couldn't find song
+    }
+    public String favouriteSong(String songName, String songAuthor) {
+        for (Song song: userSongs) {
+            if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
+                song.makeFavorite();
+                return "Song favourited!";
+            }
+        }
+        return "You don't have this song or it doesn't exist";
+    }
+
+    public String rateSong(String songName, String songAuthor, String newRating) {
+        for (Song song: userSongs) {
+            if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
+                song.setRating(newRating);
+                if (newRating.equals("5")){
+                    song.makeFavorite();
+                }
+                return "Song rated!";
+            }   
+        }
+        return "You don't own this song, or the song doesn't exist";
     }
 
     public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
-    public ArrayList<String> getBoughtSongs() { return new ArrayList<String>(userSongs); }     // Return copy of userSongs list (bought songs)
+
+    public ArrayList<String> getBoughtSongs() {     // Return deep copy of userSongs list (bought songs)
+        ArrayList<String> songStrings = new ArrayList<String>();
+        for (Song song: userSongs) {
+            songStrings.add(song.toString());
+        }
+        return songStrings;
+    }
+
+    public ArrayList<String> getFavourites() {      // Get the list of favorite songs as Strings
+        ArrayList<String> favStrings = new ArrayList<String>();
+        for (Song song: userSongs) {
+            if (song.isFavourite()) {
+                favStrings.add(song.toString());
+            }
+        }
+        return favStrings;
+    }
 
     public ArrayList<String> getAuthorsInLibrary() {    // Return list of authors of all songs in the list
         ArrayList<String> authors = new ArrayList<String>();
-        for (String song: userSongs) {
-            String author = song.split(",")[1];
-            if (!authors.contains(author.trim())) {     // Avoid duplicates
+        for (Song song: userSongs) {
+            String author = song.getAuthor();
+            if (!authors.contains(author)) {     // Avoid duplicates
                 authors.add(author.trim());
             }
         }
         return authors;
     }
 
+    // @Override from object class, helper to compare song objects in userSongs
+    public boolean contains(Song newSong) {
+        for (Song song: userSongs){
+            if (song.equals(newSong)) return true;
+        }
+        return false;
+    }
+
     public String getUsername() { return this.username; }    // Get username
     public void setUsername(String newUsername) { this.username = newUsername; }      // Give option to change username
 
-    public void createPlaylist(String playlistName) {       // Create playlist and add to library
+    public String createPlaylist(String playlistName) {       // Create playlist and add to library
         for (Playlist playlist: userPlaylists) {
             if (playlist.getName().equals(playlistName)){       // Make sure name is unique for each playlist
-                System.out.println("The name " + playlistName + " has already been used. Choose another one.");
-                return;
+                return "The name " + playlistName + " has already been used. Choose another one.";
             }
         }
         userPlaylists.add(new Playlist(playlistName)); 
+        return "Playlist '" + playlistName + "' created";
     }    
 
     public void removePlaylist(String playlistName) {       // Removes playlist given a PLaylist Name

@@ -26,6 +26,8 @@ public class Song {
 	public String getAuthor() { return author; }	// Returns name of the author
 	
 	public void makeFavorite() { this.favorite = true; }	// Makes a song favorite	
+
+	public boolean isFavourite() { return this.favorite; }	// Returns if song is favorite
 	
 	public void unfavorite() { this.favorite = false; }		// Makes song not favorite
 	
@@ -41,6 +43,12 @@ public class Song {
 		}
 	}
 	
+	public boolean equals(Song newSong) {
+		if (!this.name.equals(newSong.getName())) return false;
+		if (!this.author.equals(newSong.getAuthor())) return false;
+		return true;
+	}
+
 	// Return a String representation of Song to refer to it
 	@Override
 	public String toString() {
