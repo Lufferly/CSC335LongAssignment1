@@ -43,6 +43,8 @@ public class Song {
 		}
 	}
 	
+	// Check if two songs equal eachother
+	// They equal eachother if they have the same name and author
 	public boolean equals(Song newSong) {
 		if (!this.name.equals(newSong.getName())) return false;
 		if (!this.author.equals(newSong.getAuthor())) return false;
@@ -52,7 +54,7 @@ public class Song {
 	// Return a String representation of Song to refer to it
 	@Override
 	public String toString() {
-		return name + ", " + author; 
+		return name + "," + author; 
 	}
 
 	// Prints out the name of the song

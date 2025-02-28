@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 import MusicStore.Album;
 import MusicStore.MusicStore;
+import userLibrary.LibraryModel;
 
 public class Main {
     public static void main(String args[]) {
         // Create all of the albums
         MusicStore musicStore = new MusicStore("data/albums.txt");
+        LibraryModel userLibrary = new LibraryModel("user");
         // Create the view
         View view = new View();
 
@@ -31,12 +33,19 @@ public class Main {
                 System.out.println("searching...");
                 System.out.println(view.search(userInput, musicStore));
             }
+            // Library functionality
+            //  centralized command for simple viewing of the usersLibrary (songs, playlists, etc..)
+            //  should be in format
+            //  >library otherArgs...
+            else if (userInput.get(0).equals("library")) {
+                view.viewLibrary(userInput, userLibrary);
+            }
             // Buy an album functionality
             // should be in format:
             //  >buy [album or song] thing to buy
             else if (userInput.get(0).equals("buy")) {
                 System.out.println("buying...");
-                System.out.println("[!] Not implemented!");
+                view.buy(userInput, musicStore, userLibrary);
             }
             // View functionality
             // should be in the format:
