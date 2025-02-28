@@ -59,9 +59,16 @@ public class Main {
                     System.out.println("[!] Not implemented!");
                 }
             }
+            // exit functionality
+            // Exits the program.
+            // should be in the format:
+            //  >exit
+            else if (userInput.get(0).equals("exit")) {
+                break;
+            }
             // help functionality
             // Prints out a help method with all the commands
-            // should be in the formate:
+            // should be in the format:
             //  >help
             else if (userInput.get(0).equals("help")) {
                 print_help();
