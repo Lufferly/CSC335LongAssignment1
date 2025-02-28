@@ -47,13 +47,6 @@ public class Main {
                 System.out.println("buying...");
                 view.buy(userInput, musicStore, userLibrary);
             }
-            // View functionality
-            // should be in the format:
-            //  >view [musicstore or library] [song(s)/artist(s)/album(s)/playlist(s)/favorite(s)]
-            else if (userInput.get(0).equals("view")) {
-                System.out.println("viewing...");
-                System.out.println("[!] Not implemented!");
-            }
             // playlist functionality
             // should be in in the format
             //  >playlist create playlist_name  # for creating
