@@ -40,6 +40,25 @@ public class Main {
             else if (userInput.get(0).equals("library")) {
                 view.viewLibrary(userInput, userLibrary);
             }
+            // Username functionality: display or change username
+            // Format: user || user [newUsername]
+            else if (userInput.get(0).equals("user")) {
+                if (userInput.size() == 1) {
+                    System.out.println(userLibrary.getUsername());
+                } else {
+                    userLibrary.setUsername(userInput.get(1));
+                    System.out.println("Username changed to " + userInput.get(1));
+                }
+            }
+            // Favorite songs: mark a song as favourite
+            else if (userInput.get(0).equals("favorite")) {
+                if (userInput.size() < 2) {
+                    System.out.println("[!] Format error. Should be: favorite [song name]");
+                }
+                else {
+                    view.favoriteSong(userInput, userLibrary);
+                }
+            }
             // Buy an album functionality
             // should be in format:
             //  >buy [album or song] thing to buy
@@ -47,7 +66,7 @@ public class Main {
                 System.out.println("buying...");
                 view.buy(userInput, musicStore, userLibrary);
             }
-            // playlist functionality
+            // Playlist functionality: create and add sings to the playlist
             // should be in in the format
             //  >playlist create playlist_name  # for creating
             //  >playlist add playlist_name song_name   # for adding songs to a playlist

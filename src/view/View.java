@@ -19,6 +19,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
+        // Main.printHelp();
         System.out.print("Please enter your input:\n>");
         String userString = scanner.nextLine();
 
@@ -62,6 +63,54 @@ public class View {
         } else {
             System.out.println("[!] Error! Invalid library command!");
             System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+        }
+    }
+
+    public void favoriteSong(ArrayList<String> userInput, LibraryModel userLibrary) {
+        String songQuery = userInput.get(1);
+        ArrayList<String> possibleSongs = new ArrayList<String>();
+        for (String song : userLibrary.getAllSongs()) {
+            if (song.toLowerCase().contains(songQuery)) {
+                possibleSongs.add(song);
+            }
+        }
+        if (possibleSongs.size() > 1) {  // If we got multiple matches
+            // Give the user an enumerated list of options and let them choose
+            System.out.println("[!] That query came up with multiple results!");
+            System.out.println("Please enter the NUMBER of the song that you meant:");
+            // Print out all of the possible options
+            int i = 1;  // Used for enumerating the options
+            for (String song : possibleSongs) {
+                System.out.print(i);
+                System.out.println(": " + song);
+                i += 1;
+            }
+            System.out.print(">");
+
+            // Check that the user gave valid input
+            int userChoice = -1;
+            try {
+                // Turn the user's choice into an integer, and subtract one
+                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
+            } catch (Exception NumberFormatException) {
+                System.out.println("[!] Error! Could not convert your input to a number!");
+                return;
+            }
+            // Check the bounds is good
+            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {
+                System.out.println("[!] Error! That number is out of bounds!");
+                return;
+            }
+            String chosenName = possibleSongs.get(userChoice).split(",")[0];
+            String chosenAuthor = possibleSongs.get(userChoice).split(",")[1];
+            userLibrary.favouriteSong(chosenName, chosenAuthor);        // favorite chosen song
+        }
+        else if (possibleSongs.size() == 1) {       // If only one match
+            String chosenName = possibleSongs.get(0).split(",")[0];
+            String chosenAuthor = possibleSongs.get(0).split(",")[1];
+            userLibrary.favouriteSong(chosenName, chosenAuthor);        // favorite chosen song
+        } else {        // If no matches
+            System.out.println("[!] Couldn't find any songs by the given name.");
         }
     }
 
