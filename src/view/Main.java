@@ -1,7 +1,6 @@
 package view;
 
 import java.io.File;
-//import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import MusicStore.Album;
