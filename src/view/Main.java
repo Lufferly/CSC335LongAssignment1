@@ -96,17 +96,18 @@ public class Main {
     
         // Buy Commands
         System.out.println("BUY COMMANDS:");
-        System.out.println("  > buy album [album name] [artist] - Purchase an album (adds all its songs) to your library.");
-        System.out.println("  > buy song [song name] [artist]   - Purchase an individual song.\n");
+        System.out.println("  > buy album [album name or artist] - Purchase an album (adds all its songs) to your library.");
+        System.out.println("  > buy song [song name or artist]   - Purchase an individual song.\n");
+        System.out.println("    If multiple options exist, a list to choose from will be given");
     
         // View Commands
         System.out.println("VIEW COMMANDS:");
         System.out.println("  > view musicstore album(s)       - View all albums in the Music Store.");
         System.out.println("  > view musicstore song(s)        - View all songs available in the Music Store.");
-        System.out.println("  > view library album(s)          - View all albums in your personal library.");
-        System.out.println("  > view library song(s)           - View all songs in your personal library.");
-        System.out.println("  > view library favorite(s)       - View all favorite songs in your library.");
-        System.out.println("  > view library playlist(s)       - View all playlists in your library.\n");
+        System.out.println("  > library album(s)          - View all albums in your personal library.");
+        System.out.println("  > library song(s)           - View all songs in your personal library.");
+        System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
+        System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");
