@@ -109,6 +109,18 @@ public class MusicStore {
         return albumStrings;
     }
 
+    // Get all the songs in the music store, represented as strings
+    public ArrayList<String> getAllSongs() {
+        ArrayList<String> songStrings = new ArrayList<String>();
+        for (Album album : albums) {
+            for (Song song : album.getSongObjects()) {
+                songStrings.add(song.toString());
+            }
+        }
+
+        return songStrings;
+    }
+
     // Print all the albums in the music store, a debugging function
     public void printAlbums() {
         for (Album album : albums) {

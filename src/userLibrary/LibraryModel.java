@@ -76,7 +76,17 @@ public class LibraryModel {
 
     // Add a song to the user's library
     public void buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
-    
+        // Create the song
+        Song newSong = new Song(songName, songAuthor);
+
+        // Check the song is not already in the library
+        if (!songInLibrary(newSong)) {
+            // Add the song to the library
+            userSongs.add(newSong);
+        } else {
+            // Print an error
+            System.out.println("[!] Error! Song already exists in that userLibrary!");
+        }
     }
 
     // Internal checker to see if a song is already in the library

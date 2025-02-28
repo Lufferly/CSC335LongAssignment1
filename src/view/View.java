@@ -84,7 +84,7 @@ public class View {
 
         }
         else if (userInput.get(1).equals("song")) { // Buying a song
-
+            buySong(buyQuery, musicStore, userLibrary);
         }
         else {  // Invalid buy command
             System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"buy\" to indicate what you want to buy!");
@@ -92,7 +92,7 @@ public class View {
     }
 
     // Helper function of buy() to buy an album
-    public void buyAlbum(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
+    private void buyAlbum(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
         // Get all the albums that match the buyQuery
         ArrayList<String> possibleMatches = new ArrayList<String>();
         for (String album : musicStore.getAllAlbums()) {
@@ -143,11 +143,64 @@ public class View {
         }
     }
 
+    // Helper function for buy(), tries to put a new song into the userLibrary
+    private void buySong(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
+        // Get all the possible matches for the song
+        ArrayList<String> possibleSongs = new ArrayList<String>();
+        for (String song : musicStore.getAllSongs()) {
+            if (song.toLowerCase().contains(buyQuery)) {
+                possibleSongs.add(song);
+            }
+        }
+
+        if (possibleSongs.size() > 1) {  // If we got multiple matches
+            // Give the user an enumerated list of options and let them choose
+            System.out.println("[!] That query came up with multiple results!");
+            System.out.println("Please enter the NUMBER of the song that you meant:");
+            // Print out all of the possible options
+            int i = 1;  // Used for enumerating the options
+            for (String song : possibleSongs) {
+                System.out.print(i);
+                System.out.println(": " + song);
+                i += 1;
+            }
+            System.out.print(">");
+
+            // Check that the user gave valid input
+            int userChoice = -1;
+            try {
+                // Turn the user's choice into an integer, and subtract one
+                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
+            } catch (Exception NumberFormatException) {
+                System.out.println("[!] Error! Could not convert your input to a number!");
+                return;
+            }
+            // Check the bounds is good
+            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {
+                System.out.println("[!] Error! That number is out of bounds!");
+                return;
+            }
+
+            // Add the chosen album to the user's library
+            String chosenName = possibleSongs.get(userChoice).split(",")[0];
+            String chosenAuthor = possibleSongs.get(userChoice).split(",")[1];
+            userLibrary.buySong(chosenName, chosenAuthor);
+        } else if (possibleSongs.size() == 1) {  // Only one result
+            // Only one result found, just buy it
+            String chosenName = possibleSongs.get(0).split(",")[0];
+            String chosenAuthor = possibleSongs.get(0).split(",")[1];
+            userLibrary.buySong(chosenName, chosenAuthor);
+        } else {
+            System.out.println("[!] Could not find a song by that name!");
+        }
+    }
+
     // Search in a given music store, returns a list of results
     //  The second index controls what we search for, "album" or "song"
     public ArrayList<String> search(ArrayList<String> userInput, MusicStore musicStore) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Search request did not have enough inputs!");
+            System.out.println("[!] format for search is \"search [album or song] [name or author] query\"");
             return null;
         }
 
