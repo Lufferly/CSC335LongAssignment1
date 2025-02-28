@@ -1,6 +1,8 @@
 package userLibrary;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import MusicStore.Album;
 import MusicStore.MusicStore;
@@ -10,49 +12,96 @@ public class LibraryModel {
     private ArrayList<Song> userSongs;        // SongList
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
-    private ArrayList<String> boughtAlbums;     // Use toString() of albums for this
+    private ArrayList<Album> userAlbums;     // Use toString() of albums for this
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
         this.username = userName;
         userPlaylists = new ArrayList<Playlist>();
-        boughtAlbums = new ArrayList<String>();
+        userAlbums = new ArrayList<Album>();
+        userSongs = new ArrayList<Song>();
     }
 
-    public String buyAlbum (String albumName, String albumAuthor) {       // Mark an album as bought
-        for (Album album: MusicStore.getAlbumObjects()) {       // Iterate over album objects (deep copy of actual list)
-            String name = album.toString().split(",") [0];      // Name of current album object
-            String author = album.toString().split(",") [1];    // Author of current album object
-            if (boughtAlbums.contains(album.toString())) {
-                return "You already own this album";
-            }
-            else if (name.trim().equals(albumName) && author.trim().equals(albumAuthor)) {
-                ArrayList<Song> albumSongs = new ArrayList<Song>(album.getSongObjects());
-                for (Song song: albumSongs){          // Iterate over each song in album
-                    if (!userSongs.contains(song)){        // If user hasnt bought song before
-                        userSongs.add(song);        // Add each song in album to songlist
-                    }
-                }
-                boughtAlbums.add(album.toString());     // Mark album as bought
-                return "Album bought!";
-            }
+    // Return all of the albums we have in the form of an array of strings
+    //  this means we wont get any song information from in the albums for this
+    public ArrayList<String> getAllAlbums() {
+        ArrayList<String> allAlbums = new ArrayList<String>();
+        for (Album album : userAlbums) {
+            // We make all of its face data comma seperated so its easy to manipulate later
+            allAlbums.add(album.getName() + "," + album.getAuthor() + "," + album.getYear() + "," + album.getGenre());
         }
-        return "[!] Error, this album doesn't exist in Music Library";      // Couldn't find album
+
+        return allAlbums;
     }
 
-    public String buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
-        for (Album album: MusicStore.getAlbumObjects()) {       // Iterate over album objects (deep copy of actual list)
-            for (Song song: album.getSongObjects()) {           // Iterate over each song in each album
-                if (userSongs.contains(song)) {         // If song is in userSongs, user already owns it
-                    return "You already own this song!";
-                } else if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {    // If song matches name and author
-                    userSongs.add(song);        // Buy song
-                    return "Song Bought!";
-                }
+    // Return all of the songs owned by the user in the form of an array of strings
+    public ArrayList<String> getAllSongs() {
+        ArrayList<String> allSongs = new ArrayList<String>();
+        for (Song song : userSongs) {
+            // Comma seperate the data so its easy to manipulate
+            allSongs.add(song.getName() + "," + song.getAuthor());
+        }
+
+        return allSongs;
+    }
+
+    // Add an album to the user's library
+    //  also add all of the album's songs to the library
+    public void buyAlbum (String albumName, String albumAuthor) {
+        // Check that the album is not already in the list
+        for (Album album : userAlbums) {
+            if (album.getName().equals(albumName) && album.getAuthor().equals(albumAuthor)) {
+                // Album already exists in the library
+                System.out.println("[!] Error! Album is already owned by user!");
+                return;
             }
         }
-        return "[!] Error, this song doesn't exist in Music Library";       // Couldn't find song
+
+        // Construct the filepath from the albumName and albumAuthor
+        String albumFilePath = "data/" + albumName + "_" + albumAuthor + ".txt";
+        // Create the album and add it to the library
+        Album newAlbum = new Album(albumFilePath);
+        userAlbums.add(newAlbum);
+        
+        // Add all of the album's songs to the library
+        for (Song song : newAlbum.getSongObjects()) {
+            // This is dumb that we have to copy another copy, but encapsulation...
+            Song thisSong = new Song(song);
+            // Add the song if we dont already own it
+            if (!songInLibrary(thisSong)) {
+                userSongs.add(thisSong);
+            }
+        }
     }
+
+    // Add a song to the user's library
+    public void buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
+        // Create the song
+        Song newSong = new Song(songName, songAuthor);
+
+        // Check the song is not already in the library
+        if (!songInLibrary(newSong)) {
+            // Add the song to the library
+            userSongs.add(newSong);
+        } else {
+            // Print an error
+            System.out.println("[!] Error! Song already exists in that userLibrary!");
+        }
+    }
+
+    // Internal checker to see if a song is already in the library
+    private boolean songInLibrary(Song checkingSong) {
+        for (Song song : userSongs) {
+            // If a song matches, we already have it
+            if (song.equals(checkingSong)) {
+                return true;
+            }
+        }
+        // If we reach here the song is not already in the library
+        return false;
+    }
+
+
     public String favouriteSong(String songName, String songAuthor) {
         for (Song song: userSongs) {
             if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
@@ -75,8 +124,6 @@ public class LibraryModel {
         }
         return "You don't own this song, or the song doesn't exist";
     }
-
-    public ArrayList<String> getBoughtAlbums() { return new ArrayList<String>(boughtAlbums); }     // Return copy of boughtAlbums list
 
     public ArrayList<String> getBoughtSongs() {     // Return deep copy of userSongs list (bought songs)
         ArrayList<String> songStrings = new ArrayList<String>();
@@ -137,7 +184,7 @@ public class LibraryModel {
         }
     }
 
-    public ArrayList<String> getLibrary() {     // Get list of playlist strings
+    public ArrayList<String> getAllPlaylists() {     // Get list of playlist strings
         ArrayList<String> playlistStrings = new ArrayList<String>();
         for (Playlist playlist: userPlaylists) {
             playlistStrings.add(playlist.getName());

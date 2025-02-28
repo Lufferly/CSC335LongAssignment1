@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 import MusicStore.Album;
 import MusicStore.MusicStore;
+import userLibrary.LibraryModel;
 
 public class Main {
     public static void main(String args[]) {
         // Create all of the albums
         MusicStore musicStore = new MusicStore("data/albums.txt");
+        LibraryModel userLibrary = new LibraryModel("user");
         // Create the view
         View view = new View();
 
@@ -31,19 +33,19 @@ public class Main {
                 System.out.println("searching...");
                 System.out.println(view.search(userInput, musicStore));
             }
+            // Library functionality
+            //  centralized command for simple viewing of the usersLibrary (songs, playlists, etc..)
+            //  should be in format
+            //  >library otherArgs...
+            else if (userInput.get(0).equals("library")) {
+                view.viewLibrary(userInput, userLibrary);
+            }
             // Buy an album functionality
             // should be in format:
             //  >buy [album or song] thing to buy
             else if (userInput.get(0).equals("buy")) {
                 System.out.println("buying...");
-                System.out.println("[!] Not implemented!");
-            }
-            // View functionality
-            // should be in the format:
-            //  >view [musicstore or library] [song(s)/artist(s)/album(s)/playlist(s)/favorite(s)]
-            else if (userInput.get(0).equals("view")) {
-                System.out.println("viewing...");
-                System.out.println("[!] Not implemented!");
+                view.buy(userInput, musicStore, userLibrary);
             }
             // playlist functionality
             // should be in in the format
@@ -59,9 +61,16 @@ public class Main {
                     System.out.println("[!] Not implemented!");
                 }
             }
+            // exit functionality
+            // Exits the program.
+            // should be in the format:
+            //  >exit
+            else if (userInput.get(0).equals("exit")) {
+                break;
+            }
             // help functionality
             // Prints out a help method with all the commands
-            // should be in the formate:
+            // should be in the format:
             //  >help
             else if (userInput.get(0).equals("help")) {
                 printHelp();
@@ -87,17 +96,18 @@ public class Main {
     
         // Buy Commands
         System.out.println("BUY COMMANDS:");
-        System.out.println("  > buy album [album name] [artist] - Purchase an album (adds all its songs) to your library.");
-        System.out.println("  > buy song [song name] [artist]   - Purchase an individual song.\n");
+        System.out.println("  > buy album [album name or artist] - Purchase an album (adds all its songs) to your library.");
+        System.out.println("  > buy song [song name or artist]   - Purchase an individual song.\n");
+        System.out.println("    If multiple options exist, a list to choose from will be given");
     
         // View Commands
         System.out.println("VIEW COMMANDS:");
         System.out.println("  > view musicstore album(s)       - View all albums in the Music Store.");
         System.out.println("  > view musicstore song(s)        - View all songs available in the Music Store.");
-        System.out.println("  > view library album(s)          - View all albums in your personal library.");
-        System.out.println("  > view library song(s)           - View all songs in your personal library.");
-        System.out.println("  > view library favorite(s)       - View all favorite songs in your library.");
-        System.out.println("  > view library playlist(s)       - View all playlists in your library.\n");
+        System.out.println("  > library album(s)          - View all albums in your personal library.");
+        System.out.println("  > library song(s)           - View all songs in your personal library.");
+        System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
+        System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");

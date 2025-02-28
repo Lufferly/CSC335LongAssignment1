@@ -106,6 +106,6 @@ public class Album {
 	}
 
 	public String toString() {
-		return this.name + ", " + this.author;
+		return this.name + "," + this.author;
 	}
 }

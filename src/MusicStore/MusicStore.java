@@ -87,7 +87,7 @@ public class MusicStore {
     // Given a query for an song, search for and return every song (in the form of an array of strings)
     //  whose name contains the name query
     // Ignores case
-    public static ArrayList<String> searchForSongsByName(String songQuery) {
+    public ArrayList<String> searchForSongsByName(String songQuery) {
         ArrayList<String> foundSongs = new ArrayList<String>();
         // Search through every Album's songs, if that song's name contains the song query, add
         //  it to the foundSongs list
@@ -101,7 +101,7 @@ public class MusicStore {
         return foundSongs;
     }
 
-    public static ArrayList<String> getAllAlbums() {        // Get all albums as Strings. The toString() of music store class
+    public ArrayList<String> getAllAlbums() {        // Get all albums as Strings. The toString() of music store class
         ArrayList<String> albumStrings = new ArrayList<String>();
         for (Album album: albums) {
             albumStrings.add(album.toString());
@@ -109,12 +109,16 @@ public class MusicStore {
         return albumStrings;
     }
 
-    public static ArrayList<Album> getAlbumObjects() {      // Deep copy of all albums list 
-        ArrayList<Album> copyList = new ArrayList<Album>();
-        for (Album album: albums) {
-            copyList.add(new Album(album));
+    // Get all the songs in the music store, represented as strings
+    public ArrayList<String> getAllSongs() {
+        ArrayList<String> songStrings = new ArrayList<String>();
+        for (Album album : albums) {
+            for (Song song : album.getSongObjects()) {
+                songStrings.add(song.toString());
+            }
         }
-        return copyList;
+
+        return songStrings;
     }
 
     // Print all the albums in the music store, a debugging function
