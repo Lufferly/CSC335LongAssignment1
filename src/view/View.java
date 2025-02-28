@@ -19,6 +19,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
+        Main.printHelp();
         System.out.print("Please enter your input:\n>");
         String userString = scanner.nextLine();
 

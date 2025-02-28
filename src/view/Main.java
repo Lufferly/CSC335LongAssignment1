@@ -73,7 +73,7 @@ public class Main {
             // should be in the format:
             //  >help
             else if (userInput.get(0).equals("help")) {
-                print_help();
+                printHelp();
             }
             else {  // Command not recognized
                 System.out.println("[!] Error! Command not recognized!");
@@ -82,7 +82,50 @@ public class Main {
         }
     }
 
-    private static void print_help() {
-        System.out.println("Here is how to use the music store:");
+    public static void printHelp() {        // Command menu, to tell user how to use the program
+        System.out.println("\n======== Welcome to S&M Music Store! ========");
+        System.out.println("Here you can search, buy, and manage your own music library! Use the following commands:\\n");
+    
+        // Search Commands
+        System.out.println("SEARCH COMMANDS:");
+        System.out.println("  > search album name [query]     - Search for an album by its name.");
+        System.out.println("  > search album author [query]   - Search for albums by a specific artist.");
+        System.out.println("  > search song name [query]      - Search for a song by its title.");
+        System.out.println("  > search song author [query]    - Search for songs by a specific artist.");
+        System.out.println("  (If multiple results exist, all matching items will be displayed.)\n");
+    
+        // Buy Commands
+        System.out.println("BUY COMMANDS:");
+        System.out.println("  > buy album [album name] [artist] - Purchase an album (adds all its songs) to your library.");
+        System.out.println("  > buy song [song name] [artist]   - Purchase an individual song.\n");
+    
+        // View Commands
+        System.out.println("VIEW COMMANDS:");
+        System.out.println("  > view musicstore album(s)       - View all albums in the Music Store.");
+        System.out.println("  > view musicstore song(s)        - View all songs available in the Music Store.");
+        System.out.println("  > view library album(s)          - View all albums in your personal library.");
+        System.out.println("  > view library song(s)           - View all songs in your personal library.");
+        System.out.println("  > view library favorite(s)       - View all favorite songs in your library.");
+        System.out.println("  > view library playlist(s)       - View all playlists in your library.\n");
+    
+        // Playlist Commands
+        System.out.println("PLAYLIST COMMANDS:");
+        System.out.println("  > playlist create [playlist name]             - Create a new playlist.");
+        System.out.println("  > playlist add [playlist name] [song name]    - Add a song to a playlist.");
+        System.out.println("  > playlist remove [playlist name] [song name] - Remove a song from a playlist.\n");
+    
+        // Song Management Commands
+        System.out.println("SONG MANAGEMENT COMMANDS:");
+        System.out.println("  > favorite [song name] [artist]   - Mark a song as a favorite.");
+        System.out.println("  > rate [song name] [artist] [1-5] - Rate a song between 1 and 5.");
+        System.out.println("  (Songs rated 5 are automatically marked as favorites.)\n");
+    
+        // General Commands
+        System.out.println("GENERAL COMMANDS:");
+        System.out.println("  > help                 - Display this help menu.");
+        System.out.println("  > exit                 - Quit the application.");
+        System.out.println("  > user [username]      - Set your username to a new username.");
+        System.out.println("  > user                 - Get your username.");
+        System.out.println("====================================================\n");
     }
 }
