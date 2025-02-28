@@ -35,8 +35,9 @@ public class View {
         if (userInput.size() < 2) {
             System.out.println("[!] Error! Invalid library command!");
             System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+            System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
             return;
-        }
+        }    
 
         String userQuery = userInput.get(1);
 
@@ -64,6 +65,116 @@ public class View {
             System.out.println("[!] Error! Invalid library command!");
             System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
         }
+    }
+
+    // Search the user library for songs or albums, should be formatted like:
+    //  >library search [album(s) or song(s)] query
+    //  where the user wants to search for an album or song by author or name
+    public void searchLibrary(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 5) {
+            System.out.println("[!] Error! Invalid library command!");
+            System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+            System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+            return;
+        }    
+
+        // What the user wants to see, albums or songs
+        String userInterest = userInput.get(2);
+        // If the user is searching for names or authors
+        String searchType = userInput.get(3);
+        // What the user is searching for
+        String searchQuery = userInput.get(4);
+
+        // Matches to the search request
+        ArrayList<String> foundMatches;
+
+        if (userInterest.contains("album")) {  // Searching for albums
+            foundMatches = searchLibraryAlbums(searchType, searchQuery, userLibrary);
+        } else if (userInterest.contains("song")) {  // Searching for songs
+            foundMatches = searchLibrarySongs(searchType, searchQuery, userLibrary);
+        } else {  // Unrecognized input
+            System.out.println("[!] Error! Invalid library search command!");
+            System.out.println("[!] You must put \"album\" or \"song\" after \"library search\" in order to search for albums or songs!");
+            return;
+        }
+
+        // Check that we actually got results
+        if (foundMatches == null) {
+            return; // This happens if there was an error, and it will have already been handled
+        }
+        if (foundMatches.size() == 0) {
+            System.out.println("[!] Your search came up with no results!");
+            return;
+        }
+
+        // Print out all of the albums the search found
+        System.out.println("Your search found the following matches in your library:");
+        for (String match : foundMatches) {
+            System.out.println(match);
+        }
+    }
+
+    // Search for albums inside of the user's library based on the searchQuery
+    //  searchType is the type we are searching by "name" or "author"
+    //  searchQuery is what we are searching for
+    //  userLibrary is the LibraryModel we are looking in
+    public ArrayList<String> searchLibraryAlbums(String searchType, String searchQuery, LibraryModel userLibrary) {
+        ArrayList<String> foundAlbums = new ArrayList<String>();
+
+        // Decide what index of a split album string we are comparing to the searchQuery
+        int searchIndex;
+        if (searchType.equals("name")) {  // Searching by name
+            searchIndex = 0;
+        } else if (searchType.equals("author")) {  // Searching by author
+            searchIndex = 1;
+        } else {  // Unrecognized input
+            System.out.println("[!] Error! Invalid library search command!");
+            System.out.println("[!] You must choose to search by name or author!");
+            System.out.println("[!] Proper format is >library search [album(s) or song(s)] [name or author] searchQuery!");
+            return null;
+        }
+
+        for (String album : userLibrary.getAllAlbums()) {
+            // Split the album into its data
+            String[] albumData = album.split(",");
+            // Check if the wanted data type contains the search query
+            if (albumData[searchIndex].toLowerCase().contains(searchQuery)) {
+                // Add this album to the found albums
+                foundAlbums.add(album);
+            }
+        }
+
+        return foundAlbums;
+    }
+
+    // Search for songs insie of the user's library based on the searchQuery
+    public ArrayList<String> searchLibrarySongs(String searchType, String searchQuery, LibraryModel userLibrary) {
+        ArrayList<String> foundSongs = new ArrayList<String>();
+
+        // Decide what index of a split album string we are comparing to the searchQuery
+        int searchIndex;
+        if (searchType.equals("name")) {  // Searching by name
+            searchIndex = 0;
+        } else if (searchType.equals("author")) {  // Searching by author
+            searchIndex = 1;
+        } else {  // Unrecognized input
+            System.out.println("[!] Error! Invalid library search command!");
+            System.out.println("[!] You must choose to search by name or author!");
+            System.out.println("[!] Proper format is >library search [album(s) or song(s)] [name or author] searchQuery!");
+            return null;
+        }
+
+        for (String song : userLibrary.getAllSongs()) {
+            // Split the album into its data
+            String[] albumData = song.split(",");
+            // Check if the wanted data type contains the search query
+            if (albumData[searchIndex].toLowerCase().contains(searchQuery)) {
+                // Add this album to the found albums
+                foundSongs.add(song);
+            }
+        }
+
+        return foundSongs;
     }
 
     public void favoriteSong(ArrayList<String> userInput, LibraryModel userLibrary) {

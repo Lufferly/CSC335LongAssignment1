@@ -15,6 +15,9 @@ public class Main {
         // Create the view
         View view = new View();
 
+        // Show the user how to use the tool on startup
+        printHelp();
+
         // The user input broken into a list of words
         ArrayList<String> userInput = new ArrayList<>();
         // The main loop
@@ -34,10 +37,22 @@ public class Main {
             }
             // Library functionality
             //  centralized command for simple viewing of the usersLibrary (songs, playlists, etc..)
+            //  and searching inside the user's library
             //  should be in format
             //  >library otherArgs...
             else if (userInput.get(0).equals("library")) {
-                view.viewLibrary(userInput, userLibrary);
+                // Check that we have enough info to decide where we need to go (searching or viewing)
+                //  more userInput checking is done in the respective classes
+                if (userInput.size() < 2) {
+                    System.out.println("[!] Error! Invalid library command!");
+                    System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+                    System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+                }
+                if (userInput.get(1).equals("search")) {  // Searching inside the user's library
+                    view.searchLibrary(userInput, userLibrary);
+                } else {  // Viewing the user's library
+                    view.viewLibrary(userInput, userLibrary);
+                }
             }
             // Username functionality: display or change username
             // Format: user || user [newUsername]
