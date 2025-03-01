@@ -172,6 +172,7 @@ public class Main {
         System.out.println("  > library song(s)           - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
+        System.out.println("  > library search [song(s) or album(s)] [name or author] searchQuery       -Search for songs or albums in your library");
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");

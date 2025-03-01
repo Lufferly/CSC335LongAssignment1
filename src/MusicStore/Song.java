@@ -57,7 +57,12 @@ public class Song {
 				stars = stars + '*';
 			}
 		}
-		return name + "," + author + "," + stars; 
+
+		if (rating > 0) {
+			return name + "," + author + "," + stars;
+		} else {
+			return name + "," + author;
+		}
 	}
 
 	// Prints out the name of the song
