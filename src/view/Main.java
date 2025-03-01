@@ -33,7 +33,11 @@ public class Main {
             // >search [album or song] [name or author] query
             if (userInput.get(0).equals("search")) {
                 System.out.println("searching...");
-                System.out.println(view.search(userInput, musicStore));
+                view.search(userInput, musicStore);
+            }
+            // view is used for viewing the albums and songs in the music store
+            else if (userInput.get(0).equals("musicstore")) {
+                view.viewMusicStore(userInput, musicStore);
             }
             // Library functionality
             //  centralized command for simple viewing of the usersLibrary (songs, playlists, etc..)
@@ -45,8 +49,9 @@ public class Main {
                 //  more userInput checking is done in the respective classes
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid library command!");
-                    System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+                    System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+                    continue;
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
@@ -82,17 +87,42 @@ public class Main {
             }
             // Playlist functionality: create and add sings to the playlist
             // should be in in the format
-            //  >playlist create playlist_name  # for creating
+            //  >playlist create playlist_name  # for creating a playlist
             //  >playlist add playlist_name song_name   # for adding songs to a playlist
             else if (userInput.get(0).equals("playlist")) {
+                // Check that there is enough input data to know if we want to create a playlist or add to a playlist
+                if (userInput.size() < 2) {
+                    System.out.println("[!] Error! Invalid playlist command!");
+                    System.out.println("[!] The format is: >playlist create playlist_name # for creating a playlist");
+                    System.out.println("OR >playlist playlist_name   # for viewing songs in a playlist");
+                    System.out.println("OR >playlist remove playlist_name song_name   # for removing songs from a playlist");
+                    System.out.println("OR >playlist add playlist_name song_name   # for adding songs to a playlist");
+                    continue;
+                }
+
                 if (userInput.get(1).equals("create")) {    // For creating a playlist
                     System.out.println("creating...");
-                    System.out.println("[!] Not implemented!");
+                    view.createPlaylist(userInput, userLibrary);
                 }
-                if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
+                else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
                     System.out.println("adding...");
-                    System.out.println("[!] Not implemented!");
+                    view.addSongToPlaylist(userInput, userLibrary);
                 }
+                else if (userInput.get(1).equals("remove")) {
+                    System.out.println("removing...");
+                    view.removeSongFromPlaylist(userInput, userLibrary);
+                } else {
+                    // Try and view the given playlist
+                    view.viewPlaylist(userInput, userLibrary);
+                }
+            }
+            // rate functionality
+            //  rates a song from 1-5 in the users library
+            //  if the user rates the song 5 it is set to a favorite
+            //  should be in the format:
+            //  >rate song_name
+            else if (userInput.get(0).equals("rate")) {
+                view.rateSong(userInput, userLibrary);
             }
             // exit functionality
             // Exits the program.
@@ -135,15 +165,18 @@ public class Main {
     
         // View Commands
         System.out.println("VIEW COMMANDS:");
-        System.out.println("  > view musicstore album(s)       - View all albums in the Music Store.");
-        System.out.println("  > view musicstore song(s)        - View all songs available in the Music Store.");
+        System.out.println("  > musicstore album(s)       - View all albums in the Music Store.");
+        System.out.println("  > musicstore song(s)        - View all songs available in the Music Store.");
         System.out.println("  > library album(s)          - View all albums in your personal library.");
         System.out.println("  > library song(s)           - View all songs in your personal library.");
+        System.out.println("  > library song(s)           - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
+        System.out.println("  > library search [song(s) or album(s)] [name or author] searchQuery       -Search for songs or albums in your library");
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");
+        System.out.println("  > playlist [playlist name]                    - View a playlist's songs.");
         System.out.println("  > playlist create [playlist name]             - Create a new playlist.");
         System.out.println("  > playlist add [playlist name] [song name]    - Add a song to a playlist.");
         System.out.println("  > playlist remove [playlist name] [song name] - Remove a song from a playlist.\n");
@@ -151,7 +184,7 @@ public class Main {
         // Song Management Commands
         System.out.println("SONG MANAGEMENT COMMANDS:");
         System.out.println("  > favorite [song name] [artist]   - Mark a song as a favorite.");
-        System.out.println("  > rate [song name] [artist] [1-5] - Rate a song between 1 and 5.");
+        System.out.println("  > rate [song name] [0-5] - Rate a song between 1 and 5.");
         System.out.println("  (Songs rated 5 are automatically marked as favorites.)\n");
     
         // General Commands

@@ -26,6 +26,36 @@ public class View {
         return userString;
     }
 
+    // View the songs or albums in a musicstore
+    public void viewMusicStore(ArrayList<String> userInput, MusicStore musicStore) {
+        if (userInput.size() < 2) {
+            System.out.println("[!] Error! Bad musicstore command! Not Enough arguments!");
+            System.out.println("Format should be view musicstore [album(s) or song(s)]");
+            return;
+        }
+
+        // What the user wants to see
+        String userInterest = userInput.get(1);
+
+        // All the things we need to print
+        ArrayList<String> returnedData;
+
+        if (userInterest.contains("album")) {  // View all the albums in the musicstore
+            returnedData = musicStore.getAllAlbums();
+        } else if (userInterest.contains("song")) {  // View all the songs in the musicstore
+            returnedData = musicStore.getAllSongs();
+        } else {  // Invalid input
+            System.out.println("[!] Error! Bad musicstore command!");
+            System.out.println("Format should be view musicstore [album(s) or song(s)]");
+            return;
+        }
+
+        // print all the data
+        for (String string : returnedData) {
+            System.out.println(string);
+        }
+    }
+
     // View some data from the usersLibrary
     //  The userInput will be formatted
     //  >library query
@@ -34,7 +64,7 @@ public class View {
     public void viewLibrary(ArrayList<String> userInput, LibraryModel userLibrary) {
         if (userInput.size() < 2) {
             System.out.println("[!] Error! Invalid library command!");
-            System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+            System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
             System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
             return;
         }    
@@ -50,6 +80,11 @@ public class View {
             ArrayList<String> allSongs = userLibrary.getAllSongs();
             for (String song : allSongs) {
                 System.out.println(song);
+            }
+        } else if (userQuery.contains("artist")) {
+            ArrayList<String> allArtists = userLibrary.getAllArtists();
+            for (String artist : allArtists) {
+                System.out.println(artist);
             }
         } else if (userQuery.contains("playlist")) {
             ArrayList<String> allPlaylists = userLibrary.getAllPlaylists();
@@ -177,8 +212,65 @@ public class View {
         return foundSongs;
     }
 
+    // Set a song in the userLibrary to a favorite
     public void favoriteSong(ArrayList<String> userInput, LibraryModel userLibrary) {
         String songQuery = userInput.get(1);
+        
+        // Get the song that the user wants to favorite
+        String songToFavorite = getChoiceFromLibrarySongs(songQuery, userLibrary);
+
+        // Check we got a song back
+        if (songToFavorite == null) {
+            return;
+        }
+
+        // Split the song into its data
+        String[] songData = songToFavorite.split(",");
+        String songName = songData[0];
+        String songAuthor = songData[1];
+
+        userLibrary.favouriteSong(songName, songAuthor);
+    }
+
+    // rate a song in the user library from 1-5
+    //  if it is rated 5, add it to the user's favorites
+    public void rateSong(ArrayList<String> userInput, LibraryModel userLibrary) {
+        // Check the input is formatted correctly
+        if (userInput.size() < 3) {
+            System.out.println("[!] Error! Invalid rate command! Not enough arguments!");
+            System.out.println("[!] proper rate format is >rate song_name rating(0-5)");
+            return;
+        }
+
+        // Get the rating
+        int rating = -1;
+        try {
+            rating = Integer.parseInt(userInput.get(2));
+        } catch (Exception NumberFormatException) {
+            System.out.println("[!] Error! Rating must be an integer from 1-5!");
+            return;
+        }
+        if (rating < 0 || rating > 5) {
+            System.out.println("[!] Error! Rating must be an integer from 1-5!");
+            return;
+        }
+
+        // Get the song
+        String songQuery = userInput.get(1);
+        String songToRate = getChoiceFromLibrarySongs(songQuery, userLibrary);
+        if (songToRate == null) {
+            return;
+        }
+
+        // Split the songToRate into its data (dumb)
+        String[] songData = songToRate.split(",");
+        // Rate the song
+        userLibrary.rateSong(songData[0], songData[1], rating);
+    }
+
+    // Given a songQuery, try to find a song from the user's library to return (as a string)
+    //  if we find multiple matches give the user the option to choose from a list of them
+    private String getChoiceFromLibrarySongs(String songQuery, LibraryModel userLibrary) {
         ArrayList<String> possibleSongs = new ArrayList<String>();
         for (String song : userLibrary.getAllSongs()) {
             if (song.toLowerCase().contains(songQuery)) {
@@ -205,23 +297,21 @@ public class View {
                 userChoice = Integer.parseInt(scanner.nextLine()) - 1;
             } catch (Exception NumberFormatException) {
                 System.out.println("[!] Error! Could not convert your input to a number!");
-                return;
+                return null;
             }
             // Check the bounds is good
             if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {
                 System.out.println("[!] Error! That number is out of bounds!");
-                return;
+                return null;
             }
-            String chosenName = possibleSongs.get(userChoice).split(",")[0];
-            String chosenAuthor = possibleSongs.get(userChoice).split(",")[1];
-            userLibrary.favouriteSong(chosenName, chosenAuthor);        // favorite chosen song
+            
+            return possibleSongs.get(userChoice);
         }
         else if (possibleSongs.size() == 1) {       // If only one match
-            String chosenName = possibleSongs.get(0).split(",")[0];
-            String chosenAuthor = possibleSongs.get(0).split(",")[1];
-            userLibrary.favouriteSong(chosenName, chosenAuthor);        // favorite chosen song
+            return possibleSongs.get(0);
         } else {        // If no matches
             System.out.println("[!] Couldn't find any songs by the given name.");
+            return null;
         }
     }
 
@@ -357,25 +447,38 @@ public class View {
 
     // Search in a given music store, returns a list of results
     //  The second index controls what we search for, "album" or "song"
-    public ArrayList<String> search(ArrayList<String> userInput, MusicStore musicStore) {
+    public void search(ArrayList<String> userInput, MusicStore musicStore) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Search request did not have enough inputs!");
             System.out.println("[!] format for search is \"search [album or song] [name or author] query\"");
-            return null;
+            return;
         }
+
+        // The data we got
+        ArrayList<String> returnedData;
 
         // Search for albums
         if (userInput.get(1).equals("album")) {
-            return albumSearch(userInput, musicStore);
+            returnedData = albumSearch(userInput, musicStore);
         }
         // Search for songs
-        if (userInput.get(1).equals("song")) {
-            return songSearch(userInput, musicStore);
+        else if (userInput.get(1).equals("song")) {
+            returnedData = songSearch(userInput, musicStore);
+        }
+        else {
+            // If we reach here, the search statement was entered in incorrectly
+            System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"search\" to indicate what you want to search for!");
+            return;
         }
 
-        // If we reach here, the search statement was entered in incorrectly
-        System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"search\" to indicate what you want to search for!");
-        return null;
+        // Print the data
+        if (returnedData.size() == 0) {
+            System.out.println("[!] Search query came up with NO results!");
+            return;
+        }
+        for (String string : returnedData) {
+            System.out.println(string);
+        }
     }
 
     // Search for albums in a music store
@@ -412,5 +515,99 @@ public class View {
         // If we reach here, the search statement was entered in incorrectly
         System.out.println("[!] Error! Malformed search statement! Please put \"name\" or \"author\" after \"search name\" to indicate what you want to search for!");
         return null;
+    }
+
+    // Create a playlist in a userlibrary
+    public void createPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        // Check that the userInput is correct
+        if (userInput.size() < 3) {
+            System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist create playlist_name");
+            return;
+        }
+
+        String playlistName = userInput.get(2);
+
+        // Create the playlist
+        System.out.println(userLibrary.createPlaylist(playlistName));
+    }
+
+    // View all the songs in a playlist
+    public void viewPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 2) {
+            System.out.println("[!] Error! Invalid playlist command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist playlist_name");
+            return;
+        }
+
+        String playlistName = userInput.get(1);
+        ArrayList<String> playlistSongs = userLibrary.getPlaylistSongs(playlistName);
+
+        // Check the playlist exists
+        if (playlistSongs == null) {
+            System.out.println("[!] Error! That playlist does not exist! Cannot view it!");
+            return;
+        }
+        // Check if there are any songs in the playlist
+        if (playlistSongs.size() == 0) {
+            System.out.println("[!] No songs in the " + playlistName + " playlist!");
+            return;
+        }
+
+        // Print all the songs
+        System.out.println("All the songs in the " + playlistName + " playlist:");
+        for (String song : playlistSongs) {
+            System.out.println(song);
+        }
+    }
+
+    // Given a playlist and a song, attempt to add that song from the user's library to the playlist
+    public void addSongToPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 4) {
+            System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist add playlist_name song_name");
+            return;
+        }
+
+        String playlistName = userInput.get(2);
+        String songQuery = userInput.get(3);
+
+        // Try and find the song to add
+        String songToAdd = getChoiceFromLibrarySongs(songQuery, userLibrary);
+
+        // Check we could find a song
+        if (songToAdd == null) {
+            return;
+        }
+
+        // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
+        String[] songData = songToAdd.split(",");
+        userLibrary.addSongToPlaylist(songData[0], songData[1], playlistName);
+    }
+
+    // Given a playlist and a song, attempt to remove that song from the playlist
+    // This is kinda bad cause we dont consider only whats in the playlist,
+    //  but doing so would require some ugly backpassing between the library and view, maybe ill do it later
+    public void removeSongFromPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 4) {
+            System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist remove playlist_name song_name");
+            return;
+        }
+
+        String playlistName = userInput.get(2);
+        String songQuery = userInput.get(3);
+
+        // Try and find the song to remove
+        String songToAdd = getChoiceFromLibrarySongs(songQuery, userLibrary);
+
+        // Check we could find a song
+        if (songToAdd == null) {
+            return;
+        }
+
+        // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
+        String[] songData = songToAdd.split(",");
+        userLibrary.removeSongFromPlaylist(songData[0], songData[1], playlistName);
     }
 }
