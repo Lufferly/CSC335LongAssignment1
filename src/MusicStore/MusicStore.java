@@ -1,6 +1,9 @@
 package MusicStore;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,31 +16,41 @@ public class MusicStore {
     // from it.
     public MusicStore(String albumFilePath) {
         // Create all of the albums
-        File albumDataFile = new File(albumFilePath);
-        ArrayList<Album> allAlbums = new ArrayList<Album>();
-        Scanner scanner;
+        BufferedReader albumDataFile;
         try {
-			scanner = new Scanner(albumDataFile);
-		} catch (Exception FileNotFoundException) {
-			System.out.print("Error! MusicStore Constructor was given a file path that does not exist! : ");
-			System.out.println(albumDataFile);
-            System.out.println("[!] Exiting...");
-			System.exit(1); // Probably a better way to do this, better ask teach
-			return; // So that the ide does not complain
-		}
+            albumDataFile = new BufferedReader(new FileReader(albumFilePath));
+        } catch (Exception FileNotFoundException) {
+            System.out.println("[!] ERROR! FILE NOT FOUND!");
+            System.out.println(albumFilePath);
+            System.exit(1);
+            return;
+        }
+        ArrayList<Album> allAlbums = new ArrayList<Album>();
+
 
         // Split each line by comma. The order will be albumName, authorName
         String[] thisLine;
+        try {
+            thisLine = albumDataFile.readLine().split(",");
+        } catch (Exception IOException) {
+            System.out.println("[!] ERROR! FILE NOT FOUND!");
+            System.exit(1);
+            return;
+        }
         // For each line, create the file path where the album file will exist, and feed that into the album constructor
-        while (scanner.hasNext()) {
-            thisLine = scanner.nextLine().split(",");
+        while (true) {
             // Album file name will be albumName_authorName
             // Create the album and add it to our array of albums
             String filePath = "data/" + thisLine[0] + "_" + thisLine[1] + ".txt";
             allAlbums.add(new Album(filePath));
+
+            try {
+                thisLine = albumDataFile.readLine().split(",");
+            } catch (Exception IOException) {
+                break;
+            }
         }
         albums = allAlbums;     // Make list of all albums static
-        scanner.close();
     } 
 
     // Given an album name (or part of one), returns an array of strings containing all of the found

@@ -1,8 +1,10 @@
 package MusicStore;
 
 import java.util.ArrayList;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
 
 public class Album {
@@ -16,20 +18,25 @@ public class Album {
 	//	this will also create song objects based on the file
 	public Album(String fileName) {
 		// Read in the file
-		File albumFile = new File(fileName);
-		Scanner scanner;
-		try {
-			scanner = new Scanner(albumFile);
-		} catch (Exception FileNotFoundException) {
-			System.out.print("Error! Album Constructor was given a file path that does not exist!");
-			System.out.println(fileName);
-			System.exit(1); // Probably a better way to do this, better ask teach
-			return; // So that the ide does not complain
-		}
-		
+		BufferedReader albumFile;
+        try {
+            albumFile = new BufferedReader(new FileReader(fileName));
+        } catch (Exception FileNotFoundException) {
+            System.out.println("[!] ERROR! FILE NOT FOUND!");
+            System.out.println(fileName);
+            System.exit(1);
+            return;
+        }
 		// Fill in the fields as given by the file
 		// First line contains all the information other than the songs, comma seperated
-		String[] firstLine = scanner.nextLine().split(",");
+		String[] firstLine;
+		try {
+            firstLine = albumFile.readLine().split(",");
+        } catch (Exception IOException) {
+            System.out.println("[!] ERROR! FILE NOT FOUND!");
+            System.exit(1);
+            return;
+        }
 		this.name = firstLine[0];
 		this.author = firstLine[1];
 		this.genre = firstLine[2];
@@ -38,14 +45,21 @@ public class Album {
 		// Fill in the songs from the rest of the file
 		this.songs = new ArrayList<Song>();
 		String thisLine;
-		while (scanner.hasNext()) {  // Check to see if we hit the end of the file
+		try {
+            thisLine = albumFile.readLine();
+        } catch (Exception IOException) {
+            System.out.println("[!] No songs in file " + fileName);
+            return;
+        }
+		while (thisLine != null) {  // Check to see if we hit the end of the file
 			// Every line is a song
-			thisLine = scanner.nextLine();
 			songs.add(new Song(thisLine, this.author));
+			try {
+				thisLine = albumFile.readLine();
+			} catch (Exception IOException)  {
+				break;
+			}
 		}
-
-		// We are done with the file
-		scanner.close();
 	}
 	
 	public String getName() {
