@@ -5,13 +5,13 @@ public class Song {
 	private String name;		// The name of the song
 	private String author;		// The author of the song
 	private boolean favorite; 	// Whether the song is favorite or not
-	private String rating;		// Save rating as a String
+	private int rating;		// Save rating as a String
 	
 	public Song(String songName, String authorName) {
 		this.name = songName;
 		this.author = authorName;
 		favorite = false;
-		rating = "";
+		rating = 0;
 	}
 
 	public Song(Song song) {
@@ -33,14 +33,11 @@ public class Song {
 	
 	public boolean getFavorite() { return favorite; }	// Returns if song is favorite
 	
-	public String getRating() { return rating; }	// Returns rating as a String
+	public int getRating() { return rating; }	// Returns rating as a String
 	
 	// Sets new rating and makes song favorite automatically if rating is 5
-	public void setRating (String newRating) {
+	public void setRating (int newRating) {
 		this.rating = newRating;
-		if (rating.equals("5")) { 
-			favorite = true;
-		}
 	}
 	
 	// Check if two songs equal eachother

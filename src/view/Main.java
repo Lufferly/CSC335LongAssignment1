@@ -112,6 +112,14 @@ public class Main {
                     view.viewPlaylist(userInput, userLibrary);
                 }
             }
+            // rate functionality
+            //  rates a song from 1-5 in the users library
+            //  if the user rates the song 5 it is set to a favorite
+            //  should be in the format:
+            //  >rate song_name
+            else if (userInput.get(0).equals("rate")) {
+                view.rateSong(userInput, userLibrary);
+            }
             // exit functionality
             // Exits the program.
             // should be in the format:

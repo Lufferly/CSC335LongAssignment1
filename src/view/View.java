@@ -182,6 +182,7 @@ public class View {
         return foundSongs;
     }
 
+    // Set a song in the userLibrary to a favorite
     public void favoriteSong(ArrayList<String> userInput, LibraryModel userLibrary) {
         String songQuery = userInput.get(1);
         
@@ -199,6 +200,42 @@ public class View {
         String songAuthor = songData[1];
 
         userLibrary.favouriteSong(songName, songAuthor);
+    }
+
+    // rate a song in the user library from 1-5
+    //  if it is rated 5, add it to the user's favorites
+    public void rateSong(ArrayList<String> userInput, LibraryModel userLibrary) {
+        // Check the input is formatted correctly
+        if (userInput.size() < 3) {
+            System.out.println("[!] Error! Invalid rate command! Not enough arguments!");
+            System.out.println("[!] proper rate format is >rate song_name rating(1-5)");
+            return;
+        }
+
+        // Get the rating
+        int rating = -1;
+        try {
+            rating = Integer.parseInt(userInput.get(2));
+        } catch (Exception NumberFormatException) {
+            System.out.println("[!] Error! Rating must be an integer from 1-5!");
+            return;
+        }
+        if (rating < 1 || rating > 5) {
+            System.out.println("[!] Error! Rating must be an integer from 1-5!");
+            return;
+        }
+
+        // Get the song
+        String songQuery = userInput.get(1);
+        String songToRate = getChoiceFromLibrarySongs(songQuery, userLibrary);
+        if (songToRate == null) {
+            return;
+        }
+
+        // Split the songToRate into its data (dumb)
+        String[] songData = songToRate.split(",");
+        // Rate the song
+        userLibrary.rateSong(songData[0], songData[1], rating);
     }
 
     // Given a songQuery, try to find a song from the user's library to return (as a string)

@@ -111,17 +111,19 @@ public class LibraryModel {
         return "You don't have this song or it doesn't exist";
     }
 
-    public String rateSong(String songName, String songAuthor, String newRating) {
-        for (Song song: userSongs) {
-            if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
-                song.setRating(newRating);
-                if (newRating.equals("5")){
-                    song.makeFavorite();
-                }
-                return "Song rated!";
-            }   
+    // Rate the song, if the rating is 5, set it to the favorite
+    public void rateSong(String songName, String songAuthor, int newRating) {
+        Song songToRate = getSongFromLibrary(songName, songAuthor);
+        if (songToRate == null) {
+            System.out.print("[!] Error! Song does not exist in library!");
+            return;
         }
-        return "You don't own this song, or the song doesn't exist";
+
+        if (newRating == 5) {
+            songToRate.makeFavorite();
+        }
+
+        songToRate.setRating(newRating);
     }
 
     public ArrayList<String> getBoughtSongs() {     // Return deep copy of userSongs list (bought songs)
