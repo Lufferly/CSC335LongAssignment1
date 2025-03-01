@@ -89,19 +89,6 @@ public class LibraryModel {
         }
     }
 
-    // Internal checker to see if a song is already in the library
-    private boolean songInLibrary(Song checkingSong) {
-        for (Song song : userSongs) {
-            // If a song matches, we already have it
-            if (song.equals(checkingSong)) {
-                return true;
-            }
-        }
-        // If we reach here the song is not already in the library
-        return false;
-    }
-
-
     public String favouriteSong(String songName, String songAuthor) {
         for (Song song: userSongs) {
             if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
@@ -165,6 +152,19 @@ public class LibraryModel {
     public String getUsername() { return this.username; }    // Get username
     public void setUsername(String newUsername) { this.username = newUsername; }      // Give option to change username
 
+    // Get all the songs from a playlist in the form of an array of strings
+    public ArrayList<String> getPlaylistSongs(String playlistName) {
+        // Try and get the playlist
+        Playlist playlist = getPlaylistFromLibrary(playlistName);
+        // Check that the playlist exists
+        if (playlist == null) {
+            return null;
+        }
+
+        // return all the songs from the playlist
+        return playlist.getSongs();
+    }
+
     public String createPlaylist(String playlistName) {       // Create playlist and add to library
         for (Playlist playlist: userPlaylists) {
             if (playlist.getName().equals(playlistName)){       // Make sure name is unique for each playlist
@@ -184,11 +184,69 @@ public class LibraryModel {
         }
     }
 
+    // Given a playlist name and a song name and author, try to add the song to that playlist
+    public void addSongToPlaylist(String songName, String songAuthor, String playlistName) {
+        // Get the song in the library
+        Song playlistSong = getSongFromLibrary(songName, songAuthor);
+        // Check we actually got something (theoretically dont need to do this)
+        if (playlistSong == null) {
+            System.out.println("[!] Error! Tried to add a song to playlist, but song did not exist in user library!");
+            return;
+        }
+
+        // Try and get the playlist
+        Playlist playlist = getPlaylistFromLibrary(playlistName);
+        // Check that the playlist exists
+        if (playlist == null) {
+            System.out.println("[!] Error! Cannot add song to playlist that does not exit!");
+            return;
+        }
+
+        // Add the song to the playlist
+        playlist.addSongs(playlistSong);
+    }
+
     public ArrayList<String> getAllPlaylists() {     // Get list of playlist strings
         ArrayList<String> playlistStrings = new ArrayList<String>();
         for (Playlist playlist: userPlaylists) {
             playlistStrings.add(playlist.getName());
         }
         return playlistStrings;
+    }
+
+
+    // Internal checker to see if a song is already in the library
+    private boolean songInLibrary(Song checkingSong) {
+        for (Song song : userSongs) {
+            // If a song matches, we already have it
+            if (song.equals(checkingSong)) {
+                return true;
+            }
+        }
+        // If we reach here the song is not already in the library
+        return false;
+    }
+
+    // Internal helper to get a song that we own based on name and author
+    private Song getSongFromLibrary(String songName, String songAuthor) {
+        for (Song song : userSongs) {
+            if (song.getName().equals(songName) && song.getAuthor().equals(songAuthor)) {
+                return song;
+            }
+        }
+
+        // No song of that found
+        return null;
+    }
+
+    // Internal helper to get a playlist from the library
+    private Playlist getPlaylistFromLibrary(String playlistName) {
+        for (Playlist playlist : userPlaylists) {
+            if (playlist.getName().equals(playlistName)) {  // All playlist names will be lowercase
+                return playlist;
+            }
+        }
+
+        return null; // Found no playlist
     }
 }

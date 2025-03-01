@@ -90,6 +90,8 @@ public class Main {
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid playlist command!");
                     System.out.println("[!] The format is: >playlist create playlist_name # for creating a playlist");
+                    System.out.println("OR >playlist playlist_name   # for viewing songs in a playlist");
+                    System.out.println("OR >playlist remove playlist_name song_name   # for removing songs from a playlist");
                     System.out.println("OR >playlist add playlist_name song_name   # for adding songs to a playlist");
                     continue;
                 }
@@ -98,9 +100,16 @@ public class Main {
                     System.out.println("creating...");
                     view.createPlaylist(userInput, userLibrary);
                 }
-                if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
+                else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
                     System.out.println("adding...");
-                    System.out.println("[!] Not implemented!");
+                    view.addSongToPlaylist(userInput, userLibrary);
+                }
+                else if (userInput.get(1).equals("remove")) {
+                    System.out.println("removing...");
+                    view.removeSongFromPlaylist(userInput, userLibrary);
+                } else {
+                    // Try and view the given playlist
+                    view.viewPlaylist(userInput, userLibrary);
                 }
             }
             // exit functionality
