@@ -31,8 +31,6 @@ public class Song {
 	
 	public void unfavorite() { this.favorite = false; }		// Makes song not favorite
 	
-	public boolean getFavorite() { return favorite; }	// Returns if song is favorite
-	
 	public int getRating() { return rating; }	// Returns rating as a String
 	
 	// Sets new rating and makes song favorite automatically if rating is 5
@@ -65,7 +63,7 @@ public class Song {
 		}
 	}
 
-	// Prints out the name of the song
+	// Prints out the name of the song (for debugging)
 	public void print() {
 		System.out.print(name);
 	}

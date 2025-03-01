@@ -47,7 +47,11 @@ public class MusicStore {
         ArrayList<String> foundAlbums = new ArrayList<String>();
         for (Album album: albums) {
             if (album.getName().toLowerCase().contains(albumName)) {
-                foundAlbums.add(album.toString());
+            	String thisAlbum = album.toString() + "\n";
+            	for (Song song : album.getSongObjects()) {
+            		thisAlbum += "    " + song.toString() + "\n";
+            	}
+                foundAlbums.add(thisAlbum);
             }
         }
         return foundAlbums;
@@ -60,7 +64,11 @@ public class MusicStore {
         ArrayList<String> foundAlbums = new ArrayList<String>();
         for (Album album: albums) {
             if (album.getAuthor().toLowerCase().contains(authorName)) {
-                foundAlbums.add(album.toString());
+            	String thisAlbum = album.toString() + "\n";
+            	for (Song song : album.getSongObjects()) {
+            		thisAlbum += "    " + song.toString() + "\n";
+            	}
+                foundAlbums.add(thisAlbum);
             }
         }
         return foundAlbums;
