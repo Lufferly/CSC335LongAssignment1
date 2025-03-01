@@ -206,6 +206,19 @@ public class LibraryModel {
         playlist.addSongs(playlistSong);
     }
 
+    public void removeSongFromPlaylist(String songName, String songAuthor, String playlistName) {
+        // Try and get the playlist
+        Playlist playlist = getPlaylistFromLibrary(playlistName);
+        // Check that the playlist exists
+        if (playlist == null) {
+            System.out.println("[!] Error! Cannot remove song from a playlist that does not exit!");
+            return;
+        }
+
+        // Try and remove the song from the playlist
+        playlist.removeSong(songName, songAuthor);
+    }
+
     public ArrayList<String> getAllPlaylists() {     // Get list of playlist strings
         ArrayList<String> playlistStrings = new ArrayList<String>();
         for (Playlist playlist: userPlaylists) {

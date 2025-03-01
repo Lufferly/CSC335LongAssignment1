@@ -501,7 +501,28 @@ public class View {
     }
 
     // Given a playlist and a song, attempt to remove that song from the playlist
+    // This is kinda bad cause we dont consider only whats in the playlist,
+    //  but doing so would require some ugly backpassing between the library and view, maybe ill do it later
     public void removeSongFromPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 4) {
+            System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist remove playlist_name song_name");
+            return;
+        }
 
+        String playlistName = userInput.get(2);
+        String songQuery = userInput.get(3);
+
+        // Try and find the song to remove
+        String songToAdd = getChoiceFromLibrarySongs(songQuery, userLibrary);
+
+        // Check we could find a song
+        if (songToAdd == null) {
+            return;
+        }
+
+        // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
+        String[] songData = songToAdd.split(",");
+        userLibrary.removeSongFromPlaylist(songData[0], songData[1], playlistName);
     }
 }
