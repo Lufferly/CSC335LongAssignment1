@@ -76,7 +76,7 @@ public class MusicStore {
         for (Album album : albums) {
             if (album.getAuthor().toLowerCase().contains(authorQuery)) {
                 for (String song : album.getSongs()) {
-                    foundSongs.add(song);
+                    foundSongs.add(song + "," + album.getName());
                 }
             }
         }
@@ -94,7 +94,7 @@ public class MusicStore {
         for (Album album : albums) {
             for (String song : album.getSongs()) {
                 if (song.toLowerCase().split(",")[0].contains(songQuery)) {
-                    foundSongs.add(song);
+                    foundSongs.add(song + "," + album.getName());
                 }
             }
         }
