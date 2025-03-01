@@ -39,7 +39,7 @@ public class LibraryModel {
         ArrayList<String> allSongs = new ArrayList<String>();
         for (Song song : userSongs) {
             // Comma seperate the data so its easy to manipulate
-            allSongs.add(song.getName() + "," + song.getAuthor());
+            allSongs.add(song.toString());
         }
 
         return allSongs;

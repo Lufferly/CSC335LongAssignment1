@@ -51,7 +51,13 @@ public class Song {
 	// Return a String representation of Song to refer to it
 	@Override
 	public String toString() {
-		return name + "," + author; 
+		String stars = "";
+		if (rating > 0) {
+			for (int i = 0; i < rating; i++) {
+				stars = stars + '*';
+			}
+		}
+		return name + "," + author + "," + stars; 
 	}
 
 	// Prints out the name of the song

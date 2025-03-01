@@ -238,7 +238,7 @@ public class View {
         // Check the input is formatted correctly
         if (userInput.size() < 3) {
             System.out.println("[!] Error! Invalid rate command! Not enough arguments!");
-            System.out.println("[!] proper rate format is >rate song_name rating(1-5)");
+            System.out.println("[!] proper rate format is >rate song_name rating(0-5)");
             return;
         }
 
@@ -250,7 +250,7 @@ public class View {
             System.out.println("[!] Error! Rating must be an integer from 1-5!");
             return;
         }
-        if (rating < 1 || rating > 5) {
+        if (rating < 0 || rating > 5) {
             System.out.println("[!] Error! Rating must be an integer from 1-5!");
             return;
         }
