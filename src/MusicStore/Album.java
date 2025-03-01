@@ -11,16 +11,6 @@ public class Album {
 	private String genre;
 	private String year;
 	private ArrayList<Song> songs;
-	
-	public Album(Album album) {
-		this.name = album.getName();
-		this.author = album.getAuthor();
-		this.genre = album.getGenre();
-		this.year = album.getYear();
-		for (Song song: album.getSongObjects()){
-			this.songs.add(song);
-		}
-	}
 
 	// Overloaded constructor for creating an album based on a given File
 	//	this will also create song objects based on the file
@@ -106,6 +96,6 @@ public class Album {
 	}
 
 	public String toString() {
-		return this.name + "," + this.author;
+		return this.name + "," + this.author + "," + this.genre + "," + this.year;
 	}
 }

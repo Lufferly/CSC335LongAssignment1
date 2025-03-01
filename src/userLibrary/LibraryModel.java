@@ -28,7 +28,7 @@ public class LibraryModel {
         ArrayList<String> allAlbums = new ArrayList<String>();
         for (Album album : userAlbums) {
             // We make all of its face data comma seperated so its easy to manipulate later
-            allAlbums.add(album.getName() + "," + album.getAuthor() + "," + album.getYear() + "," + album.getGenre());
+            allAlbums.add(album.getName() + "," + album.getAuthor() + "," + album.getGenre() + "," + album.getYear());
         }
 
         return allAlbums;
@@ -126,14 +126,6 @@ public class LibraryModel {
         songToRate.setRating(newRating);
     }
 
-    public ArrayList<String> getBoughtSongs() {     // Return deep copy of userSongs list (bought songs)
-        ArrayList<String> songStrings = new ArrayList<String>();
-        for (Song song: userSongs) {
-            songStrings.add(song.toString());
-        }
-        return songStrings;
-    }
-
     public ArrayList<String> getFavourites() {      // Get the list of favorite songs as Strings
         ArrayList<String> favStrings = new ArrayList<String>();
         for (Song song: userSongs) {
@@ -142,17 +134,6 @@ public class LibraryModel {
             }
         }
         return favStrings;
-    }
-
-    public ArrayList<String> getAuthorsInLibrary() {    // Return list of authors of all songs in the list
-        ArrayList<String> authors = new ArrayList<String>();
-        for (Song song: userSongs) {
-            String author = song.getAuthor();
-            if (!authors.contains(author)) {     // Avoid duplicates
-                authors.add(author.trim());
-            }
-        }
-        return authors;
     }
 
     // @Override from object class, helper to compare song objects in userSongs
