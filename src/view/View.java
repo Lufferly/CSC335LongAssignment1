@@ -34,7 +34,7 @@ public class View {
     public void viewLibrary(ArrayList<String> userInput, LibraryModel userLibrary) {
         if (userInput.size() < 2) {
             System.out.println("[!] Error! Invalid library command!");
-            System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+            System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
             System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
             return;
         }    
@@ -50,6 +50,11 @@ public class View {
             ArrayList<String> allSongs = userLibrary.getAllSongs();
             for (String song : allSongs) {
                 System.out.println(song);
+            }
+        } else if (userQuery.contains("artist")) {
+            ArrayList<String> allArtists = userLibrary.getAllArtists();
+            for (String artist : allArtists) {
+                System.out.println(artist);
             }
         } else if (userQuery.contains("playlist")) {
             ArrayList<String> allPlaylists = userLibrary.getAllPlaylists();

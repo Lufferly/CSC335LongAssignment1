@@ -45,6 +45,18 @@ public class LibraryModel {
         return allSongs;
     }
 
+    // Return an array of all the artists represented by the user's library
+    public ArrayList<String> getAllArtists() {
+        ArrayList<String> allArtists = new ArrayList<String>();
+        for (Song song : userSongs) {
+            if (! allArtists.contains(song.getAuthor())) {
+                allArtists.add(song.getAuthor());
+            }
+        }
+
+        return allArtists;
+    }
+
     // Add an album to the user's library
     //  also add all of the album's songs to the library
     public void buyAlbum (String albumName, String albumAuthor) {

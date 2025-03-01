@@ -45,7 +45,7 @@ public class Main {
                 //  more userInput checking is done in the respective classes
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid library command!");
-                    System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
+                    System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
                     continue;
                 }
@@ -157,6 +157,7 @@ public class Main {
         System.out.println("  > view musicstore song(s)        - View all songs available in the Music Store.");
         System.out.println("  > library album(s)          - View all albums in your personal library.");
         System.out.println("  > library song(s)           - View all songs in your personal library.");
+        System.out.println("  > library song(s)           - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
     
