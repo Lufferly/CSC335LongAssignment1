@@ -413,4 +413,19 @@ public class View {
         System.out.println("[!] Error! Malformed search statement! Please put \"name\" or \"author\" after \"search name\" to indicate what you want to search for!");
         return null;
     }
+
+    // Create a playlist in a userlibrary
+    public void createPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        // Check that the userInput is correct
+        if (userInput.size() < 3) {
+            System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
+            System.out.println("[!] The format is: >playlist create playlist_name");
+            return;
+        }
+
+        String playlistName = userInput.get(2);
+
+        // Create the playlist
+        System.out.println(userLibrary.createPlaylist(playlistName));
+    }
 }

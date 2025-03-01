@@ -47,6 +47,7 @@ public class Main {
                     System.out.println("[!] Error! Invalid library command!");
                     System.out.println("[!] The format for the library command is >library [album or song or playlist or favorite]");
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+                    continue;
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
@@ -82,12 +83,20 @@ public class Main {
             }
             // Playlist functionality: create and add sings to the playlist
             // should be in in the format
-            //  >playlist create playlist_name  # for creating
+            //  >playlist create playlist_name  # for creating a playlist
             //  >playlist add playlist_name song_name   # for adding songs to a playlist
             else if (userInput.get(0).equals("playlist")) {
+                // Check that there is enough input data to know if we want to create a playlist or add to a playlist
+                if (userInput.size() < 2) {
+                    System.out.println("[!] Error! Invalid playlist command!");
+                    System.out.println("[!] The format is: >playlist create playlist_name # for creating a playlist");
+                    System.out.println("OR >playlist add playlist_name song_name   # for adding songs to a playlist");
+                    continue;
+                }
+
                 if (userInput.get(1).equals("create")) {    // For creating a playlist
                     System.out.println("creating...");
-                    System.out.println("[!] Not implemented!");
+                    view.createPlaylist(userInput, userLibrary);
                 }
                 if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
                     System.out.println("adding...");
