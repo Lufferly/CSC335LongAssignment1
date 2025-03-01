@@ -26,6 +26,36 @@ public class View {
         return userString;
     }
 
+    // View the songs or albums in a musicstore
+    public void viewMusicStore(ArrayList<String> userInput, MusicStore musicStore) {
+        if (userInput.size() < 2) {
+            System.out.println("[!] Error! Bad musicstore command! Not Enough arguments!");
+            System.out.println("Format should be view musicstore [album(s) or song(s)]");
+            return;
+        }
+
+        // What the user wants to see
+        String userInterest = userInput.get(1);
+
+        // All the things we need to print
+        ArrayList<String> returnedData;
+
+        if (userInterest.contains("album")) {  // View all the albums in the musicstore
+            returnedData = musicStore.getAllAlbums();
+        } else if (userInterest.contains("song")) {  // View all the songs in the musicstore
+            returnedData = musicStore.getAllSongs();
+        } else {  // Invalid input
+            System.out.println("[!] Error! Bad musicstore command!");
+            System.out.println("Format should be view musicstore [album(s) or song(s)]");
+            return;
+        }
+
+        // print all the data
+        for (String string : returnedData) {
+            System.out.println(string);
+        }
+    }
+
     // View some data from the usersLibrary
     //  The userInput will be formatted
     //  >library query
@@ -417,25 +447,38 @@ public class View {
 
     // Search in a given music store, returns a list of results
     //  The second index controls what we search for, "album" or "song"
-    public ArrayList<String> search(ArrayList<String> userInput, MusicStore musicStore) {
+    public void search(ArrayList<String> userInput, MusicStore musicStore) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Search request did not have enough inputs!");
             System.out.println("[!] format for search is \"search [album or song] [name or author] query\"");
-            return null;
+            return;
         }
+
+        // The data we got
+        ArrayList<String> returnedData;
 
         // Search for albums
         if (userInput.get(1).equals("album")) {
-            return albumSearch(userInput, musicStore);
+            returnedData = albumSearch(userInput, musicStore);
         }
         // Search for songs
-        if (userInput.get(1).equals("song")) {
-            return songSearch(userInput, musicStore);
+        else if (userInput.get(1).equals("song")) {
+            returnedData = songSearch(userInput, musicStore);
+        }
+        else {
+            // If we reach here, the search statement was entered in incorrectly
+            System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"search\" to indicate what you want to search for!");
+            return;
         }
 
-        // If we reach here, the search statement was entered in incorrectly
-        System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"search\" to indicate what you want to search for!");
-        return null;
+        // Print the data
+        if (returnedData.size() == 0) {
+            System.out.println("[!] Search query came up with NO results!");
+            return;
+        }
+        for (String string : returnedData) {
+            System.out.println(string);
+        }
     }
 
     // Search for albums in a music store

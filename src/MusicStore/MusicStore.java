@@ -93,7 +93,7 @@ public class MusicStore {
         //  it to the foundSongs list
         for (Album album : albums) {
             for (String song : album.getSongs()) {
-                if (song.toLowerCase().contains(songQuery)) {
+                if (song.toLowerCase().split(",")[0].contains(songQuery)) {
                     foundSongs.add(song);
                 }
             }
