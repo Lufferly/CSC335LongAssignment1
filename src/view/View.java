@@ -7,15 +7,12 @@ import userLibrary.LibraryModel;
 
 
 public class View {
-
-    // We use a scanner to get user input
-    private Scanner scanner;
+    
+    private Scanner scanner;        // We use a scanner to get user input
 
     public View() {
-        // Read from standard in to get user input
-        scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);        // Read from standard in to get user input
     }
-
 
     // Get an input string from the user
     public String getInput() {
@@ -56,11 +53,11 @@ public class View {
         }
     }
 
-    // View some data from the usersLibrary
-    //  The userInput will be formatted
-    //  >library query
-    //  Where query is what the user wants to view, and can be any of the following:
-    //  album(s), song(s), playlist(s), favorite(s) 
+    /* View some data from the userLibrary
+    The userInput will be formatted:
+    >library query
+    Where query is what the user wants to view, and can be any of the following:
+    album(s), song(s), playlist(s), favorite(s) */
     public void viewLibrary(ArrayList<String> userInput, LibraryModel userLibrary) {
         if (userInput.size() < 2) {
             System.out.println("[!] Error! Invalid library command!");
@@ -609,5 +606,9 @@ public class View {
         // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
         String[] songData = songToAdd.split(",");
         userLibrary.removeSongFromPlaylist(songData[0], songData[1], playlistName);
+    }
+
+    public void libraryPlays(ArrayList<String> userInput, LibraryModel userLibrary) {
+        // IMPLEMENT METHOD FOR 10 MOST PLAYED SONGS
     }
 }

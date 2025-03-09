@@ -45,7 +45,7 @@ public class Main {
             //  should be in format
             //  >library otherArgs...
             else if (userInput.get(0).equals("library")) {
-                // Check that we have enough info to decide where we need to go (searching or viewing)
+                // Check that we have enough info to decide where we need to go
                 //  more userInput checking is done in the respective classes
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid library command!");
@@ -55,8 +55,10 @@ public class Main {
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
-                } else {  // Viewing the user's library
+                } else if (userInput.get(1).equals("view")){
                     view.viewLibrary(userInput, userLibrary);
+                } else if (userInput.get(1).contains("plays")) {
+                    view.libraryPlays(userInput, userLibrary);
                 }
             }
             // Username functionality: display or change username

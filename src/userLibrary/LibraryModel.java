@@ -2,6 +2,7 @@ package userLibrary;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
 import MusicStore.Album;
@@ -13,6 +14,7 @@ public class LibraryModel {
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
     private ArrayList<Album> userAlbums;     // Use toString() of albums for this
+    private ArrayList<Song> mostPlayed;        // Most played songs playlist
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -20,17 +22,17 @@ public class LibraryModel {
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
+        mostPlayed = new ArrayList<Song>();
     }
 
-    // Return all of the albums we have in the form of an array of strings
-    //  this means we wont get any song information from in the albums for this
+    /* Return all of the albums we have in the form of an array of strings
+    this means we wont get any song information from in the albums for this */
     public ArrayList<String> getAllAlbums() {
         ArrayList<String> allAlbums = new ArrayList<String>();
         for (Album album : userAlbums) {
             // We make all of its face data comma seperated so its easy to manipulate later
             allAlbums.add(album.getName() + "," + album.getAuthor() + "," + album.getGenre() + "," + album.getYear());
         }
-
         return allAlbums;
     }
 
@@ -41,7 +43,6 @@ public class LibraryModel {
             // Comma seperate the data so its easy to manipulate
             allSongs.add(song.toString());
         }
-
         return allSongs;
     }
 
@@ -53,7 +54,6 @@ public class LibraryModel {
                 allArtists.add(song.getAuthor());
             }
         }
-
         return allArtists;
     }
 
@@ -254,7 +254,36 @@ public class LibraryModel {
                 return playlist;
             }
         }
-
         return null; // Found no playlist
+    }
+
+    // Method to play a song and update the most played playlist
+    public void playSong(String songName, String songAuthor) {
+        Song songToPlay = getSongFromLibrary(songName, songAuthor);
+        if (songToPlay == null) {
+            System.out.println("[!] Error! Song does not exist in library.");
+            return;
+        }
+        songToPlay.playsong();              // Play the song
+        updateMostPlayed(songToPlay);       // Update the most played list
+    }
+
+    // Update the mostPlayed list with the latest play count
+    private void updateMostPlayed(Song song) {
+        mostPlayed.remove(song);        // If the song is already in mostPlayed, remove it so we can re-add it sorted
+        mostPlayed.add(song);            // Add the song to the list
+        mostPlayed.sort(Comparator.comparingInt(Song::getPlays).reversed());    // Sort the list by play count in descending order
+        if (mostPlayed.size() > 10) {       // Keep only the top 10 most played songs
+            mostPlayed.remove(mostPlayed.size() - 1); // Remove the least played song if the list exceeds 10
+        }
+    }
+
+    // Get the top 10 most played songs as a list of Strings
+    public ArrayList<String> getMostPlayedSongs() {
+        ArrayList<String> topSongs = new ArrayList<>();
+        for (Song song : mostPlayed) {
+            topSongs.add(song.getName() + " - " + song.getAuthor() + " (Plays: " + song.getPlays() + ")");
+        }
+        return topSongs;
     }
 }

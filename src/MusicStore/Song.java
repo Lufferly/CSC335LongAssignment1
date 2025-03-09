@@ -6,12 +6,14 @@ public class Song {
 	private String author;		// The author of the song
 	private boolean favorite; 	// Whether the song is favorite or not
 	private int rating;		// Save rating as a String
+	private int plays;
 	
 	public Song(String songName, String authorName) {
 		this.name = songName;
 		this.author = authorName;
 		favorite = false;
 		rating = 0;
+		plays = 0;
 	}
 
 	public Song(Song song) {
@@ -19,7 +21,12 @@ public class Song {
 		this.author = song.author;
 		this.favorite = song.favorite;
 		this.rating = song.rating;
+		this.plays = song.plays;
 	}
+
+	public void playsong() { plays++; }			// Play a song once
+
+	public int getPlays() { return this.plays; }		// Get the plays of this song
 	
 	public String getName() { return name; } // Returns name of the song
 	
