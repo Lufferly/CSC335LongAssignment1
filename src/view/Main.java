@@ -1,9 +1,6 @@
 package view;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import MusicStore.Album;
 import MusicStore.MusicStore;
 import userLibrary.LibraryModel;
 

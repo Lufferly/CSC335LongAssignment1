@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
-
 import MusicStore.Album;
-import MusicStore.MusicStore;
 import MusicStore.Song;
 
 public class LibraryModel {
@@ -14,7 +12,8 @@ public class LibraryModel {
     private ArrayList<Playlist> userPlaylists;  // Array of playlists
     private String username;
     private ArrayList<Album> userAlbums;     // Use toString() of albums for this
-    private ArrayList<Song> mostPlayed;        // Most played songs playlist
+    private Playlist mostPlayed;        // Most played songs playlist
+    private Playlist recentlyPlayed;        // Most played songs playlist
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -22,7 +21,8 @@ public class LibraryModel {
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
-        mostPlayed = new ArrayList<Song>();
+        mostPlayed = new Playlist("mostPlayed");
+        recentlyPlayed = new Playlist("recentlyPlayed");
     }
 
     /* Return all of the albums we have in the form of an array of strings
@@ -270,19 +270,25 @@ public class LibraryModel {
 
     // Update the mostPlayed list with the latest play count
     private void updateMostPlayed(Song song) {
-        mostPlayed.remove(song);        // If the song is already in mostPlayed, remove it so we can re-add it sorted
-        mostPlayed.add(song);            // Add the song to the list
-        mostPlayed.sort(Comparator.comparingInt(Song::getPlays).reversed());    // Sort the list by play count in descending order
-        if (mostPlayed.size() > 10) {       // Keep only the top 10 most played songs
-            mostPlayed.remove(mostPlayed.size() - 1); // Remove the least played song if the list exceeds 10
+        if (mostPlayed.contains(song)) {      // If song is there just re-sort the list
+            mostPlayed.sortByPlays();
+            return;
         }
+        else if (mostPlayed.size() < 10) {    // If the most played songs length is less than 10 just add the song
+            mostPlayed.addSongs(song);
+            mostPlayed.sortByPlays();
+            return;
+        }
+        mostPlayed.addSongs(song);            // Add the song to the list
+        mostPlayed.sortByPlays();             // Sort list by plays (descending)
+        mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
     }
 
     // Get the top 10 most played songs as a list of Strings
     public ArrayList<String> getMostPlayedSongs() {
         ArrayList<String> topSongs = new ArrayList<>();
-        for (Song song : mostPlayed) {
-            topSongs.add(song.getName() + " - " + song.getAuthor() + " (Plays: " + song.getPlays() + ")");
+        for (Song song : mostPlayed.getSongObjects()) {
+            topSongs.add(song.getName() + "; " + song.getAuthor() + "; (Plays: " + song.getPlays() + ")");
         }
         return topSongs;
     }
