@@ -268,7 +268,7 @@ public class LibraryModel {
         }
         songToPlay.playsong();              // Play the song
         updateMostPlayed(songToPlay);       // Update the most played list
-        updateRecentlyPlayed(songToPlay);
+        updateRecentlyPlayed(songToPlay);   // Update the recently played list
     }
 
     // Update the mostPlayed list with the latest play count
@@ -312,5 +312,14 @@ public class LibraryModel {
             recentSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
         }
         return recentSongs;
+    }
+
+    // Get all the plays of all songs (for fun)
+    public int getAllPlays() {
+        int total = 0;
+        for (Song song: userSongs) {
+            total += song.getPlays();
+        }
+        return total;
     }
 }

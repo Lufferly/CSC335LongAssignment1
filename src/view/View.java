@@ -16,8 +16,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        // Main.printHelp();
-        System.out.print("Please enter your input:\n>");
+        System.out.print("\nPlease enter your input:\n > ");
         String userString = scanner.nextLine();
 
         return userString;
@@ -608,7 +607,68 @@ public class View {
         userLibrary.removeSongFromPlaylist(songData[0], songData[1], playlistName);
     }
 
-    public void libraryPlays(ArrayList<String> userInput, LibraryModel userLibrary) {
-        // IMPLEMENT METHOD FOR 10 MOST PLAYED SONGS
+    // Get the 10 most played songs in the user library
+    public void libraryPlays(LibraryModel userLibrary) {
+        ArrayList<String> songs = userLibrary.getMostPlayedSongs();
+        System.out.println("You have a total of " + userLibrary.getAllPlays() + " song plays in your library!");
+        System.out.println("Here are your most played songs:");
+        for (String song: songs) {
+            System.out.println(song);
+        }
+    }
+
+    public void libraryRecents(LibraryModel userLibrary) {
+        ArrayList<String> songs = userLibrary.getRecentlyPlayed();
+        System.out.println("Here are your most recently played songs:");
+        for (String song: songs) {
+            System.out.println(" - " + song);
+        }
+    }
+
+    public void playLibrarySong(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 2) {
+            System.out.println("[!] Error: Please specify the name of the song you want to play");
+            return;
+        }
+        String songName = userInput.get(1);
+        ArrayList<String> matches = new ArrayList<String>();
+        for (String song : userLibrary.getAllSongs()) {
+            if (song.toLowerCase().contains(songName)) {
+                matches.add(song);
+            }
+        }
+
+        if (matches.size() > 1) {  // If we got multiple matches
+            System.out.println("[!] That came up with multiple results!");
+            System.out.println("Please enter the NUMBER of the song that you want to play:");
+            // Print out all of the possible options
+            int i = 1;  // Used for enumerating the options
+            for (String song : matches) {
+                System.out.print(i);
+                System.out.println(": " + song);
+                i += 1;
+            }
+            System.out.print("> ");
+            int userChoice =- 1;
+            try {       // Turn the user's choice into an integer, and subtract one
+                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
+            } catch (Exception NumberFormatException) {
+                System.out.println("[!] Error! Could not convert your input to a number!");
+                return;
+            }
+            if (((userChoice) >= matches.size()) || ((userChoice) < 0)) {       // Check the bounds is good
+                System.out.println("[!] Error! That number is out of bounds!");
+                return;
+            }
+            String chosenName = matches.get(userChoice).split(",")[0];
+            String chosenAuthor = matches.get(userChoice).split(",")[1];
+            userLibrary.playSong(chosenName, chosenAuthor);         // Play the chosen song
+        } else if (matches.size() == 1) {                   // If only one result just play it
+            String chosenName = matches.get(0).split(",")[0];
+            String chosenAuthor = matches.get(0).split(",")[1];
+            userLibrary.playSong(chosenName, chosenAuthor);
+        } else {        // No results 
+            System.out.println("[!] Could not find a song on your library by that name!");
+        }
     }
 }
