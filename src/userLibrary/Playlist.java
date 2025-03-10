@@ -24,6 +24,12 @@ public class Playlist {
         songList.add(newSong);
     }
 
+    // Overload to add a song to a specific index
+    public void addSongs(Song song, int index) {
+        Song newSong = new Song(song);
+        songList.add(index, newSong);
+    }
+
     // Remove song by passing name and author
     public void removeSong(String songName, String author) {
         for (int i = songList.size() - 1; i >= 0; i--) {
@@ -90,9 +96,7 @@ public class Playlist {
     public int size() { return songList.size(); }       // Get length of playlist no. of songs
 
     public void maxLength(int max) {
-        if (songList.size() <= max) {
-            return;
-        }
+        if (songList.size() <= max) return;
         for (int i = songList.size() - 1; i >= max; i--) {      // Remove elements from the last index to max
             songList.remove(i);
         }

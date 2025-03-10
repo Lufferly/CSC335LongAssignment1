@@ -23,6 +23,8 @@ public class LibraryModel {
         userSongs = new ArrayList<Song>();
         mostPlayed = new Playlist("mostPlayed");
         recentlyPlayed = new Playlist("recentlyPlayed");
+        userPlaylists.add(mostPlayed);
+        userPlaylists.add(recentlyPlayed);
     }
 
     /* Return all of the albums we have in the form of an array of strings
@@ -257,7 +259,7 @@ public class LibraryModel {
         return null; // Found no playlist
     }
 
-    // Method to play a song and update the most played playlist
+    // Method to play a song and update the most played playlist & recently played playlist
     public void playSong(String songName, String songAuthor) {
         Song songToPlay = getSongFromLibrary(songName, songAuthor);
         if (songToPlay == null) {
@@ -266,6 +268,7 @@ public class LibraryModel {
         }
         songToPlay.playsong();              // Play the song
         updateMostPlayed(songToPlay);       // Update the most played list
+        updateRecentlyPlayed(songToPlay);
     }
 
     // Update the mostPlayed list with the latest play count
@@ -288,8 +291,26 @@ public class LibraryModel {
     public ArrayList<String> getMostPlayedSongs() {
         ArrayList<String> topSongs = new ArrayList<>();
         for (Song song : mostPlayed.getSongObjects()) {
-            topSongs.add(song.getName() + "; " + song.getAuthor() + "; (Plays: " + song.getPlays() + ")");
+            topSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
         }
         return topSongs;
+    }
+
+    // Update the recently played list with the lastest played song
+    private void updateRecentlyPlayed(Song song) {
+        if(recentlyPlayed.contains(song)) {
+            recentlyPlayed.removeSong(song.getName(), song.getAuthor());
+        }
+        recentlyPlayed.addSongs(song, 0);
+        recentlyPlayed.maxLength(10);
+    }
+
+    // Get the top 10 most recently played songs as a list of Strings
+    public ArrayList<String> getRecentlyPlayed() {
+        ArrayList<String> recentSongs = new ArrayList<>();
+        for (Song song : recentlyPlayed.getSongObjects()) {
+            recentSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
+        }
+        return recentSongs;
     }
 }
