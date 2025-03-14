@@ -1,9 +1,6 @@
 package view;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import MusicStore.Album;
 import MusicStore.MusicStore;
 import userLibrary.LibraryModel;
 
@@ -45,7 +42,7 @@ public class Main {
             //  should be in format
             //  >library otherArgs...
             else if (userInput.get(0).equals("library")) {
-                // Check that we have enough info to decide where we need to go (searching or viewing)
+                // Check that we have enough info to decide where we need to go
                 //  more userInput checking is done in the respective classes
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid library command!");
@@ -55,15 +52,19 @@ public class Main {
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
-                } else {  // Viewing the user's library
+                } else if (userInput.get(1).equals("view")) {
                     view.viewLibrary(userInput, userLibrary);
+                } else if (userInput.get(1).contains("plays")) {
+                    view.libraryPlays(userLibrary);
+                } else if (userInput.get(1).contains("recent")) {
+                    view.libraryRecents(userLibrary);
                 }
             }
             // Username functionality: display or change username
             // Format: user || user [newUsername]
             else if (userInput.get(0).equals("user")) {
                 if (userInput.size() == 1) {
-                    System.out.println(userLibrary.getUsername());
+                    System.out.println("Your username is: " + userLibrary.getUsername());
                 } else {
                     userLibrary.setUsername(userInput.get(1));
                     System.out.println("Username changed to " + userInput.get(1));
@@ -115,6 +116,12 @@ public class Main {
                     // Try and view the given playlist
                     view.viewPlaylist(userInput, userLibrary);
                 }
+            }
+            /* Song plays functionality: play a song and get song plays
+             * Format: "play [songname]", to play a song. */
+            else if (userInput.get(0).equals("play")) {
+                view.playLibrarySong(userInput, userLibrary);
+                System.out.println("Playing...");
             }
             // rate functionality
             //  rates a song from 1-5 in the users library
@@ -169,10 +176,12 @@ public class Main {
         System.out.println("  > musicstore song(s)        - View all songs available in the Music Store.");
         System.out.println("  > library album(s)          - View all albums in your personal library.");
         System.out.println("  > library song(s)           - View all songs in your personal library.");
-        System.out.println("  > library song(s)           - View all artists in your personal library.");
+        System.out.println("  > library artists(s)        - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
-        System.out.println("  > library playlist(s)       - View all playlists in your library.\n");
+        System.out.println("  > library playlist(s)       - View all playlists in your library.");
         System.out.println("  > library search [song(s) or album(s)] [name or author] searchQuery       -Search for songs or albums in your library");
+        System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
+        System.out.println("  > library plays             - View the total amount of songplays and the 10 most played songs in the library.\n");
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");
@@ -184,7 +193,8 @@ public class Main {
         // Song Management Commands
         System.out.println("SONG MANAGEMENT COMMANDS:");
         System.out.println("  > favorite [song name] [artist]   - Mark a song as a favorite.");
-        System.out.println("  > rate [song name] [0-5] - Rate a song between 1 and 5.");
+        System.out.println("  > rate [song name] [0-5]          - Rate a song between 1 and 5.");
+        System.out.println("  > play [song name]                - Rate a song between 1 and 5.");
         System.out.println("  (Songs rated 5 are automatically marked as favorites.)\n");
     
         // General Commands
