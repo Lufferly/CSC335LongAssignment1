@@ -48,16 +48,18 @@ public class Main {
                     System.out.println("[!] Error! Invalid library command!");
                     System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+                    System.out.println("[!] OR >library plays");
+                    System.out.println("[!] OR >library recent");
                     continue;
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
-                } else if (userInput.get(1).equals("view")) {
-                    view.viewLibrary(userInput, userLibrary);
-                } else if (userInput.get(1).contains("plays")) {
+                } else if (userInput.get(1).contains("plays")) {  // Viewing the most played songs
                     view.libraryPlays(userLibrary);
-                } else if (userInput.get(1).contains("recent")) {
+                } else if (userInput.get(1).contains("recent")) {  // Viewing the recently played songs
                     view.libraryRecents(userLibrary);
+                } else {    // Just viewing the songs/albums inside the users library
+                    view.viewLibrary(userInput, userLibrary);
                 }
             }
             // Username functionality: display or change username
