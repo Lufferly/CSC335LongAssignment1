@@ -8,12 +8,13 @@ public class Main {
     public static void main(String args[]) {
         // Create all of the albums
         MusicStore musicStore = new MusicStore("data/albums.txt");
-        LibraryModel userLibrary = new LibraryModel("user");
         // Create the view
         View view = new View();
+        // Have the user log in, and get their LibraryModel
+        LibraryModel userLibrary = view.login();
 
         // Show the user how to use the tool on startup
-        printHelp();
+        //printHelp();
 
         // The user input broken into a list of words
         ArrayList<String> userInput = new ArrayList<>();
@@ -134,10 +135,13 @@ public class Main {
                 view.rateSong(userInput, userLibrary);
             }
             // exit functionality
-            // Exits the program.
+            // Saves the user's data and exits the program.
             // should be in the format:
             //  >exit
             else if (userInput.get(0).equals("exit")) {
+                System.out.println("Saving user data...");
+                userLibrary.saveData();
+                System.out.println("Saved data!");
                 break;
             }
             // help functionality

@@ -1,6 +1,10 @@
 package userLibrary;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
@@ -14,6 +18,7 @@ public class LibraryModel {
     private ArrayList<Album> userAlbums;     // Use toString() of albums for this
     private Playlist mostPlayed;        // Most played songs playlist
     private Playlist recentlyPlayed;        // Most played songs playlist
+    private String userDataFilePath;        // The path where we store this users data
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -25,6 +30,81 @@ public class LibraryModel {
         recentlyPlayed = new Playlist("recentlyPlayed");
         userPlaylists.add(mostPlayed);
         userPlaylists.add(recentlyPlayed);
+    }
+
+    // Constructor for reading a user's data file
+    public LibraryModel (String username, String dataFilePath) {
+        this.username = username;
+        userDataFilePath = dataFilePath;
+
+        // TODO: All of this needs to be read from a save file:
+        userPlaylists = new ArrayList<Playlist>();
+        userAlbums = new ArrayList<Album>();
+        userSongs = new ArrayList<Song>();
+        mostPlayed = new Playlist("mostPlayed");
+        recentlyPlayed = new Playlist("recentlyPlayed");
+        userPlaylists.add(mostPlayed);
+        userPlaylists.add(recentlyPlayed);
+
+        // Read the datafile
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(dataFilePath));
+            String thisLine = reader.readLine();
+            while (thisLine != null) {
+                // Clean the line
+                thisLine = thisLine.trim();
+                // Find the tag of this line (the first data segment)
+                String thisLineTag = thisLine.substring(0, thisLine.indexOf(';'));
+                // Find the data of this line (everything but the tag)
+                String thisLineData = thisLine.substring(thisLine.indexOf(';') + 1); // Get rid of the semi-colon
+
+                // Use the tag to find out what kind of data this is
+                if (thisLineTag.equals("[song]")) {
+                    // This line represents data for a song, add that song to the library
+                    userSongs.add(Song.songFromSongData(thisLineData));
+                }
+
+                thisLine = reader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("[!] Error! Could not find file " + dataFilePath);
+            System.out.println("[!] Library Model cannot create a user library!");
+            e.printStackTrace();
+            System.exit(1);
+        } catch (Exception e) {
+            System.out.println("[!] Library Model encountered an exception!");
+            System.out.println("[!] Library Model cannot create a user library!");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+    }
+
+    // Method for saving all of our data into a data file
+    public void saveData() {
+        if (userDataFilePath == null) {
+            System.out.println("[!] Error! " + username + "'s LibraryModel does not have anywhere to store its data! Cannot save data!");
+            System.exit(1);
+        }
+
+        try {
+            // We assume the save file has already been created for us by the view
+            FileWriter writer = new FileWriter(userDataFilePath);
+
+            // Save every song that we own
+            for (Song song : userSongs) {
+                writer.write("[song];"); // add the tag;
+                writer.write(song.songData());
+                writer.write("\n");
+            }
+
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("[!] Error! Encountered an error when attempting to save " + username + "'s data!");
+            e.printStackTrace();
+            System.exit(1);
+        }   
     }
 
     /* Return all of the albums we have in the form of an array of strings
