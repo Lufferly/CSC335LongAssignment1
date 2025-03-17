@@ -1,0 +1,7 @@
+# Ignore things inside the userdata folder
+userdata/*
+userdata/savedata/*
+userdata/users/*
+
+!userdata/savedata
+!userdata/users

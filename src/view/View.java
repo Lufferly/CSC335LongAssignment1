@@ -1,4 +1,10 @@
 package view;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,6 +26,94 @@ public class View {
         String userString = scanner.nextLine();
 
         return userString;
+    }
+
+    // Prompt the user for log in, and fetch/create their save file
+    //  returns a userLibrary corresponding to the user
+    public LibraryModel login() {
+        // Prompt for the user's username
+        System.out.println("What is your username?");
+        // The username can only be one word, so just get the first word from the input
+        String usernameInput = getInput().split(" ")[0];
+
+        // Find the location of the user's savefile
+        // Check that the file for storing where user's save files are is actually created
+        String userSaveFileLocationsPath = "userdata/users/userSaveFileLocations.txt";
+        try {
+            new File(userSaveFileLocationsPath).createNewFile();
+        } catch (IOException e) {
+            System.out.print("Experienced an IO exception, could not get " + userSaveFileLocationsPath);
+            e.printStackTrace();
+            System.exit(1);
+        }
+        // Create the buffered reader to read the file
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(userSaveFileLocationsPath));
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not find file " + userSaveFileLocationsPath);
+            System.exit(1);
+            return null;
+        }
+
+        // Try and find where the user's data is stored
+        String userDataPath = null;
+        try {
+            String thisLine = reader.readLine();
+            while (thisLine != null) {
+                // Trim the line of whitespace
+                thisLine = thisLine.trim();
+                // Split the line into its individual data segments
+                String[] lineData = thisLine.split(";");
+                if (lineData[0].equals(usernameInput)) { // Check if this is the user's data
+                    // Found the line that contains the user's data location
+                    userDataPath = lineData[1];
+                    break;
+                }
+    
+                thisLine = reader.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("[!] Error! Encountered an error while reading " + userSaveFileLocationsPath);
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // Create the LibraryModel using the path we found, if we did not find a path create a file
+        //  and give that path
+        LibraryModel userLibrary;
+        // Create the file if we found no matching file, and add to the userSaveFileLocations file
+        if (userDataPath == null) {
+            // No save file found, create a new one
+            try {
+                userDataPath = "userdata/savedata/"; 
+                userDataPath += usernameInput + Integer.toString(usernameInput.hashCode()); // This could be anything technically (so long as we dont get duplicates)
+                userDataPath += ".txt";
+                new File(userDataPath).createNewFile();
+                // Append this save file's location to the end of userSaveFileLocations
+                FileWriter writer = new FileWriter(userSaveFileLocationsPath, true); // The true lets us append to the file
+                writer.write(usernameInput + ";" + userDataPath + "\n");
+                writer.close();
+                System.out.println("Created a save file for user: " + usernameInput);
+            } catch (Exception e) {
+                System.out.println("[!] Error! Encountered an error while trying to create a new save file for user " + usernameInput);
+                System.exit(1);
+            }
+        }
+        // Now we can be sure a save file will exist for the user, create the LibraryModel
+        System.out.println(userDataPath);
+        userLibrary = new LibraryModel(usernameInput, userDataPath);
+
+        // close the buffered reader
+        try {
+            reader.close();
+        } catch (IOException e) {
+            // Fuck you
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        return userLibrary;
     }
 
     // View the songs or albums in a musicstore

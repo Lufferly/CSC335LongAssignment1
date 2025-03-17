@@ -1,5 +1,7 @@
 package MusicStore;
 
+import java.util.ArrayList;
+
 public class Song {
 	
 	private String name;		// The name of the song
@@ -73,5 +75,57 @@ public class Song {
 	// Prints out the name of the song (for debugging)
 	public void print() {
 		System.out.print(name);
+	}
+
+	// A string representation of all the songs data, for writing into a save file
+	//	or situations where we want a more concrete description of a song
+	public String songData() {
+		String dataString = "";
+		// Add all the data
+		dataString += "name:" + name + ";";
+		dataString += "author:" + author + ";";
+		dataString += "favorite:" + Boolean.toString(favorite) + ";";
+		dataString += "rating:" + Integer.toString(rating) + ";";
+		dataString += "plays:" + Integer.toString(plays) + ";";
+
+		return dataString;
+	}
+
+	// Create a song object based on the dataString from songData()
+	public static Song songFromSongData(String songData) {
+		Song newSong = new Song(null, null);
+		
+		// Split the songData string into its individual data segments
+		ArrayList<String[]> songDataList = new ArrayList<>();
+		for (String data : songData.split(";")) {
+			// If the string is empty, skip it
+			if (data.equals("")) {
+				continue;
+			}
+			// Get the key value pair for this data segment and add it to the songDataList
+			String[] keyValuePair = new String[] {data.split(":")[0], data.split(":")[1]};
+			songDataList.add(keyValuePair);
+		}
+
+		// Read all of the data into the new song
+		for (String[] keyValue : songDataList) {
+			String key = keyValue[0];
+			String value = keyValue[1];
+			// We do it this way so it's easier to modify the song class
+			if (key.equals("name")) {
+				newSong.name = value;
+			} else if (key.equals("author")) {
+				newSong.author = value;
+			} else if (key.equals("favorite")) {
+				newSong.favorite = Boolean.parseBoolean(value);
+			} else if (key.equals("rating")) {
+				newSong.rating = Integer.parseInt(value);
+			} else if (key.equals("plays")) {
+				newSong.plays = Integer.parseInt(value);
+			}
+		}
+
+
+		return newSong;
 	}
 }

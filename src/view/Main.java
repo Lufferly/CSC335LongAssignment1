@@ -8,12 +8,13 @@ public class Main {
     public static void main(String args[]) {
         // Create all of the albums
         MusicStore musicStore = new MusicStore("data/albums.txt");
-        LibraryModel userLibrary = new LibraryModel("user");
         // Create the view
         View view = new View();
+        // Have the user log in, and get their LibraryModel
+        LibraryModel userLibrary = view.login();
 
         // Show the user how to use the tool on startup
-        printHelp();
+        //printHelp();
 
         // The user input broken into a list of words
         ArrayList<String> userInput = new ArrayList<>();
@@ -48,16 +49,18 @@ public class Main {
                     System.out.println("[!] Error! Invalid library command!");
                     System.out.println("[!] The format for the library command is >library [album or song or artist or playlist or favorite]");
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
+                    System.out.println("[!] OR >library plays");
+                    System.out.println("[!] OR >library recent");
                     continue;
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library
                     view.searchLibrary(userInput, userLibrary);
-                } else if (userInput.get(1).equals("view")) {
-                    view.viewLibrary(userInput, userLibrary);
-                } else if (userInput.get(1).contains("plays")) {
+                } else if (userInput.get(1).contains("plays")) {  // Viewing the most played songs
                     view.libraryPlays(userLibrary);
-                } else if (userInput.get(1).contains("recent")) {
+                } else if (userInput.get(1).contains("recent")) {  // Viewing the recently played songs
                     view.libraryRecents(userLibrary);
+                } else {    // Just viewing the songs/albums inside the users library
+                    view.viewLibrary(userInput, userLibrary);
                 }
             }
             // Username functionality: display or change username
@@ -132,10 +135,13 @@ public class Main {
                 view.rateSong(userInput, userLibrary);
             }
             // exit functionality
-            // Exits the program.
+            // Saves the user's data and exits the program.
             // should be in the format:
             //  >exit
             else if (userInput.get(0).equals("exit")) {
+                System.out.println("Saving user data...");
+                userLibrary.saveData();
+                System.out.println("Saved data!");
                 break;
             }
             // help functionality
