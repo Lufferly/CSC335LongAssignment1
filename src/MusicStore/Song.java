@@ -128,4 +128,6 @@ public class Song {
 
 		return newSong;
 	}
+
+	public void setPlays(int plays) { this.plays = plays; }
 }
