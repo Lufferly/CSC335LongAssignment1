@@ -155,7 +155,7 @@ public class Album {
 		ArrayList<String[]> albumDataList = new ArrayList<String[]>();
 		for (String data : albumData.split(";", totalDataSegments)) {
 			// break the data into its key value pairs and add it to the list
-			String[] keyValuePair = new String[] {data.split(":")[0], data.split(":")[1]};
+			String[] keyValuePair = new String[] {data.split(":", 2)[0], data.split(":", 2)[1]};
 			albumDataList.add(keyValuePair);
 		}
 
@@ -185,23 +185,23 @@ public class Album {
 
 	// Helper function for albumFromAlbumData; Constructs the list of songs from the song data string
 	//	constructed in albumData()
-	private static ArrayList<Song> songArrayFromAlbumData(String songDataString) {
+	public static ArrayList<Song> songArrayFromAlbumData(String songDataString) {
 		ArrayList<Song> songArray = new ArrayList<Song>();
 
 		// The first data segment in every song segment tells us how many characters we need
 		//	to skip to get to the next song data segment; ie:
 		//		125;[a song data string that is 125 characters long];32;[and so on...];
 		//	a length of zero lets us know we have no more songs
-		String[] splitData = songDataString.split(";", 1);
+		String[] splitData = songDataString.split(";", 2);
 		int nextSongOffset = Integer.parseInt(splitData[0]);
 		String remainingData = splitData[1];
-		while (nextSongOffset != 0) {  // a length of zero lets us know we have no more songs
+		while (nextSongOffset > 0) {  // a length of zero lets us know we have no more songs
 			// Create and add the next song
 			String thisSongData = remainingData.substring(0, nextSongOffset);
 			Song thisSong = Song.songFromSongData(thisSongData);
 			songArray.add(thisSong);
 			// Find the next song to process
-			splitData = remainingData.substring(nextSongOffset).split(";", 1);
+			splitData = remainingData.substring(nextSongOffset).split(";", 2);
 			nextSongOffset = Integer.parseInt(splitData[0]);
 			remainingData = splitData[1];
 		}

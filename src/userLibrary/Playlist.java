@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import MusicStore.Album;
 import MusicStore.Song;
 
 public class Playlist {
@@ -100,5 +101,59 @@ public class Playlist {
         for (int i = songList.size() - 1; i >= max; i--) {      // Remove elements from the last index to max
             songList.remove(i);
         }
+    }
+
+    // Returns a string representing all of this playlist's data in key value pairs,
+    //   which is used to reconstruct it
+    public String playlistData() {
+        String dataString = "";
+
+        dataString += "name:" + name + ";";
+        // Add all the songs
+		// We have the song tag, and then the data for all of the songs, but the first piece of 
+		//	data for the songs is how many characters long the next song's data lasts for. So its like:
+		//		songs:125;[a song data string that is 125 characters long];32;[and so on...];
+		//	a length of zero lets us know we have no more songs
+        dataString += "songs:";
+        for (Song song : songList) {
+			String thisSongData = song.songData();
+			dataString += Integer.toString(thisSongData.length()) + ";"; // find the length
+			dataString += thisSongData; // Song data puts a semicolon at the end for us
+		}
+		dataString += "0;";  // No more songs in the album
+
+        return dataString;
+    }
+
+    // Reconstructs a new playlist based on data derived from playlistData()
+    public static Playlist playlistFromPlaylistData(String playlistData) {
+        System.out.println(playlistData);
+        Playlist newPlaylist = new Playlist(null);
+
+        // Split the data into it segments, which are key value pairs, Dont split the song list
+        int totalDataSegments = 2;  // How many data segments the album has, this must be updated as more is added to the playlist class
+		ArrayList<String[]> albumDataList = new ArrayList<String[]>();
+		for (String data : playlistData.split(";", totalDataSegments)) {
+			// break the data into its key value pairs and add it to the list
+			String[] keyValuePair = new String[] {data.split(":", 2)[0], data.split(":", 2)[1]};
+			albumDataList.add(keyValuePair);
+		}
+
+        // Read the data and use it to fill in the playlist
+        for (String[] keyValue : albumDataList) {
+            String key = keyValue[0];
+            String value = keyValue[1];
+
+            // We know what data the value is based on the key
+            if (key.equals("name")) {
+                newPlaylist.name = value;
+            } else if (key.equals("songs")) {
+                // We use the same method as album for representing our array of songs
+                System.out.println(value);
+                newPlaylist.songList = Album.songArrayFromAlbumData(value);
+            }
+        }
+
+        return newPlaylist;
     }
 }

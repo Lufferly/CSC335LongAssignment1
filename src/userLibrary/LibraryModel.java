@@ -39,8 +39,8 @@ public class LibraryModel {
 
         // TODO: All of this needs to be read from a save file:
         userPlaylists = new ArrayList<Playlist>();
-        userAlbums = new ArrayList<Album>();
-        userSongs = new ArrayList<Song>();
+        userAlbums = new ArrayList<Album>(); // Done
+        userSongs = new ArrayList<Song>();  // Done
         mostPlayed = new Playlist("mostPlayed");
         recentlyPlayed = new Playlist("recentlyPlayed");
         userPlaylists.add(mostPlayed);
@@ -66,6 +66,9 @@ public class LibraryModel {
                 } else if (thisLineTag.equals("[album]")) {
                     // This line represents data for an entire album
                     userAlbums.add(Album.albumFromAlbumData(thisLineData));
+                } else if (thisLineTag.equals("[playlist]")) {
+                    // This line represents data for a playlist
+                    userPlaylists.add(Playlist.playlistFromPlaylistData(thisLineData));
                 }
 
                 thisLine = reader.readLine();
@@ -107,7 +110,12 @@ public class LibraryModel {
                 writer.write(song.songData());
                 writer.write("\n");
             }
-            // Save every album that we own
+            // Save every playlist that we own
+            for (Playlist playlist : userPlaylists) {
+                writer.write("[playlist];"); // add the tag
+                writer.write(playlist.playlistData());
+                writer.write("\n");
+            }
 
             writer.close();
         } catch (Exception e) {
