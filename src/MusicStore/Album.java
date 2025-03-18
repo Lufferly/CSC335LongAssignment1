@@ -174,7 +174,7 @@ public class Album {
 				newAlbum.genre = value;
 			} else if (key.equals("year")) {
 				newAlbum.year = value;
-			} else if (key.equals("song")) {
+			} else if (key.equals("songs")) {
 				// Construct the song array from the value
 				newAlbum.songs = songArrayFromAlbumData(value);
 			}

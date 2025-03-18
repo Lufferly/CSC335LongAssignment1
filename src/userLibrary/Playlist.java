@@ -127,7 +127,6 @@ public class Playlist {
 
     // Reconstructs a new playlist based on data derived from playlistData()
     public static Playlist playlistFromPlaylistData(String playlistData) {
-        System.out.println(playlistData);
         Playlist newPlaylist = new Playlist(null);
 
         // Split the data into it segments, which are key value pairs, Dont split the song list
@@ -149,7 +148,6 @@ public class Playlist {
                 newPlaylist.name = value;
             } else if (key.equals("songs")) {
                 // We use the same method as album for representing our array of songs
-                System.out.println(value);
                 newPlaylist.songList = Album.songArrayFromAlbumData(value);
             }
         }
