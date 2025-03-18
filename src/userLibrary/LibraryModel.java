@@ -387,7 +387,7 @@ public class LibraryModel {
     public ArrayList<String> getRecentlyPlayed() {
         ArrayList<String> recentSongs = new ArrayList<>();
         for (Song song : recentlyPlayed.getSongObjects()) {
-            recentSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
+            recentSongs.add(song.toString());
         }
         return recentSongs;
     }
