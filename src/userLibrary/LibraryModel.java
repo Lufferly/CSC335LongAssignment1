@@ -63,6 +63,9 @@ public class LibraryModel {
                 if (thisLineTag.equals("[song]")) {
                     // This line represents data for a song, add that song to the library
                     userSongs.add(Song.songFromSongData(thisLineData));
+                } else if (thisLineTag.equals("[album]")) {
+                    // This line represents data for an entire album
+                    userAlbums.add(Album.albumFromAlbumData(thisLineData));
                 }
 
                 thisLine = reader.readLine();
@@ -92,12 +95,19 @@ public class LibraryModel {
             // We assume the save file has already been created for us by the view
             FileWriter writer = new FileWriter(userDataFilePath);
 
+            // Save every album that we own
+            for (Album album : userAlbums) {
+                writer.write("[album];");
+                writer.write(album.albumData());
+                writer.write("\n");
+            }
             // Save every song that we own
             for (Song song : userSongs) {
                 writer.write("[song];"); // add the tag;
                 writer.write(song.songData());
                 writer.write("\n");
             }
+            // Save every album that we own
 
             writer.close();
         } catch (Exception e) {

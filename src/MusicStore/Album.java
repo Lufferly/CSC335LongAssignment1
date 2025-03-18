@@ -14,6 +14,15 @@ public class Album {
 	private String year;
 	private ArrayList<Song> songs;
 
+	// null constructor for setting up albums
+	public Album() {
+		name = null;
+		author = null;
+		genre = null;
+		year = null;
+		songs = new ArrayList<Song>();
+	}
+
 	// Overloaded constructor for creating an album based on a given File
 	//	this will also create song objects based on the file
 	public Album(String fileName) {
@@ -111,5 +120,92 @@ public class Album {
 
 	public String toString() {
 		return this.name + "," + this.author + "," + this.genre + "," + this.year;
+	}
+
+	// Returns a string that represents all the data we need to reconstruct an album
+	public String albumData() {
+		String dataString = "";
+		// All of the data in key value pairs
+		dataString += "name:" + name + ";";
+		dataString += "author:" + author + ";";
+		dataString += "genre:" + genre + ";";
+		dataString += "year:" + year + ";";
+		// Add all the songs
+		// We have the song tag, and then the data for all of the songs, but the first piece of 
+		//	data for the songs is how many characters long the next song's data lasts for. So its like:
+		//		songs:125;[a song data string that is 125 characters long];32;[and so on...];
+		//	a length of zero lets us know we have no more songs
+		dataString += "songs:";
+		for (Song song : songs) {
+			String thisSongData = song.songData();
+			dataString += Integer.toString(thisSongData.length()) + ";"; // find the length
+			dataString += thisSongData; // Song data puts a semicolon at the end for us
+		}
+		dataString += "0;";  // No more songs in the album
+
+		return dataString;
+	}
+
+	// Creates an album from the data from albumData()
+	public static Album albumFromAlbumData(String albumData) {
+		Album newAlbum = new Album();
+
+		// Break the albumData into the data segments BEFORE all of the songs
+		int totalDataSegments = 5;  // How many data segments the album has, this must be updated as more is added to the album class
+		ArrayList<String[]> albumDataList = new ArrayList<String[]>();
+		for (String data : albumData.split(";", totalDataSegments)) {
+			// break the data into its key value pairs and add it to the list
+			String[] keyValuePair = new String[] {data.split(":")[0], data.split(":")[1]};
+			albumDataList.add(keyValuePair);
+		}
+
+		// Now read the keys and use the values to construct the new album
+		for (String[] keyValue : albumDataList) {
+			// Get the key and the value
+			String key = keyValue[0];
+			String value = keyValue[1];
+
+			// The key tells us where the data should be put and how to process it
+			if (key.equals("name")) {
+				newAlbum.name = value;
+			} else if (key.equals("author")) {
+				newAlbum.author = value;
+			} else if (key.equals("genre")) {
+				newAlbum.genre = value;
+			} else if (key.equals("year")) {
+				newAlbum.year = value;
+			} else if (key.equals("song")) {
+				// Construct the song array from the value
+				newAlbum.songs = songArrayFromAlbumData(value);
+			}
+		}
+
+		return newAlbum;
+	}
+
+	// Helper function for albumFromAlbumData; Constructs the list of songs from the song data string
+	//	constructed in albumData()
+	private static ArrayList<Song> songArrayFromAlbumData(String songDataString) {
+		ArrayList<Song> songArray = new ArrayList<Song>();
+
+		// The first data segment in every song segment tells us how many characters we need
+		//	to skip to get to the next song data segment; ie:
+		//		125;[a song data string that is 125 characters long];32;[and so on...];
+		//	a length of zero lets us know we have no more songs
+		String[] splitData = songDataString.split(";", 1);
+		int nextSongOffset = Integer.parseInt(splitData[0]);
+		String remainingData = splitData[1];
+		while (nextSongOffset != 0) {  // a length of zero lets us know we have no more songs
+			// Create and add the next song
+			String thisSongData = remainingData.substring(0, nextSongOffset);
+			Song thisSong = Song.songFromSongData(thisSongData);
+			songArray.add(thisSong);
+			// Find the next song to process
+			splitData = remainingData.substring(nextSongOffset).split(";", 1);
+			nextSongOffset = Integer.parseInt(splitData[0]);
+			remainingData = splitData[1];
+		}
+
+		return songArray;
 	}
 }
