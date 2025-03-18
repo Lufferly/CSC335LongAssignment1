@@ -354,20 +354,15 @@ public class LibraryModel {
     // Update the mostPlayed playlist with the latest play count
     private void updateMostPlayed(Song song) {
         for (Song s : mostPlayed.getSongObjects()) {
-            if (s.getName().equals(song.getName()) && s.getAuthor().equals(song.getAuthor())) {
-                s.setPlays(song.getPlays()); // Update play count
-                mostPlayed.sortByPlays();
+            if (s.equals(song)) {  
+                s.setPlays(song.getPlays());  // Update play count with the latest value
+                mostPlayed.sortByPlays();  // Sort after updating
                 return;
             }
         }
-        if (mostPlayed.size() < 10) {       // If song is not the most played list
-            mostPlayed.addSongs(song);
-            mostPlayed.sortByPlays();
-            return;
-        }
-        mostPlayed.addSongs(song);  // Add the song to the list
-        mostPlayed.sortByPlays();   // Sort by play count (descending)
-        mostPlayed.maxLength(10);   // Keep only the top 10 most played songs
+        mostPlayed.addSongs(song);            // Add the song to the list
+        mostPlayed.sortByPlays();             // Sort list by plays (descending)
+        mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
     }
 
     // Get the top 10 most played songs as a list of Strings
