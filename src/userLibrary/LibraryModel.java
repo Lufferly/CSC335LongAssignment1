@@ -26,8 +26,8 @@ public class LibraryModel {
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
-        mostPlayed = new Playlist("mostPlayed");
-        recentlyPlayed = new Playlist("recentlyPlayed");
+        mostPlayed = new Playlist("mostplayed");
+        recentlyPlayed = new Playlist("recentlyplayed");
         userPlaylists.add(mostPlayed);
         userPlaylists.add(recentlyPlayed);
     }
@@ -37,14 +37,9 @@ public class LibraryModel {
         this.username = username;
         userDataFilePath = dataFilePath;
 
-        // TODO: All of this needs to be read from a save file:
         userPlaylists = new ArrayList<Playlist>();
-        userAlbums = new ArrayList<Album>(); // Done
-        userSongs = new ArrayList<Song>();  // Done
-        mostPlayed = new Playlist("mostPlayed");
-        recentlyPlayed = new Playlist("recentlyPlayed");
-        userPlaylists.add(mostPlayed);
-        userPlaylists.add(recentlyPlayed);
+        userAlbums = new ArrayList<Album>();
+        userSongs = new ArrayList<Song>();
 
         // Read the datafile
         BufferedReader reader;
@@ -68,7 +63,16 @@ public class LibraryModel {
                     userAlbums.add(Album.albumFromAlbumData(thisLineData));
                 } else if (thisLineTag.equals("[playlist]")) {
                     // This line represents data for a playlist
-                    userPlaylists.add(Playlist.playlistFromPlaylistData(thisLineData));
+                    Playlist playlistToAdd = Playlist.playlistFromPlaylistData(thisLineData);
+                    userPlaylists.add(playlistToAdd);
+
+                    // Check if this is one of our special playlists, if it is fill in the dat
+                    if (playlistToAdd.getName().equals("mostplayed")) {
+                        mostPlayed = playlistToAdd;
+                    } else if (playlistToAdd.getName().equals("recentlyplayed")) {
+                        recentlyPlayed = playlistToAdd;
+                    }
+
                 }
 
                 thisLine = reader.readLine();
@@ -85,6 +89,15 @@ public class LibraryModel {
             System.exit(1);
         }
 
+        // If we have not yet created our special playlists, do so now
+        if (mostPlayed == null) {
+            mostPlayed = new Playlist("mostplayed");
+            userPlaylists.add(mostPlayed);
+        }
+        if (recentlyPlayed == null) {
+            recentlyPlayed = new Playlist("recentlyplayed");
+            userPlaylists.add(recentlyPlayed);
+        }
     }
 
     // Method for saving all of our data into a data file
