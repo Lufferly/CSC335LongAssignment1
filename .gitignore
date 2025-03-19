@@ -5,3 +5,5 @@ userdata/users/*
 
 !userdata/savedata
 !userdata/users
+!userdata/savedata/emptytest.txt
+!userdata/users/emptytest.txt
