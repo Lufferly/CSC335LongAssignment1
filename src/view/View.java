@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.random.*;
 
 import MusicStore.MusicStore;
 import userLibrary.LibraryModel;
@@ -22,10 +26,49 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        System.out.print("\nPlease enter your input:\n > ");
-        String userString = scanner.nextLine();
+        System.out.print("Please enter your input:\n > ");
+        String userString = scanner.nextLine().trim();
 
         return userString;
+    }
+
+    // Get a password input string from the user, properly encrypted
+    public String getPasswordInput(String salt) {
+        String userInput = getInput();
+        // Check the input is the right size
+        while (userInput.length() < 7 || userInput.length() > 26) {
+            System.out.println("Password must be between 7 and 26 characters! Please try again:");
+            userInput = getInput();
+        }
+        // Salt the input
+        userInput += salt;
+        // Encrypt the input
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encryptedBytes = digest.digest(userInput.getBytes(StandardCharsets.UTF_8));
+            // Change the user input into a string version of the encrypted Bytes
+            userInput = bytesToHexstring(encryptedBytes);
+        } catch (Exception e) {
+            System.out.println("[!] Error! Encountered an error while attempting to encrypt!");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        return userInput;
+    }
+
+    // Turn an array of bytes into a hex string
+    private String bytesToHexstring(byte[] bytes) {
+        String returnString = "";
+        for (int i = 0; i < bytes.length; i++) {
+            String thisHex = Integer.toHexString(0xff & bytes[i]);
+            if (thisHex.length() == 1) { // We want the hex like 03 not 3 (for example)
+                returnString += "0";
+            }
+            returnString += thisHex;
+        }
+
+        return returnString;
     }
 
     // Prompt the user for log in, and fetch/create their save file
@@ -36,13 +79,79 @@ public class View {
         // The username can only be one word, so just get the first word from the input
         String usernameInput = getInput().split(" ")[0];
 
+        // Check if the user has an account
+        //  if they do check their password
+        //  otherwise create their account
+        String userPasswordsLocation = "userdata/users/userPasswords.txt";
+        try {
+            // Create the passwords file if we need to
+            new File(userPasswordsLocation).createNewFile();
+            // Read through the passwords file and try to find the user
+            BufferedReader reader = new BufferedReader(new FileReader(userPasswordsLocation));
+            // The password file is a list of key value value (seperated by :) triples where the key is the username
+            //  , the first value is the salt, and the third value is the password
+            String thisLine = reader.readLine();
+            String userEncryptedPassword = null;
+            String userSalt = null;
+            while (thisLine != null) {
+                // Split the line into the key value salt triple
+                String[] keyValueSalt = thisLine.split(":", 3);
+                if (keyValueSalt[0].equals(usernameInput)) {
+                    // This is the user's password
+                    userEncryptedPassword = keyValueSalt[1];
+                    // This is the user's salt
+                    userSalt = keyValueSalt[2];
+                }
+
+                thisLine = reader.readLine();
+            }
+            reader.close();
+
+            // If the found password is null, we need to set up a new user. Otherwise we verify the user's password
+            String passwordInput;
+            if (userEncryptedPassword == null) {
+                // Generate a new salt for the user
+                Random random = new Random();
+                userSalt = Integer.toString(random.nextInt());
+                // Get the user's encrypted input
+                System.out.println("Welcome new user!\nPlease create an unique password:");
+                passwordInput = getPasswordInput(userSalt);
+                // Append to the user password list and let the user through
+                FileWriter writer = new FileWriter(userPasswordsLocation, true);
+                writer.write(usernameInput + ":" + passwordInput + ":" + userSalt + "\n");
+                writer.close();
+
+                System.out.println("Password accepted! Welcome new user " + usernameInput);
+            } else { // We found this user, verify their password
+                System.out.println("Welcome back " + usernameInput + "!");
+                System.out.println("Enter your password:");
+                // Get the user's encrypted password and verify it
+                passwordInput = getPasswordInput(userSalt);
+                while (passwordInput.equals(userEncryptedPassword) == false) {
+                    System.out.println("Wrong Password! Please try again");
+                    passwordInput = getPasswordInput(userSalt);
+                }
+                System.out.println("Password Accepted!\nWelcome back " + usernameInput);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("[!] Error! Experienced a FileNotFoundException while attempting to get the user's password!");
+            System.out.println("[!] Could not find file " + userPasswordsLocation);
+            e.printStackTrace();
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("[!] Error! Experienced an IO exception while attempting to get the user's password!");
+            System.out.println("[!] Failing file: " + userPasswordsLocation);
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         // Find the location of the user's savefile
         // Check that the file for storing where user's save files are is actually created
         String userSaveFileLocationsPath = "userdata/users/userSaveFileLocations.txt";
         try {
             new File(userSaveFileLocationsPath).createNewFile();
         } catch (IOException e) {
-            System.out.print("Experienced an IO exception, could not get " + userSaveFileLocationsPath);
+            System.out.print("[!] Error! Experienced an IO exception, could not get " + userSaveFileLocationsPath);
             e.printStackTrace();
             System.exit(1);
         }
@@ -101,7 +210,6 @@ public class View {
             }
         }
         // Now we can be sure a save file will exist for the user, create the LibraryModel
-        System.out.println(userDataPath);
         userLibrary = new LibraryModel(usernameInput, userDataPath);
 
         // close the buffered reader
