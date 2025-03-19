@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 import MusicStore.Album;
@@ -399,5 +400,22 @@ public class LibraryModel {
             total += song.getPlays();
         }
         return total;
+    }
+
+    // Sort songs by title in ascending (alphabetic) order
+    // (case insensitive to treat upper & lower case the same)
+    public void sortSongsByTitle() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getName, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by artist in ascending (alphabetic) order 
+    // (case insensitive to treat upper & lower case the same)
+    public void sortSongsByArtist() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getAuthor, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by rating in ascending order (I don't agree, I think should be descending logically)
+    public void sortByRating() {
+        Collections.sort(userSongs, Comparator.comparingInt(Song::getRating));
     }
 }
