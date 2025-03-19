@@ -351,16 +351,14 @@ public class LibraryModel {
         updateRecentlyPlayed(songToPlay);   // Update the recently played list
     }
 
-    // Update the mostPlayed list with the latest play count
+    // Update the mostPlayed playlist with the latest play count
     private void updateMostPlayed(Song song) {
-        if (mostPlayed.contains(song)) {      // If song is there just re-sort the list
-            mostPlayed.sortByPlays();
-            return;
-        }
-        else if (mostPlayed.size() < 10) {    // If the most played songs length is less than 10 just add the song
-            mostPlayed.addSongs(song);
-            mostPlayed.sortByPlays();
-            return;
+        for (Song s : mostPlayed.getSongObjects()) {
+            if (s.equals(song)) {  
+                s.setPlays(song.getPlays());  // Update play count with the latest value
+                mostPlayed.sortByPlays();  // Sort after updating
+                return;
+            }
         }
         mostPlayed.addSongs(song);            // Add the song to the list
         mostPlayed.sortByPlays();             // Sort list by plays (descending)
@@ -389,7 +387,7 @@ public class LibraryModel {
     public ArrayList<String> getRecentlyPlayed() {
         ArrayList<String> recentSongs = new ArrayList<>();
         for (Song song : recentlyPlayed.getSongObjects()) {
-            recentSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
+            recentSongs.add(song.toString());
         }
         return recentSongs;
     }
