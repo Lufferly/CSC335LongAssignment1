@@ -26,7 +26,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        System.out.print("Please enter your input:\n > ");
+        System.out.print("\n > ");
         String userString = scanner.nextLine().trim();
 
         return userString;
@@ -871,6 +871,19 @@ public class View {
             userLibrary.playSong(chosenName, chosenAuthor);
         } else {        // No results 
             System.out.println("[!] Could not find a song on your library by that name!");
+        }
+    }
+
+    public void librarySorting(LibraryModel userLibrary, ArrayList<String> userInput) {
+        if (userInput.size() < 3) {
+            System.out.println("[!] Invalid sort command. Format should be: library sort [title || artist || rating]");
+        } else {
+            if (userInput.get(2).contains("rating")) userLibrary.sortByRating();
+            else if (userInput.get(2).contains("artist")) userLibrary.sortByArtist();
+            else if (userInput.get(2).contains("title")) userLibrary.sortByTitle();
+            for (String song: userLibrary.getAllSongs()) {
+                System.out.println(song);
+            }
         }
     }
 }

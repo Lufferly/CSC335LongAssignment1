@@ -66,9 +66,9 @@ public class Song {
 		}
 
 		if (rating > 0) {
-			return name + "," + author + "," + stars;
+			return name + " - " + author + " - " + stars;
 		} else {
-			return name + "," + author;
+			return name + " - " + author;
 		}
 	}
 
@@ -129,5 +129,5 @@ public class Song {
 		return newSong;
 	}
 
-	public void setPlays(int plays) { this.plays = plays; }
+	public void setPlays(int newPlays) { this.plays = newPlays; }
 }

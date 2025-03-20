@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 import MusicStore.Album;
@@ -249,7 +250,7 @@ public class LibraryModel {
         return favStrings;
     }
 
-    // @Override from object class, helper to compare song objects in userSongs
+    // Helper to compare song objects in userSongs
     public boolean contains(Song newSong) {
         for (Song song: userSongs){
             if (song.equals(newSong)) return true;
@@ -398,9 +399,9 @@ public class LibraryModel {
 
     // Get the top 10 most played songs as a list of Strings
     public ArrayList<String> getMostPlayedSongs() {
-        ArrayList<String> topSongs = new ArrayList<>();
+        ArrayList<String> topSongs = new ArrayList<String>();
         for (Song song : mostPlayed.getSongObjects()) {
-            topSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
+            topSongs.add(song.toString() + "; (Plays: " + Integer.toString(song.getPlays()) + ")");
         }
         return topSongs;
     }
@@ -431,4 +432,22 @@ public class LibraryModel {
         }
         return total;
     }
+
+    // Sort songs by title in ascending (alphabetic) order
+    // (case insensitive to treat upper & lower case the same)
+    public void sortByTitle() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getName, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by artist in ascending (alphabetic) order 
+    // (case insensitive to treat upper & lower case the same)
+    public void sortByArtist() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getAuthor, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by rating in ascending order (I don't agree, I think should be descending logically)
+    public void sortByRating() {
+        Collections.sort(userSongs, Comparator.comparingInt(Song::getRating));
+    }
+
 }
