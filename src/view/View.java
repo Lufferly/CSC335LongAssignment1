@@ -26,7 +26,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        System.out.print("\n > ");
+        System.out.print(" > ");
         String userString = scanner.nextLine().trim();
 
         return userString;
