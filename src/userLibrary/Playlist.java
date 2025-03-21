@@ -159,4 +159,8 @@ public class Playlist {
             if (s.equals(songToPlay)) s.playsong();
         }
     }
+
+    public void shuffleSongsInPlaylist() {
+        Collections.shuffle(songList);
+    }
 }

@@ -113,15 +113,15 @@ public class Main {
                 if (userInput.get(1).equals("create")) {    // For creating a playlist
                     System.out.println("creating...");
                     view.createPlaylist(userInput, userLibrary);
-                }
-                else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
+                } else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
                     System.out.println("adding...");
                     view.addSongToPlaylist(userInput, userLibrary);
-                }
-                else if (userInput.get(1).equals("remove")) {
+                } else if (userInput.get(1).equals("remove")) {
                     System.out.println("removing...");
                     view.removeSongFromPlaylist(userInput, userLibrary);
-                } else {
+                } else if (userInput.get(1).equals("shuffle"))
+                    view.shufflePlaylist(userInput, userLibrary);
+                else {
                     // Try and view the given playlist
                     view.viewPlaylist(userInput, userLibrary);
                 }

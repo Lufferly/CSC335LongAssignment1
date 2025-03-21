@@ -789,4 +789,14 @@ public class View {
         userLibrary.shuffleSongs();
         System.out.println("Songs shuffled successfully:");
     }
+
+    public void shufflePlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 3) {
+            System.err.println("[!] Invalid playlist shuffle command. Format should be: 'playlist shuffle [name]'");
+        } else {
+            String chosenName = getFromList(userLibrary.getAllPlaylists(), userInput.get(2));
+            if (chosenName != null) userLibrary.shufflePlaylist(chosenName); // If name matches, shuffle
+            else System.err.println("[!] Couldn't find any playlists by that name");
+        }
+    }
 }

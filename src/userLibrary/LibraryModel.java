@@ -383,23 +383,21 @@ public class LibraryModel {
 
     // Update the mostPlayed playlist with the latest play count
     private void updateMostPlayed(Song song) {
-        for (Song s : mostPlayed.getSongObjects()) {
-            if (s.equals(song)) {  
-                s.setPlays(song.getPlays());  // Update play count with the latest value
-                mostPlayed.sortByPlays();  // Sort after updating
-                return;
-            }
+        if (mostPlayed.contains(song)) {        // Song inside mostPlayed already
+            mostPlayed.playInsidePlaylist(song);    // Play the object inside the playlist
+            mostPlayed.sortByPlays();               // Re-sort list by plays
+        } else {                                // Song not in mostplayed
+            mostPlayed.addSongs(song);            // Add the song to the list with plays = plays inside the library
+            mostPlayed.sortByPlays();             // Sort list by plays
+            mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
         }
-        mostPlayed.addSongs(song);            // Add the song to the list
-        mostPlayed.sortByPlays();             // Sort list by plays (descending)
-        mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
     }
 
     // Get the top 10 most played songs as a list of Strings
     public ArrayList<String> getMostPlayedSongs() {
         ArrayList<String> topSongs = new ArrayList<String>();
         for (Song song : mostPlayed.getSongObjects()) {
-            topSongs.add(song.toString() + "; (Plays: " + Integer.toString(song.getPlays()) + ")");
+            topSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
         }
         return topSongs;
     }
