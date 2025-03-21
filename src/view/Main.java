@@ -59,6 +59,12 @@ public class Main {
                     view.libraryPlays(userLibrary);
                 } else if (userInput.get(1).contains("recent")) {  // Viewing the recently played songs
                     view.libraryRecents(userLibrary);
+                } else if (userInput.get(1).contains("sort")) {    // Sorting the user library by specific variable
+                    view.librarySorting(userLibrary, userInput);
+                } else if (userInput.get(1).contains("delete")) {   // Delete a song/album from the library
+                    view.libraryDelete(userLibrary, userInput);
+                } else if (userInput.get(1).contains("shuffle")) {   // Shuffle a library songs
+                    view.libraryShuffle(userLibrary);
                 } else {    // Just viewing the songs/albums inside the users library
                     view.viewLibrary(userInput, userLibrary);
                 }
@@ -107,15 +113,15 @@ public class Main {
                 if (userInput.get(1).equals("create")) {    // For creating a playlist
                     System.out.println("creating...");
                     view.createPlaylist(userInput, userLibrary);
-                }
-                else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
+                } else if (userInput.get(1).equals("add")) {   // For adding a song in your library to a playlist
                     System.out.println("adding...");
                     view.addSongToPlaylist(userInput, userLibrary);
-                }
-                else if (userInput.get(1).equals("remove")) {
+                } else if (userInput.get(1).equals("remove")) {
                     System.out.println("removing...");
                     view.removeSongFromPlaylist(userInput, userLibrary);
-                } else {
+                } else if (userInput.get(1).equals("shuffle"))
+                    view.shufflePlaylist(userInput, userLibrary);
+                else {
                     // Try and view the given playlist
                     view.viewPlaylist(userInput, userLibrary);
                 }
@@ -160,7 +166,7 @@ public class Main {
 
     public static void printHelp() {        // Command menu, to tell user how to use the program
         System.out.println("\n======== Welcome to S&M Music Store! ========");
-        System.out.println("Here you can search, buy, and manage your own music library! Use the following commands:\\n");
+        System.out.println("Here you can search, buy, and manage your own music library! Use the following commands:\n");
     
         // Search Commands
         System.out.println("SEARCH COMMANDS:");
@@ -173,8 +179,8 @@ public class Main {
         // Buy Commands
         System.out.println("BUY COMMANDS:");
         System.out.println("  > buy album [album name or artist] - Purchase an album (adds all its songs) to your library.");
-        System.out.println("  > buy song [song name or artist]   - Purchase an individual song.\n");
-        System.out.println("    If multiple options exist, a list to choose from will be given");
+        System.out.println("  > buy song [song name or artist]   - Purchase an individual song.");
+        System.out.println("    If multiple options exist, a list to choose from will be given\n");
     
         // View Commands
         System.out.println("VIEW COMMANDS:");
@@ -185,9 +191,11 @@ public class Main {
         System.out.println("  > library artists(s)        - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.");
-        System.out.println("  > library search [song(s) or album(s)] [name or author] searchQuery       -Search for songs or albums in your library");
+        System.out.println("  > library plays             - View the total amount of songplays and the 10 most played songs in the library.");
         System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
-        System.out.println("  > library plays             - View the total amount of songplays and the 10 most played songs in the library.\n");
+        System.out.println("  > library search [song(s) or album(s)] [name or author] *searchQuery    -Search for songs or albums in your library");
+        System.out.println("  > library sort [song name, artist, or rating]                 - Sort all the songs in the library and display them.\n");
+        
     
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");

@@ -7,7 +7,7 @@ public class Song {
 	private String name;		// The name of the song
 	private String author;		// The author of the song
 	private boolean favorite; 	// Whether the song is favorite or not
-	private int rating;		// Save rating as a String
+	private int rating;		    // Save rating as a String
 	private int plays;
 	
 	public Song(String songName, String authorName) {
@@ -66,9 +66,9 @@ public class Song {
 		}
 
 		if (rating > 0) {
-			return name + "," + author + "," + stars;
+			return name + ", " + author + ", " + stars;
 		} else {
-			return name + "," + author;
+			return name + ", " + author;
 		}
 	}
 
@@ -129,5 +129,5 @@ public class Song {
 		return newSong;
 	}
 
-	public void setPlays(int plays) { this.plays = plays; }
+	public void setPlays(int newPlays) { this.plays = newPlays; }
 }

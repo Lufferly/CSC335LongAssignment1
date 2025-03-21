@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 import MusicStore.Album;
@@ -249,7 +250,7 @@ public class LibraryModel {
         return favStrings;
     }
 
-    // @Override from object class, helper to compare song objects in userSongs
+    // Helper to compare song objects in userSongs
     public boolean contains(Song newSong) {
         for (Song song: userSongs){
             if (song.equals(newSong)) return true;
@@ -355,9 +356,7 @@ public class LibraryModel {
                 return song;
             }
         }
-
-        // No song of that found
-        return null;
+        return null;        // No song of that found
     }
 
     // Internal helper to get a playlist from the library
@@ -384,21 +383,19 @@ public class LibraryModel {
 
     // Update the mostPlayed playlist with the latest play count
     private void updateMostPlayed(Song song) {
-        for (Song s : mostPlayed.getSongObjects()) {
-            if (s.equals(song)) {  
-                s.setPlays(song.getPlays());  // Update play count with the latest value
-                mostPlayed.sortByPlays();  // Sort after updating
-                return;
-            }
+        if (mostPlayed.contains(song)) {        // Song inside mostPlayed already
+            mostPlayed.playInsidePlaylist(song);    // Play the object inside the playlist
+            mostPlayed.sortByPlays();               // Re-sort list by plays
+        } else {                                // Song not in mostplayed
+            mostPlayed.addSongs(song);            // Add the song to the list with plays = plays inside the library
+            mostPlayed.sortByPlays();             // Sort list by plays
+            mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
         }
-        mostPlayed.addSongs(song);            // Add the song to the list
-        mostPlayed.sortByPlays();             // Sort list by plays (descending)
-        mostPlayed.maxLength(10);         // Make sure there are no more than 10 songs in list
     }
 
     // Get the top 10 most played songs as a list of Strings
     public ArrayList<String> getMostPlayedSongs() {
-        ArrayList<String> topSongs = new ArrayList<>();
+        ArrayList<String> topSongs = new ArrayList<String>();
         for (Song song : mostPlayed.getSongObjects()) {
             topSongs.add(song.toString() + "; (Plays: " + song.getPlays() + ")");
         }
@@ -431,4 +428,50 @@ public class LibraryModel {
         }
         return total;
     }
+
+    // Sort songs by title in ascending (alphabetic) order
+    // (case insensitive to treat upper & lower case the same)
+    public void sortByTitle() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getName, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by artist in ascending (alphabetic) order 
+    // (case insensitive to treat upper & lower case the same)
+    public void sortByArtist() {
+        Collections.sort(userSongs, Comparator.comparing(Song::getAuthor, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by rating in ascending order (I don't agree, I think should be descending logically)
+    public void sortByRating() {
+        Collections.sort(userSongs, Comparator.comparingInt(Song::getRating));
+    }
+
+    // Delete song from the user songlist and all the library
+    public void deleteSong(String title, String author) {
+        Song songToRemove = getSongFromLibrary(title, author);      // Object to remove
+        if (songToRemove != null) {
+            userSongs.remove(songToRemove);             // Remove form user library
+            // Iterate over all playlists and if the song is there remove
+            for (Playlist p: userPlaylists) {
+                if (p.contains(songToRemove)) p.removeSong(title, author);
+            }
+        }
+    }
+
+    // Delete album from user album list, and all the library
+    public void deleteAlbum(String title, String author) {
+        ArrayList<Song> songsToRemove = new ArrayList<Song>();      // Store songs of the album we want to delete
+        for (Album a: userAlbums) {
+            if (a.getName().equals(title) && a.getAuthor().equals(author)) {    // If title and author match, remove
+                userAlbums.remove(a);       
+                songsToRemove = a.getSongObjects();                 // Store song objects to remove
+                break;     // Not necessary to keep going
+            }
+        }
+        if (songsToRemove.size() != 0) {        // If album is not empty & album was found
+            for (Song s: songsToRemove) deleteSong(s.getName(), s.getAuthor());     // Remove all songs form everywhere
+        }
+    }
+
+    public void shuffleSongs() { Collections.shuffle(userSongs); }  // Shuffle songs in a random order
 }

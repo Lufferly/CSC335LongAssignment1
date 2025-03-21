@@ -26,7 +26,7 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        System.out.print("Please enter your input:\n > ");
+        System.out.print(" > ");
         String userString = scanner.nextLine().trim();
 
         return userString;
@@ -414,19 +414,13 @@ public class View {
     public void favoriteSong(ArrayList<String> userInput, LibraryModel userLibrary) {
         String songQuery = userInput.get(1);
         
-        // Get the song that the user wants to favorite
-        String songToFavorite = getChoiceFromLibrarySongs(songQuery, userLibrary);
+        String songToFavorite = getFromList(userLibrary.getAllSongs(), songQuery);      // Get the song that the user wants to favorite
 
-        // Check we got a song back
-        if (songToFavorite == null) {
+        if (songToFavorite == null) {           // Check we got a song back
             return;
         }
-
-        // Split the song into its data
-        String[] songData = songToFavorite.split(",");
-        String songName = songData[0];
-        String songAuthor = songData[1];
-
+        String songName = songToFavorite.split(",")[0].trim();
+        String songAuthor = songToFavorite.split(",")[1].trim();
         userLibrary.favouriteSong(songName, songAuthor);
     }
 
@@ -452,65 +446,13 @@ public class View {
             System.out.println("[!] Error! Rating must be an integer from 1-5!");
             return;
         }
-
-        // Get the song
-        String songQuery = userInput.get(1);
-        String songToRate = getChoiceFromLibrarySongs(songQuery, userLibrary);
+        String songQuery = userInput.get(1);        // Get the song
+        String songToRate = getFromList(userLibrary.getAllSongs(), songQuery);
         if (songToRate == null) {
             return;
         }
-
-        // Split the songToRate into its data (dumb)
-        String[] songData = songToRate.split(",");
-        // Rate the song
-        userLibrary.rateSong(songData[0], songData[1], rating);
-    }
-
-    // Given a songQuery, try to find a song from the user's library to return (as a string)
-    //  if we find multiple matches give the user the option to choose from a list of them
-    private String getChoiceFromLibrarySongs(String songQuery, LibraryModel userLibrary) {
-        ArrayList<String> possibleSongs = new ArrayList<String>();
-        for (String song : userLibrary.getAllSongs()) {
-            if (song.toLowerCase().contains(songQuery)) {
-                possibleSongs.add(song);
-            }
-        }
-        if (possibleSongs.size() > 1) {  // If we got multiple matches
-            // Give the user an enumerated list of options and let them choose
-            System.out.println("[!] That query came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you meant:");
-            // Print out all of the possible options
-            int i = 1;  // Used for enumerating the options
-            for (String song : possibleSongs) {
-                System.out.print(i);
-                System.out.println(": " + song);
-                i += 1;
-            }
-            System.out.print(">");
-
-            // Check that the user gave valid input
-            int userChoice = -1;
-            try {
-                // Turn the user's choice into an integer, and subtract one
-                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (Exception NumberFormatException) {
-                System.out.println("[!] Error! Could not convert your input to a number!");
-                return null;
-            }
-            // Check the bounds is good
-            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {
-                System.out.println("[!] Error! That number is out of bounds!");
-                return null;
-            }
-            
-            return possibleSongs.get(userChoice);
-        }
-        else if (possibleSongs.size() == 1) {       // If only one match
-            return possibleSongs.get(0);
-        } else {        // If no matches
-            System.out.println("[!] Couldn't find any songs by the given name.");
-            return null;
-        }
+        String[] songData = songToRate.split(",");            // Split the songToRate into its data (dumb)
+        userLibrary.rateSong(songData[0], songData[1], rating);     // Rate the song
     }
 
     // Given a userInput containing info on what they want to buy, buy the album/song in the uerLibrary
@@ -519,72 +461,27 @@ public class View {
     //      buyQuery should be a name of the album or song, if we encounter multiple we will
     //      give the user multiple options
     public void buy(ArrayList<String> userInput, MusicStore musicStore, LibraryModel userLibrary) {
-        // Check that the length of the userInput is correct
-        if (userInput.size() < 3) {
+        if (userInput.size() < 3) {     // Check that the length of the userInput is correct
             System.out.println("[!] Error! Invalid buy command! Format should be \"buy [album or song] buyQuery\" ");
             return;
         }
-        
-        String buyQuery = userInput.get(2);
 
+        String buyQuery = userInput.get(2);
         if (userInput.get(1).equals("album")) {  // Buying an album
             buyAlbum(buyQuery, musicStore, userLibrary);
-
-        }
-        else if (userInput.get(1).equals("song")) { // Buying a song
+        } else if (userInput.get(1).equals("song")) { // Buying a song
             buySong(buyQuery, musicStore, userLibrary);
-        }
-        else {  // Invalid buy command
+        } else {  // Invalid buy command
             System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"buy\" to indicate what you want to buy!");
         }
     }
 
     // Helper function of buy() to buy an album
     private void buyAlbum(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
-        // Get all the albums that match the buyQuery
-        ArrayList<String> possibleMatches = new ArrayList<String>();
-        for (String album : musicStore.getAllAlbums()) {
-            if (album.toLowerCase().contains(buyQuery)) {
-                possibleMatches.add(album);
-            }
-        }
-
-        if (possibleMatches.size() > 1) {  // If we got multiple matches
-            // Give the user an enumerated list of options and let them choose
-            System.out.println("[!] That query came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the album that you meant:");
-            // Print out all of the possible options
-            int i = 1;  // Used for enumerating the options
-            for (String album : possibleMatches) {
-                System.out.print(i);
-                System.out.println(": " + album);
-                i += 1;
-            }
-            System.out.print(">");
-
-            // Check that the user gave valid input
-            int userChoice = -1;
-            try {
-                // Turn the user's choice into an integer, and subtract one
-                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (Exception NumberFormatException) {
-                System.out.println("[!] Error! Could not convert your input to a number!");
-                return;
-            }
-            // Check the bounds is good
-            if (((userChoice) >= possibleMatches.size()) || ((userChoice) < 0)) {
-                System.out.println("[!] Error! That number is out of bounds!");
-                return;
-            }
-
-            // Add the chosen album to the user's library
-            String chosenName = possibleMatches.get(userChoice).split(",")[0];
-            String chosenAuthor = possibleMatches.get(userChoice).split(",")[1];
-            userLibrary.buyAlbum(chosenName, chosenAuthor);
-        } else if (possibleMatches.size() == 1) {  // Only one result
-            // Only one result found, just buy it
-            String chosenName = possibleMatches.get(0).split(",")[0];
-            String chosenAuthor = possibleMatches.get(0).split(",")[1];
+        String chosenAlbum = getFromList(musicStore.getAllAlbums(), buyQuery);
+        if (chosenAlbum != null) {
+            String chosenName = chosenAlbum.split(",")[0].trim();
+            String chosenAuthor = chosenAlbum.split(",")[1].trim();
             userLibrary.buyAlbum(chosenName, chosenAuthor);
         } else {
             System.out.println("[!] Could not find an album by that name!");
@@ -593,53 +490,13 @@ public class View {
 
     // Helper function for buy(), tries to put a new song into the userLibrary
     private void buySong(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
-        // Get all the possible matches for the song
-        ArrayList<String> possibleSongs = new ArrayList<String>();
-        for (String song : musicStore.getAllSongs()) {
-            if (song.toLowerCase().contains(buyQuery)) {
-                possibleSongs.add(song);
-            }
-        }
-
-        if (possibleSongs.size() > 1) {  // If we got multiple matches
-            // Give the user an enumerated list of options and let them choose
-            System.out.println("[!] That query came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you meant:");
-            // Print out all of the possible options
-            int i = 1;  // Used for enumerating the options
-            for (String song : possibleSongs) {
-                System.out.print(i);
-                System.out.println(": " + song);
-                i += 1;
-            }
-            System.out.print(">");
-
-            // Check that the user gave valid input
-            int userChoice = -1;
-            try {
-                // Turn the user's choice into an integer, and subtract one
-                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (Exception NumberFormatException) {
-                System.out.println("[!] Error! Could not convert your input to a number!");
-                return;
-            }
-            // Check the bounds is good
-            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {
-                System.out.println("[!] Error! That number is out of bounds!");
-                return;
-            }
-
-            // Add the chosen album to the user's library
-            String chosenName = possibleSongs.get(userChoice).split(",")[0];
-            String chosenAuthor = possibleSongs.get(userChoice).split(",")[1];
-            userLibrary.buySong(chosenName, chosenAuthor);
-        } else if (possibleSongs.size() == 1) {  // Only one result
-            // Only one result found, just buy it
-            String chosenName = possibleSongs.get(0).split(",")[0];
-            String chosenAuthor = possibleSongs.get(0).split(",")[1];
-            userLibrary.buySong(chosenName, chosenAuthor);
+        String chosenSong = getFromList(musicStore.getAllSongs(), buyQuery);    // Get element from music store songlist
+        if (chosenSong != null) {       // If we found something 
+            String chosenName = chosenSong.split(",")[0].trim();
+            String chosenAuthor = chosenSong.split(",")[1].trim();
+            userLibrary.buySong(chosenName, chosenAuthor);      // Buy song by name & author
         } else {
-            System.out.println("[!] Could not find a song by that name!");
+            System.out.println("[!] Could not find an song by that name!");
         }
     }
 
@@ -652,29 +509,19 @@ public class View {
             return;
         }
 
-        // The data we got
-        ArrayList<String> returnedData;
-
-        // Search for albums
-        if (userInput.get(1).equals("album")) {
-            returnedData = albumSearch(userInput, musicStore);
-        }
-        // Search for songs
-        else if (userInput.get(1).equals("song")) {
-            returnedData = songSearch(userInput, musicStore);
-        }
-        else {
-            // If we reach here, the search statement was entered in incorrectly
+        ArrayList<String> returnedData;     // The data we got
+        if (userInput.get(1).equals("album")) returnedData = albumSearch(userInput, musicStore);    // Search for albums
+        else if (userInput.get(1).equals("song")) returnedData = songSearch(userInput, musicStore); // Search for songs
+        else {      // If we reach here, the search statement was entered in incorrectly
             System.out.println("[!] Error! Malformed search statement! Please put \"album\" or \"song\" after \"search\" to indicate what you want to search for!");
             return;
         }
 
-        // Print the data
-        if (returnedData.size() == 0) {
+        if (returnedData.size() == 0) {     // If nothing was found
             System.out.println("[!] Search query came up with NO results!");
             return;
         }
-        for (String string : returnedData) {
+        for (String string : returnedData) {    // Iterate over every returned element & print
             System.out.println(string);
         }
     }
@@ -683,12 +530,9 @@ public class View {
     //  The third element in the userInput determines if we search by name or author, an the fourth
     //  element is the query we are searching for
     private ArrayList<String> albumSearch(ArrayList<String> userInput, MusicStore musicStore) {
-        // Search for albums by name
-        if (userInput.get(2).equals("name")) {
+        if (userInput.get(2).equals("name")) {      // Search for albums by name
             return musicStore.searchForAlbumByName(userInput.get(3));
-        }
-        // Search for albums by author
-        if (userInput.get(2).equals("author")) {
+        } else if (userInput.get(2).equals("author")) {    // Search for albums by author
             return musicStore.searchForAlbumByAuthor(userInput.get(3));
         }
 
@@ -701,12 +545,10 @@ public class View {
     //  The third element in the userInput determines if we search by name or author, an the fourth
     //  element is the query we are searching for
     private ArrayList<String> songSearch(ArrayList<String> userInput, MusicStore musicStore) {
-        // Search for songs by name
-        if (userInput.get(2).equals("name")) {
+        if (userInput.get(2).equals("name")) {          // Search for songs by name
             return musicStore.searchForSongsByName(userInput.get(3));
         }
-        // Search for songs by author
-        if (userInput.get(2).equals("author")) {
+        if (userInput.get(2).equals("author")) {        // Search for songs by author
             return musicStore.searchForSongsByAuthor(userInput.get(3));
         }
 
@@ -717,8 +559,7 @@ public class View {
 
     // Create a playlist in a userlibrary
     public void createPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
-        // Check that the userInput is correct
-        if (userInput.size() < 3) {
+        if (userInput.size() < 3) {     // Check that the userInput is correct
             System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
             System.out.println("[!] The format is: >playlist create playlist_name");
             return;
@@ -770,11 +611,9 @@ public class View {
         String playlistName = userInput.get(2);
         String songQuery = userInput.get(3);
 
-        // Try and find the song to add
-        String songToAdd = getChoiceFromLibrarySongs(songQuery, userLibrary);
+        String songToAdd = getFromList(userLibrary.getAllSongs(), songQuery);   // Try and find the song to add
 
-        // Check we could find a song
-        if (songToAdd == null) {
+        if (songToAdd == null) {     // Check we could find a song
             return;
         }
 
@@ -795,18 +634,14 @@ public class View {
 
         String playlistName = userInput.get(2);
         String songQuery = userInput.get(3);
-
-        // Try and find the song to remove
-        String songToAdd = getChoiceFromLibrarySongs(songQuery, userLibrary);
-
-        // Check we could find a song
-        if (songToAdd == null) {
+        String songToAdd = getFromList(userLibrary.getAllSongs(), songQuery);   // Try and find the song to remove
+        if (songToAdd == null) {        // Check we could find a song
             return;
         }
 
         // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
         String[] songData = songToAdd.split(",");
-        userLibrary.removeSongFromPlaylist(songData[0], songData[1], playlistName);
+        userLibrary.removeSongFromPlaylist(songData[0].trim(), songData[1].trim(), playlistName);
     }
 
     // Get the 10 most played songs in the user library
@@ -871,6 +706,97 @@ public class View {
             userLibrary.playSong(chosenName, chosenAuthor);
         } else {        // No results 
             System.out.println("[!] Could not find a song on your library by that name!");
+        }
+    }
+
+    public void librarySorting(LibraryModel userLibrary, ArrayList<String> userInput) {
+        if (userInput.size() < 3) {
+            System.out.println("[!] Invalid sort command. Format should be: 'library sort [title || artist || rating]'");
+        } else {
+            if (userInput.get(2).contains("rating")) userLibrary.sortByRating();
+            else if (userInput.get(2).contains("artist")) userLibrary.sortByArtist();
+            else if (userInput.get(2).contains("title")) userLibrary.sortByTitle();
+            for (String song: userLibrary.getAllSongs()) {
+                System.out.println(song);
+            }
+        }
+    }
+
+    public void libraryDelete(LibraryModel userLibrary, ArrayList<String> userInput) {
+        if (userInput.size() < 4) {
+            System.out.println("[!] Invalid sort command. Format should be: 'library delete [song || album] title'");
+        } else {
+            if (userInput.get(2).contains("song")) {
+                String songString = getFromList(userLibrary.getAllSongs(), userInput.get(3));
+                if (songString != null) {
+                    String title = songString.split(",")[0].trim();
+                    String author = songString.split(",")[1].trim();
+                    userLibrary.deleteSong(title, author);
+                }
+            } else if (userInput.get(2).contains("album")) {
+                String albumString = getFromList(userLibrary.getAllAlbums(), userInput.get(3));
+                if (albumString != null) {
+                    String title = albumString.split(",")[0].trim();
+                    String author = albumString.split(",")[1].trim();
+                    userLibrary.deleteAlbum(title, author);
+                }
+            }
+        }
+    }
+
+    public String getFromList(ArrayList<String> list, String query) {
+        // Get all the possible matches for the song
+        ArrayList<String> possibleSongs = new ArrayList<String>();
+        for (String song: list) {
+            if (song.toLowerCase().contains(query)) {
+                possibleSongs.add(song);
+            }
+        }
+        if (possibleSongs.size() > 1) {  // If we got multiple matches
+            // Give the user an enumerated list of options and let them choose
+            System.out.println("[!] That query came up with multiple results!");
+            System.out.println("Please enter the NUMBER of the song that you meant:");
+            // Print out all of the possible options
+            int i = 1;  // Used for enumerating the options
+            for (String song : possibleSongs) {
+                System.out.print(i);
+                System.out.println(": " + song);
+                i += 1;
+            }
+            System.out.print(" > ");
+
+            // Check that the user gave valid input
+            int userChoice = -1;
+            try {
+                userChoice = Integer.parseInt(scanner.nextLine()) - 1;    // Turn the user choice into an integer, and -1
+            } catch (Exception NumberFormatException) {
+                System.out.println("[!] Error! Could not convert your input to a number!");
+                return null;
+            }
+            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {     // Check the bounds is good
+                System.out.println("[!] Error! That number is out of bounds!");
+                return null;
+            }
+            String chosenSong = possibleSongs.get(userChoice);  
+            return chosenSong;      // return chosen song
+        } else {
+            System.out.println("[!] Could not find a song by that name!");
+            return null;
+        }
+    }
+
+    public void libraryShuffle(LibraryModel userLibrary) {
+        userLibrary.shuffleSongs();
+        System.out.println("Songs shuffled successfully:");
+    }
+
+    public void shufflePlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 3) {
+            System.err.println("[!] Invalid playlist shuffle command. Format should be: 'playlist shuffle [name]'");
+        } else {
+            String chosenName = getFromList(userLibrary.getAllPlaylists(), userInput.get(2));
+            if (chosenName != null) userLibrary.shufflePlaylist(chosenName); // If name matches, shuffle
+            else System.err.println("[!] Couldn't find any playlists by that name");
         }
     }
 }
