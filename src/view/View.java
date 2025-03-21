@@ -784,4 +784,9 @@ public class View {
             return null;
         }
     }
+
+    public void libraryShuffle(LibraryModel userLibrary) {
+        userLibrary.shuffleSongs();
+        System.out.println("Songs shuffled successfully:");
+    }
 }

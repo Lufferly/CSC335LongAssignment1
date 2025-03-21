@@ -474,4 +474,6 @@ public class LibraryModel {
             for (Song s: songsToRemove) deleteSong(s.getName(), s.getAuthor());     // Remove all songs form everywhere
         }
     }
+
+    public void shuffleSongs() { Collections.shuffle(userSongs); }  // Shuffle songs in a random order
 }

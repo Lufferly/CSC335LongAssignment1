@@ -63,6 +63,8 @@ public class Main {
                     view.librarySorting(userLibrary, userInput);
                 } else if (userInput.get(1).contains("delete")) {   // Delete a song/album from the library
                     view.libraryDelete(userLibrary, userInput);
+                } else if (userInput.get(1).contains("shuffle")) {   // Shuffle a library songs
+                    view.libraryShuffle(userLibrary);
                 } else {    // Just viewing the songs/albums inside the users library
                     view.viewLibrary(userInput, userLibrary);
                 }
