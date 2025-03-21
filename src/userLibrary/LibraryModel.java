@@ -356,9 +356,7 @@ public class LibraryModel {
                 return song;
             }
         }
-
-        // No song of that found
-        return null;
+        return null;        // No song of that found
     }
 
     // Internal helper to get a playlist from the library
@@ -450,4 +448,30 @@ public class LibraryModel {
         Collections.sort(userSongs, Comparator.comparingInt(Song::getRating));
     }
 
+    // Delete song from the user songlist and all the library
+    public void deleteSong(String title, String author) {
+        Song songToRemove = getSongFromLibrary(title, author);      // Object to remove
+        if (songToRemove != null) {
+            userSongs.remove(songToRemove);             // Remove form user library
+            // Iterate over all playlists and if the song is there remove
+            for (Playlist p: userPlaylists) {
+                if (p.contains(songToRemove)) p.removeSong(title, author);
+            }
+        }
+    }
+
+    // Delete album from user album list, and all the library
+    public void deleteAlbum(String title, String author) {
+        ArrayList<Song> songsToRemove = new ArrayList<Song>();      // Store songs of the album we want to delete
+        for (Album a: userAlbums) {
+            if (a.getName().equals(title) && a.getAuthor().equals(author)) {    // If title and author match, remove
+                userAlbums.remove(a);       
+                songsToRemove = a.getSongObjects();                 // Store song objects to remove
+                break;     // Not necessary to keep going
+            }
+        }
+        if (songsToRemove.size() != 0) {        // If album is not empty & album was found
+            for (Song s: songsToRemove) deleteSong(s.getName(), s.getAuthor());     // Remove all songs form everywhere
+        }
+    }
 }

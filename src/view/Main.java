@@ -60,7 +60,9 @@ public class Main {
                 } else if (userInput.get(1).contains("recent")) {  // Viewing the recently played songs
                     view.libraryRecents(userLibrary);
                 } else if (userInput.get(1).contains("sort")) {    // Sorting the user library by specific variable
-                    view.librarySorting(userLibrary, userInput); 
+                    view.librarySorting(userLibrary, userInput);
+                } else if (userInput.get(1).contains("delete")) {   // Delete a song/album from the library
+                    view.libraryDelete(userLibrary, userInput);
                 } else {    // Just viewing the songs/albums inside the users library
                     view.viewLibrary(userInput, userLibrary);
                 }
