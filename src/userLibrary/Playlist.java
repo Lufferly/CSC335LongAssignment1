@@ -151,7 +151,12 @@ public class Playlist {
                 newPlaylist.songList = Album.songArrayFromAlbumData(value);
             }
         }
-
         return newPlaylist;
+    }
+
+    public void playInsidePlaylist(Song songToPlay) {
+        for (Song s: songList) {
+            if (s.equals(songToPlay)) s.playsong();
+        }
     }
 }
