@@ -51,6 +51,7 @@ public class Main {
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
                     System.out.println("[!] OR >library plays");
                     System.out.println("[!] OR >library recent");
+                    System.out.println("[!] OR >library delete [album(s) or song(s)] deleteQuery!");
                     continue;
                 }
                 if (userInput.get(1).equals("search")) {  // Searching inside the user's library

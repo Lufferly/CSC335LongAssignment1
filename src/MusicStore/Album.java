@@ -105,6 +105,34 @@ public class Album {
 		// No duplicates found, add teh song
 		songs.add(new Song(song));
 	}
+
+	// Check to see if a song is in this album
+	//	returns true if there is the given song in the album, false otherwise
+	public boolean hasSong(Song song) {
+		for (Song thisSong : songs) {
+			if (thisSong.equals(song)) {
+				return true;
+			}
+		}
+
+		// Song not found
+		return false;
+	}
+
+	// Deletes a song from the album
+	public void removeSong(Song song) {
+		for (Song thisSong : songs) {
+			if (thisSong.equals(song)) {
+				songs.remove(thisSong);
+				return;	// Albums dont allow duplicate songs
+			}
+		}
+	}
+
+	// Returns the number of songs in this album
+	public int numSongs() {
+		return songs.size();
+	}
 		
 	// Getter method to return Array List with string representation of songs (immutable)
 	public ArrayList<String> getSongs() {

@@ -478,6 +478,18 @@ public class LibraryModel {
             for (Playlist p: userPlaylists) {
                 if (p.contains(songToRemove)) p.removeSong(title, author);
             }
+            // Remove the song in all albums
+            for (Album thisAlbum : userAlbums) {
+                if (thisAlbum.hasSong(songToRemove)) {
+                    thisAlbum.removeSong(songToRemove);
+                    // If that was the only song in this album, remove the album
+                    if (thisAlbum.numSongs() == 0) {
+                        userAlbums.remove(thisAlbum);
+                    }
+
+                    return; // Early return that will need to be changed if songs can ever be in multiple albums
+                }
+            }
         }
     }
 
