@@ -23,6 +23,15 @@ public class Album {
 		songs = new ArrayList<Song>();
 	}
 
+	// Copy constructor for an album, ignores songs
+	public Album(Album album) {
+		name = album.name;
+		author = album.author;
+		genre = album.genre;
+		year = album.year;
+		songs = new ArrayList<Song>();
+	}
+
 	// Overloaded constructor for creating an album based on a given File
 	//	this will also create song objects based on the file
 	public Album(String fileName) {
@@ -82,6 +91,48 @@ public class Album {
 	public String getGenre() {
 		return genre;
 	}
+
+	// Add a song to this album
+	//	Will not add a song to the album if that song already exists
+	public void addSong(Song song) {
+		// Check for duplicates
+		for (Song thisSong : songs) {
+			if (thisSong.equals(song)) {
+				return;
+			}
+		}
+
+		// No duplicates found, add teh song
+		songs.add(new Song(song));
+	}
+
+	// Check to see if a song is in this album
+	//	returns true if there is the given song in the album, false otherwise
+	public boolean hasSong(Song song) {
+		for (Song thisSong : songs) {
+			if (thisSong.equals(song)) {
+				return true;
+			}
+		}
+
+		// Song not found
+		return false;
+	}
+
+	// Deletes a song from the album
+	public void removeSong(Song song) {
+		for (Song thisSong : songs) {
+			if (thisSong.equals(song)) {
+				songs.remove(thisSong);
+				return;	// Albums dont allow duplicate songs
+			}
+		}
+	}
+
+	// Returns the number of songs in this album
+	public int numSongs() {
+		return songs.size();
+	}
 		
 	// Getter method to return Array List with string representation of songs (immutable)
 	public ArrayList<String> getSongs() {
@@ -105,6 +156,16 @@ public class Album {
 		return year;
 	}
 	
+	// Equals method for comparing two albums
+	//	two albums are considered equal if they have the same name, author, genre, and year
+	//	note that this equals method does not care about the songs inside of an album
+	public boolean equals(Album otherAlbum) {
+		return this.name.equals(otherAlbum.name) &&
+			this.author.equals(otherAlbum.author) &&
+			this.genre.equals(otherAlbum.genre) &&
+			this.year.equals(otherAlbum.year);
+	}
+
 	// Prints out a representation of the object
 	public void print() {
 		System.out.println("Author:" + author + 
@@ -123,7 +184,8 @@ public class Album {
 	}
 
 	// Returns a string that represents all the data we need to reconstruct an album
-	public String albumData() {
+	//	if bool_includeSongs is true, include the songs, otherwise do not
+	public String albumData(boolean bool_includeSongs) {
 		String dataString = "";
 		// All of the data in key value pairs
 		dataString += "name:" + name + ";";
@@ -136,10 +198,12 @@ public class Album {
 		//		songs:125;[a song data string that is 125 characters long];32;[and so on...];
 		//	a length of zero lets us know we have no more songs
 		dataString += "songs:";
-		for (Song song : songs) {
-			String thisSongData = song.songData();
-			dataString += Integer.toString(thisSongData.length()) + ";"; // find the length
-			dataString += thisSongData; // Song data puts a semicolon at the end for us
+		if (bool_includeSongs == true) {  // Only include the songs if this bool is true
+			for (Song song : songs) {
+				String thisSongData = song.songData();
+				dataString += Integer.toString(thisSongData.length()) + ";"; // find the length
+				dataString += thisSongData; // Song data puts a semicolon at the end for us
+			}
 		}
 		dataString += "0;";  // No more songs in the album
 

@@ -12,7 +12,9 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.random.*;
 
+import MusicStore.Album;
 import MusicStore.MusicStore;
+import MusicStore.Song;
 import userLibrary.LibraryModel;
 
 
@@ -491,13 +493,27 @@ public class View {
     // Helper function for buy(), tries to put a new song into the userLibrary
     private void buySong(String buyQuery, MusicStore musicStore, LibraryModel userLibrary) {
         String chosenSong = getFromList(musicStore.getAllSongs(), buyQuery);    // Get element from music store songlist
-        if (chosenSong != null) {       // If we found something 
-            String chosenName = chosenSong.split(",")[0].trim();
-            String chosenAuthor = chosenSong.split(",")[1].trim();
-            userLibrary.buySong(chosenName, chosenAuthor);      // Buy song by name & author
-        } else {
+        
+        if (chosenSong == null) {       // If we didn't find anything
             System.out.println("[!] Could not find an song by that name!");
+            return;
         }
+
+        // If we found a song
+        String chosenName = chosenSong.split(",")[0].trim();
+        String chosenAuthor = chosenSong.split(",")[1].trim();
+        userLibrary.buySong(chosenName, chosenAuthor);      // Buy song by name & author
+
+        // Get the album data for the chosen song
+        String chosenSongAlbumData = musicStore.getSongAlbumData(chosenName, chosenAuthor);
+        // Construct the album
+        Album newAlbum = Album.albumFromAlbumData(chosenSongAlbumData);
+
+        // Add the album to the library, this will check for copies
+        userLibrary.addAlbum(newAlbum);
+        // Add the song to the album in the library
+        userLibrary.addSongToAlbum(new Song(chosenName, chosenAuthor), newAlbum);
+
     }
 
     // Search in a given music store, returns a list of results
@@ -744,7 +760,10 @@ public class View {
         }
     }
 
-    public String getFromList(ArrayList<String> list, String query) {
+    // TODO: The variable names in this suck, this function probably needs a half rewrite
+    // Finds a matching or containing string based on the query in list
+    //  if multiple possibilities show up, ask the user to chose.
+    private String getFromList(ArrayList<String> list, String query) {
         // Get all the possible matches for the song
         ArrayList<String> possibleSongs = new ArrayList<String>();
         for (String song: list) {
@@ -779,6 +798,8 @@ public class View {
             }
             String chosenSong = possibleSongs.get(userChoice);  
             return chosenSong;      // return chosen song
+        } else if (possibleSongs.size() == 1) { // We only found one song
+            return possibleSongs.get(0);
         } else {
             System.out.println("[!] Could not find a song by that name!");
             return null;
