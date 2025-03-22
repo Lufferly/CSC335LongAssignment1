@@ -760,7 +760,10 @@ public class View {
         }
     }
 
-    public String getFromList(ArrayList<String> list, String query) {
+    // TODO: The variable names in this suck, this function probably needs a half rewrite
+    // Finds a matching or containing string based on the query in list
+    //  if multiple possibilities show up, ask the user to chose.
+    private String getFromList(ArrayList<String> list, String query) {
         // Get all the possible matches for the song
         ArrayList<String> possibleSongs = new ArrayList<String>();
         for (String song: list) {
@@ -795,6 +798,8 @@ public class View {
             }
             String chosenSong = possibleSongs.get(userChoice);  
             return chosenSong;      // return chosen song
+        } else if (possibleSongs.size() == 1) { // We only found one song
+            return possibleSongs.get(0);
         } else {
             System.out.println("[!] Could not find a song by that name!");
             return null;
