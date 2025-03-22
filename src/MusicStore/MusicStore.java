@@ -148,4 +148,24 @@ public class MusicStore {
             album.print();
         }
     }
+
+    // Given a song name and album, return the album data string of an album that has the given song
+    //  returns null if it could not find an album
+    //  The album data will not contain the album's songs
+    public String getSongAlbumData(String songName, String songAuthor) {
+        // Create a dummy song for comparing songs
+        Song querySong = new Song(songName, songAuthor);
+        // Loop through all the songs in an album, if you find a matching song return the string version
+        //  of that album
+        for (Album thisAlbum : albums) {
+            for (Song thisSong : thisAlbum.getSongObjects()) {
+                if (thisSong.equals(querySong)) {
+                    return thisAlbum.albumData(false); // False tells us
+                }
+            }
+        }
+
+        // nada found
+        return null;
+    }
 }

@@ -115,7 +115,7 @@ public class LibraryModel {
             // Save every album that we own
             for (Album album : userAlbums) {
                 writer.write("[album];");
-                writer.write(album.albumData());
+                writer.write(album.albumData(true)); // True tells us to keep the album's songs
                 writer.write("\n");
             }
             // Save every song that we own
@@ -196,6 +196,29 @@ public class LibraryModel {
             // Add the song if we dont already own it
             if (!songInLibrary(thisSong)) {
                 userSongs.add(thisSong);
+            }
+        }
+    }
+
+    // Just add an album to the user's library, will not accept duplicate albums
+    public void addAlbum(Album albumToAdd) {
+        // Check if we already have this album
+        for (Album thisAlbum : userAlbums) {
+            if (thisAlbum.equals(albumToAdd)) {
+                return; // Already have this album
+            }
+        }
+        
+        // We do not have this album, add a copy of it to our albums
+        userAlbums.add(new Album(albumToAdd));
+    }
+
+    // Add a song to a given album in the user's library, will not accept dupilcate songs
+    public void addSongToAlbum(Song songToAdd, Album albumToAddTo) {
+        // Find the album, if found add the song
+        for (Album thisAlbum : userAlbums) {
+            if (thisAlbum.equals(albumToAddTo)) {
+                thisAlbum.addSong(new Song(songToAdd));
             }
         }
     }
