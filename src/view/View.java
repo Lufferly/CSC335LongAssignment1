@@ -28,9 +28,26 @@ public class View {
 
     // Get an input string from the user
     public String getInput() {
-        System.out.print(" > ");
-        String userString = scanner.nextLine().trim();
+        // Whether or not this is a valid input
+        boolean validInput = false;
 
+        String userString = null;
+        while (validInput == false) {
+            System.out.print(" > ");
+            userString = scanner.nextLine().trim();
+            // Check we actually got something
+            if (userString == null) {
+                System.out.println("Invalid input!\n");
+                continue;
+            } else if (userString.contains(":") || userString.contains(";") || userString.contains(",")) {
+                // Get rid of any special characters we use later
+                System.out.println("Input cannot contain ';' ':' or ',' !");
+                continue;
+            } else {
+                validInput = true;
+            }
+            
+        }
         return userString;
     }
 
