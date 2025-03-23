@@ -518,11 +518,16 @@ public class View {
 
     // Search in a given music store, returns a list of results
     //  The second index controls what we search for, "album" or "song"
-    public void search(ArrayList<String> userInput, MusicStore musicStore) {
+    // If the 5th element in the request is "-albuminfo", print if the song is already in the library
+    public void search(ArrayList<String> userInput, MusicStore musicStore, LibraryModel userLibrary) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Search request did not have enough inputs!");
-            System.out.println("[!] format for search is \"search [album or song] [name or author] query\"");
+            System.out.println("[!] format for search is \"search [album or song] [name or author] query [-albuminfo (optional)]\"");
             return;
+        }
+        boolean b_checkInLibrary = false; // If we check inside the library
+        if (userInput.size() >= 5) {
+            b_checkInLibrary = userInput.get(4).equals("-albuminfo");
         }
 
         ArrayList<String> returnedData;     // The data we got
@@ -533,12 +538,26 @@ public class View {
             return;
         }
 
-        if (returnedData.size() == 0) {     // If nothing was found
+        if (returnedData == null || returnedData.size() == 0) {     // If nothing was found
             System.out.println("[!] Search query came up with NO results!");
             return;
         }
+
+
         for (String string : returnedData) {    // Iterate over every returned element & print
-            System.out.println(string);
+            String extraInfo = "";
+
+            // Check if we want to show information about songs and we are searching for songs
+            if (b_checkInLibrary == true && userInput.get(1).contains("song")) {
+                // Check if the represented song is in the library
+                String songName = string.split(",")[0].trim();
+                String songAuthor = string.split(",")[1].trim();
+                Song checkingSong = new Song(songName, songAuthor);
+                if (userLibrary.contains(checkingSong)) {
+                    extraInfo = " (ALREADY IN LIBRARY)";
+                }
+            }
+            System.out.println(string + extraInfo);
         }
     }
 
@@ -560,12 +579,20 @@ public class View {
     // Search for songs in a music store
     //  The third element in the userInput determines if we search by name or author, an the fourth
     //  element is the query we are searching for
+    // If the 5th element of userInput is "-albuminfo", then the user is requesting that information
+    //  about the song's info is also printed.
     private ArrayList<String> songSearch(ArrayList<String> userInput, MusicStore musicStore) {
+        // If the user put in the optional song album info flag, set that to true, otherwise set it to fals
+        boolean b_songAlbumInfo = false;
+        if (userInput.size() >= 5) {
+            b_songAlbumInfo = userInput.get(4).equals("-albuminfo");
+        }
+
         if (userInput.get(2).equals("name")) {          // Search for songs by name
-            return musicStore.searchForSongsByName(userInput.get(3));
+            return musicStore.searchForSongsByName(userInput.get(3), b_songAlbumInfo);
         }
         if (userInput.get(2).equals("author")) {        // Search for songs by author
-            return musicStore.searchForSongsByAuthor(userInput.get(3));
+            return musicStore.searchForSongsByAuthor(userInput.get(3), b_songAlbumInfo);
         }
 
         // If we reach here, the search statement was entered in incorrectly

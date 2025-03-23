@@ -28,10 +28,10 @@ public class Main {
 
             // Search functionality
             // should be in format:
-            // >search [album or song] [name or author] query
+            // >search [album or song] [name or author] query [-albuminfo (optional)]
             if (userInput.get(0).equals("search")) {
                 System.out.println("searching...");
-                view.search(userInput, musicStore);
+                view.search(userInput, musicStore, userLibrary);
             }
             // view is used for viewing the albums and songs in the music store
             else if (userInput.get(0).equals("musicstore")) {
@@ -171,6 +171,8 @@ public class Main {
     
         // Search Commands
         System.out.println("SEARCH COMMANDS:");
+        System.out.println("  > search [album or song] [name or author] query [-albuminfo (optional)]");
+        System.out.println("    (-albuminfo is optional, and will give you additional info on the album the song comes from)");
         System.out.println("  > search album name [query]     - Search for an album by its name.");
         System.out.println("  > search album author [query]   - Search for albums by a specific artist.");
         System.out.println("  > search song name [query]      - Search for a song by its title.");

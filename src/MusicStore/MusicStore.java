@@ -90,14 +90,21 @@ public class MusicStore {
     // Given a query for an author, search for and return every song (in the form of an array of strings)
     //  whose author name contains the author query
     // Ignores case
-    public ArrayList<String> searchForSongsByAuthor(String authorQuery) {
+    // If b_SongAlbumInfo is true, then the user is requesting extra information about the song's album
+    public ArrayList<String> searchForSongsByAuthor(String authorQuery, boolean b_songAlbumInfo) {
         ArrayList<String> foundSongs = new ArrayList<String>();
         // Search through every Album's author, if the author has the author query, add
         //  all of their songs to the foundSongs list
         for (Album album : albums) {
             if (album.getAuthor().toLowerCase().contains(authorQuery)) {
+                // We found an author that matches
+
                 for (String song : album.getSongs()) {
-                    foundSongs.add(song + "," + album.getName());
+                    if (b_songAlbumInfo == true) {
+                        foundSongs.add(song + ", Album:" + album.toString());
+                    } else {
+                        foundSongs.add(song);
+                    }
                 }
             }
         }
@@ -108,14 +115,19 @@ public class MusicStore {
     // Given a query for an song, search for and return every song (in the form of an array of strings)
     //  whose name contains the name query
     // Ignores case
-    public ArrayList<String> searchForSongsByName(String songQuery) {
+    //  if b_songAlbumInfo is true, also append information about the album
+    public ArrayList<String> searchForSongsByName(String songQuery, boolean b_songAlbumInfo) {
         ArrayList<String> foundSongs = new ArrayList<String>();
         // Search through every Album's songs, if that song's name contains the song query, add
         //  it to the foundSongs list
         for (Album album : albums) {
             for (String song : album.getSongs()) {
                 if (song.toLowerCase().split(",")[0].contains(songQuery)) {
-                    foundSongs.add(song + "," + album.getName());
+                    if (b_songAlbumInfo == true) {
+                        foundSongs.add(song + ", Album:" + album.toString());
+                    } else {
+                        foundSongs.add(song);
+                    }
                 }
             }
         }
