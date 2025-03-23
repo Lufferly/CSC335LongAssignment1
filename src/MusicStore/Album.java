@@ -1,11 +1,7 @@
 package MusicStore;
 
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Album {
 	private String name;
@@ -71,7 +67,7 @@ public class Album {
         }
 		while (thisLine != null) {  // Check to see if we hit the end of the file
 			// Every line is a song
-			songs.add(new Song(thisLine, this.author));
+			songs.add(new Song(thisLine, this.author, genre));
 			try {
 				thisLine = albumFile.readLine();
 			} catch (Exception IOException)  {
@@ -89,7 +85,7 @@ public class Album {
 	}
 	
 	public String getGenre() {
-		return genre;
+		return genre.toLowerCase();
 	}
 
 	// Add a song to this album

@@ -1,25 +1,21 @@
 package userLibrary;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 import MusicStore.Album;
 import MusicStore.Song;
 
 public class LibraryModel {
-    private ArrayList<Song> userSongs;        // SongList
-    private ArrayList<Playlist> userPlaylists;  // Array of playlists
+    private ArrayList<Song> userSongs;
+    private ArrayList<Playlist> userPlaylists;   // ArrayList of playlists
     private String username;
-    private ArrayList<Album> userAlbums;     // Use toString() of albums for this
-    private Playlist mostPlayed;        // Most played songs playlist
-    private Playlist recentlyPlayed;        // Most played songs playlist
-    private String userDataFilePath;        // The path where we store this users data
+    private ArrayList<Album> userAlbums;
+    private Playlist mostPlayed = new Playlist("Most Played");            // Most played songs playlist
+    private Playlist recentlyPlayed = new Playlist("Recently Played");    // Recently songs playlist
+    private Playlist favourites = new Playlist("Favourites");             // Favourites playlist
+    private Playlist toprated = new Playlist("Top Rated");                // Toprated playlist
+    private String userDataFilePath;             // The path where we store this users data
+    private HashMap<String, Integer> genreCount = new HashMap<String, Integer>(); // Count songs with given genre
 
     // Constructor & initialize class instance variables
     public LibraryModel (String userName) {
@@ -27,17 +23,16 @@ public class LibraryModel {
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
-        mostPlayed = new Playlist("mostplayed");
-        recentlyPlayed = new Playlist("recentlyplayed");
         userPlaylists.add(mostPlayed);
         userPlaylists.add(recentlyPlayed);
+        userPlaylists.add(favourites); 
+        userPlaylists.add(toprated); 
     }
 
     // Constructor for reading a user's data file
     public LibraryModel (String username, String dataFilePath) {
         this.username = username;
         userDataFilePath = dataFilePath;
-
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
@@ -73,9 +68,7 @@ public class LibraryModel {
                     } else if (playlistToAdd.getName().equals("recentlyplayed")) {
                         recentlyPlayed = playlistToAdd;
                     }
-
                 }
-
                 thisLine = reader.readLine();
             }
         } catch (FileNotFoundException e) {
@@ -99,6 +92,18 @@ public class LibraryModel {
             recentlyPlayed = new Playlist("recentlyplayed");
             userPlaylists.add(recentlyPlayed);
         }
+        resetGenreCounts();
+    }
+
+    private void resetGenreCounts() {       // Reset count of songs by genre in userSongs
+        for (Song s: userSongs) {
+            if (!genreCount.containsKey(s.getGenre())) {  // If genre is not in Hashmap
+                genreCount.put(s.getGenre(), 1);
+            } else {
+                genreCount.put(s.getGenre(), genreCount.get(s.getGenre())+1); // Count ++
+            }
+        }
+        checkGenreForPlaylist();        // Check that the playlists are created
     }
 
     // Method for saving all of our data into a data file
@@ -115,7 +120,7 @@ public class LibraryModel {
             // Save every album that we own
             for (Album album : userAlbums) {
                 writer.write("[album];");
-                writer.write(album.albumData(true)); // True tells us to keep the album's songs
+                writer.write(album.albumData(true));
                 writer.write("\n");
             }
             // Save every song that we own
@@ -130,7 +135,6 @@ public class LibraryModel {
                 writer.write(playlist.playlistData());
                 writer.write("\n");
             }
-
             writer.close();
         } catch (Exception e) {
             System.out.println("[!] Error! Encountered an error when attempting to save " + username + "'s data!");
@@ -198,50 +202,40 @@ public class LibraryModel {
                 userSongs.add(thisSong);
             }
         }
-    }
-
-    // Just add an album to the user's library, will not accept duplicate albums
-    public void addAlbum(Album albumToAdd) {
-        // Check if we already have this album
-        for (Album thisAlbum : userAlbums) {
-            if (thisAlbum.equals(albumToAdd)) {
-                return; // Already have this album
-            }
+        if (genreCount.containsKey(newAlbum.getGenre())) {      // If genre is there
+            Integer newCount = genreCount.get(newAlbum.getGenre()) + newAlbum.getSongObjects().size();
+            genreCount.put(newAlbum.getGenre(), newCount);      // Update count
+        } else {
+            genreCount.put(newAlbum.getGenre(), newAlbum.getSongObjects().size());
         }
-        
-        // We do not have this album, add a copy of it to our albums
-        userAlbums.add(new Album(albumToAdd));
-    }
-
-    // Add a song to a given album in the user's library, will not accept dupilcate songs
-    public void addSongToAlbum(Song songToAdd, Album albumToAddTo) {
-        // Find the album, if found add the song
-        for (Album thisAlbum : userAlbums) {
-            if (thisAlbum.equals(albumToAddTo)) {
-                thisAlbum.addSong(new Song(songToAdd));
-            }
-        }
+        checkGenreForPlaylist();
     }
 
     // Add a song to the user's library
-    public void buySong (String songName, String songAuthor) {       // Mark individual song as bought (ugly)
+    public void buySong (String songName, String songAuthor, String genre) {       // Mark individual song as bought (ugly)
         // Create the song
-        Song newSong = new Song(songName, songAuthor);
+        Song newSong = new Song(songName, songAuthor, genre);
 
         // Check the song is not already in the library
         if (!songInLibrary(newSong)) {
-            // Add the song to the library
-            userSongs.add(newSong);
+            userSongs.add(newSong);     // Add the song to the library
+            if (!genreCount.containsKey(newSong.getGenre())) {  // If genre is in genreCount
+                genreCount.put(newSong.getGenre(), 1);  // Genre count = 1
+            } else {    // Genre is in genreCount
+                genreCount.put(newSong.getGenre(), genreCount.get(newSong.getGenre())+1); // Count ++
+            }
+            checkGenreForPlaylist();    // Update playlists after new counts set
         } else {
-            // Print an error
-            System.out.println("[!] Error! Song already exists in that userLibrary!");
+            System.err.println("[!] Error! Song already exists in that userLibrary!");      // Print an error
         }
     }
 
+    // Favourite a song object inside the library
     public String favouriteSong(String songName, String songAuthor) {
         for (Song song: userSongs) {
             if (songName.equals(song.getName()) && songAuthor.equals(song.getAuthor())) {
                 song.makeFavorite();
+                favourites.addSongs(song);      // Add song to favourites playlist
                 return "Song favourited!";
             }
         }
@@ -255,22 +249,20 @@ public class LibraryModel {
             System.out.print("[!] Error! Song does not exist in library!");
             return;
         }
-
-        if (newRating == 5) {
+        if (newRating == 5) {    // If rating = 5
             songToRate.makeFavorite();
+            favourites.addSongs(songToRate);      // Add song to favourites & toprated playlist
+            toprated.addSongs(songToRate);
+        } else if (newRating == 4) toprated.addSongs(songToRate);   // Add only to toprated
+        else if (newRating>=0 && newRating<4) {  // Maybe song is downrated, remove from toprated
+            if (toprated.contains(songToRate)) 
+                toprated.removeSong(songToRate.getName(), songToRate.getAuthor());
         }
-
-        songToRate.setRating(newRating);
+        songToRate.setRating(newRating);        // Set new song rating
     }
 
-    public ArrayList<String> getFavourites() {      // Get the list of favorite songs as Strings
-        ArrayList<String> favStrings = new ArrayList<String>();
-        for (Song song: userSongs) {
-            if (song.isFavourite()) {
-                favStrings.add(song.toString());
-            }
-        }
-        return favStrings;
+    public ArrayList<String> getFavourites() {      // Get the list of favorite songs (Strings)
+        return favourites.getSongs();
     }
 
     // Helper to compare song objects in userSongs
@@ -293,8 +285,7 @@ public class LibraryModel {
             return null;
         }
 
-        // return all the songs from the playlist
-        return playlist.getSongs();
+        return playlist.getSongs();     // return all the songs from the playlist
     }
 
     public String createPlaylist(String playlistName) {       // Create playlist and add to library
@@ -346,12 +337,11 @@ public class LibraryModel {
             System.out.println("[!] Error! Cannot remove song from a playlist that does not exit!");
             return;
         }
-
         // Try and remove the song from the playlist
         playlist.removeSong(songName, songAuthor);
     }
 
-    public ArrayList<String> getAllPlaylists() {     // Get list of playlist strings
+    public ArrayList<String> getAllPlaylists() {     // Get list of playlist string names
         ArrayList<String> playlistStrings = new ArrayList<String>();
         for (Playlist playlist: userPlaylists) {
             playlistStrings.add(playlist.getName());
@@ -478,18 +468,13 @@ public class LibraryModel {
             for (Playlist p: userPlaylists) {
                 if (p.contains(songToRemove)) p.removeSong(title, author);
             }
-            // Remove the song in all albums
-            for (Album thisAlbum : userAlbums) {
-                if (thisAlbum.hasSong(songToRemove)) {
-                    thisAlbum.removeSong(songToRemove);
-                    // If that was the only song in this album, remove the album
-                    if (thisAlbum.numSongs() == 0) {
-                        userAlbums.remove(thisAlbum);
-                    }
-
-                    return; // Early return that will need to be changed if songs can ever be in multiple albums
-                }
-            }
+        }
+        Integer newCount = genreCount.get(songToRemove.getGenre())-1;
+        if (newCount == 0 ) {   // No more songs of a given genre (there was one before)
+            genreCount.remove(songToRemove.getGenre());
+        } else {
+            genreCount.put(songToRemove.getGenre(), newCount);      // Update genre count
+            checkGenreForPlaylist();        // Update playlists for genre
         }
     }
 
@@ -509,4 +494,57 @@ public class LibraryModel {
     }
 
     public void shuffleSongs() { Collections.shuffle(userSongs); }  // Shuffle songs in a random order
+
+    public void shufflePlaylist(String playlistName) {
+        for (Playlist p: userPlaylists) {
+            if (p.getName().equals(playlistName)) {
+                p.shuffleSongsInPlaylist();
+                break;
+            }
+        }
+    }
+
+    // get all songs by a given genre
+    public ArrayList<String> getSongsbyGenre(String genre) {
+        ArrayList<String> matches = new ArrayList<String>();
+        for (Song s: userSongs) {
+            if (s.getGenre().equals(genre)) matches.add(s.toString());  // If genre match add song
+        }
+        return matches;
+    }
+
+    public String getPlaylistByName(String name) {
+        for (Playlist p: userPlaylists) {
+            if (p.getName().equals(name)) return p.toString();
+        }
+        return null;
+    }
+
+    // Create/delete/update playlist songs
+    public void checkGenreForPlaylist() {
+        // Iterate over each genre we have counted
+        for (String genre : genreCount.keySet()) {
+            int count = genreCount.get(genre);
+            // If there are at least 10 songs for this genre
+            if (count >= 10) {
+                // If no playlist for this genre exists, create
+                if (getPlaylistFromLibrary(genre) == null) {    
+                    Playlist genrePlaylist = new Playlist(genre);
+                    for (Song s : userSongs) { // Add all songs to new playlist
+                        if (s.getGenre().equalsIgnoreCase(genre)) {
+                            genrePlaylist.addSongs(s);
+                        }
+                    }
+                    userPlaylists.add(genrePlaylist);
+                }
+            } else { 
+                // If there is a playlist for this genre but we now have fewer than 10 songs,
+                // remove that playlist from the library, or dont do anything.
+                Playlist genrePlaylist = getPlaylistFromLibrary(genre);
+                if (genrePlaylist != null) {
+                    userPlaylists.remove(genrePlaylist);
+                }
+            }
+        }
+    }
 }
