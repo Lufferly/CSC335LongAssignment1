@@ -471,7 +471,7 @@ public class View {
             return;
         }
         String[] songData = songToRate.split(",");            // Split the songToRate into its data (dumb)
-        userLibrary.rateSong(songData[0], songData[1], rating);     // Rate the song
+        userLibrary.rateSong(songData[0].trim(), songData[1].trim(), rating);     // Rate the song
     }
 
     // Given a userInput containing info on what they want to buy, buy the album/song in the uerLibrary

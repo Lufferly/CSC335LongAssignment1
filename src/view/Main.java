@@ -51,6 +51,7 @@ public class Main {
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
                     System.out.println("[!] OR >library plays");
                     System.out.println("[!] OR >library recent");
+                    System.out.println("[!] OR library sort [title or artist or rating]");
                     System.out.println("[!] OR >library delete [album(s) or song(s)] deleteQuery!");
                     continue;
                 }
@@ -196,6 +197,7 @@ public class Main {
         System.out.println("  > library playlist(s)       - View all playlists in your library.");
         System.out.println("  > library plays             - View the total amount of songplays and the 10 most played songs in the library.");
         System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
+        System.out.println("  > library sort [title or artist or rating]  -View the library by its sorted titles, aritists, or ratings");
         System.out.println("  > library search [song(s) or album(s)] [name or author] *searchQuery    -Search for songs or albums in your library");
         System.out.println("  > library sort [song name, artist, or rating]                 - Sort all the songs in the library and display them.\n");
         
@@ -217,7 +219,7 @@ public class Main {
         // General Commands
         System.out.println("GENERAL COMMANDS:");
         System.out.println("  > help                 - Display this help menu.");
-        System.out.println("  > exit                 - Quit the application.");
+        System.out.println("  > exit                 - Quit the application and save all user data.");
         System.out.println("  > user [username]      - Set your username to a new username.");
         System.out.println("  > user                 - Get your username.");
         System.out.println("====================================================\n");
