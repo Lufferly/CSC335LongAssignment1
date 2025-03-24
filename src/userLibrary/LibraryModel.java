@@ -410,7 +410,7 @@ public class LibraryModel {
     // Internal helper to get a song that we own based on name and author
     private Song getSongFromLibrary(String songName, String songAuthor) {
         for (Song song : userSongs) {
-            if (song.getName().equals(songName) && song.getAuthor().equals(songAuthor)) {
+            if (song.getName().equals(songName.toLowerCase()) && song.getAuthor().equals(songAuthor.toLowerCase())) {
                 return song;
             }
         }

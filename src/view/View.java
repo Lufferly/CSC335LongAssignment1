@@ -621,7 +621,6 @@ public class View {
 
         String playlistName = userInput.get(2);
         String songQuery = userInput.get(3);
-
         String songToAdd = getFromList(userLibrary.getAllSongs(), songQuery);   // Try and find the song to add
 
         if (songToAdd == null) {     // Check we could find a song
@@ -635,7 +634,7 @@ public class View {
 
     // Given a playlist and a song, attempt to remove that song from the playlist
     // This is kinda bad cause we dont consider only whats in the playlist,
-    //  but doing so would require some ugly backpassing between the library and view, maybe ill do it later
+    // but doing so would require some ugly backpassing between the library and view, maybe ill do it later
     public void removeSongFromPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");

@@ -33,9 +33,9 @@ public class Song {
 
 	public int getPlays() { return this.plays; }		// Get the plays of this song
 	
-	public String getName() { return name; } // Returns name of the song
+	public String getName() { return name.toLowerCase(); } // Returns name of the song
 	
-	public String getAuthor() { return author; }	// Returns name of the author
+	public String getAuthor() { return author.toLowerCase(); }	// Returns name of the author
 	
 	public void makeFavorite() { this.favorite = true; }	// Makes a song favorite	
 
