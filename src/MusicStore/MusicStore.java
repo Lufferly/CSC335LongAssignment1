@@ -168,7 +168,7 @@ public class MusicStore {
         for (Album thisAlbum : albums) {
             for (Song thisSong : thisAlbum.getSongObjects()) {
                 if (thisSong.equals(querySong)) {
-                    return thisAlbum.albumData(false); // False tells us
+                    return thisAlbum.albumData(false); // False tells us not to get the songs
                 }
             }
         }

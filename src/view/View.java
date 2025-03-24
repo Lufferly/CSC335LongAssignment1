@@ -564,7 +564,7 @@ public class View {
                 // Check if the represented song is in the library
                 String songName = string.split(",")[0].trim();
                 String songAuthor = string.split(",")[1].trim();
-                Song checkingSong = new Song(songName, songAuthor);
+                Song checkingSong = new Song(songName, songAuthor, null);
                 if (userLibrary.contains(checkingSong)) {
                     extraInfo = " (ALREADY IN LIBRARY)";
                 }
