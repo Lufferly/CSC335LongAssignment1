@@ -192,17 +192,19 @@ public class Main {
         System.out.println("  > library artists(s)        - View all artists in your personal library.");
         System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.");
-        System.out.println("  > library plays             - View the total amount of songplays and the 10 most played songs in the library.");
+        System.out.println("  > library plays             - View the total amount of plays and the 10 most played songs in the library.");
         System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
-        System.out.println("  > library search [song(s) or album(s)] [name or author] *searchQuery    -Search for songs or albums in your library");
-        System.out.println("  > library sort [song name, artist, or rating]                 - Sort all the songs in the library and display them.\n");
-        
-    
+        System.out.println("  > library shuffle           - Shuffle the songs in the library in random order.");
+        System.out.println("  > library sort [title, artist, or rating]           - Sort all the songs in the library and display them.");
+        System.out.println("  > library song(s) genre *genre                          - Get all the songs by a given genre.");
+        System.out.println("  > library search [song(s) or album(s)] [name or author] *searchQuery    - Search for songs or albums in your library.\n");
+
         // Playlist Commands
         System.out.println("PLAYLIST COMMANDS:");
         System.out.println("  > playlist [playlist name]                    - View a playlist's songs.");
         System.out.println("  > playlist create [playlist name]             - Create a new playlist.");
         System.out.println("  > playlist add [playlist name] [song name]    - Add a song to a playlist.");
+        System.out.println("  > playlist shuffle [playlist name]            - Shuffle the songs in the playlist in random order.");
         System.out.println("  > playlist remove [playlist name] [song name] - Remove a song from a playlist.\n");
     
         // Song Management Commands
