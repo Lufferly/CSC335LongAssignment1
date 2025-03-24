@@ -598,18 +598,20 @@ public class LibraryModel {
         Playlist p = getPlaylistFromLibrary(playlistName);
         if (p != null && p.getName().equals(playlistName.trim()))
             p.sortPlaylistByRating();
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 
     public void sortPlaylistByTitle(String playlistName) {
         Playlist p = getPlaylistFromLibrary(playlistName);
-        if (p != null && p.getName().equals(playlistName.trim())) {
+        if (p != null && p.getName().equals(playlistName.trim()))
             p.sortPlaylistByName();
-        }
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 
     public void sortPlaylistByArtist(String playlistName) {
         Playlist p = getPlaylistFromLibrary(playlistName);
         if (p != null && p.getName().equals(playlistName.trim())) 
             p.sortPlaylistByAuthor();
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 }
