@@ -9,30 +9,33 @@ public class Song {
 	private boolean favorite; 	// Whether the song is favorite or not
 	private int rating;		    // Save rating as a String
 	private int plays;
+	private String genre;		// Genre of the song
 	
-	public Song(String songName, String authorName) {
+	public Song(String songName, String authorName, String genre) {
 		this.name = songName;
 		this.author = authorName;
 		favorite = false;
 		rating = 0;
 		plays = 0;
+		this.genre = genre;
 	}
 
-	public Song(Song song) {
+	public Song(Song song) {	// Copy constructor
 		this.name = song.name;
 		this.author = song.author;
 		this.favorite = song.favorite;
 		this.rating = song.rating;
 		this.plays = song.plays;
+		this.genre = song.genre;
 	}
 
 	public void playsong() { plays++; }			// Play a song once
 
 	public int getPlays() { return this.plays; }		// Get the plays of this song
 	
-	public String getName() { return name; } // Returns name of the song
+	public String getName() { return name.toLowerCase(); } // Returns name of the song
 	
-	public String getAuthor() { return author; }	// Returns name of the author
+	public String getAuthor() { return author.toLowerCase(); }	// Returns name of the author
 	
 	public void makeFavorite() { this.favorite = true; }	// Makes a song favorite	
 
@@ -41,6 +44,8 @@ public class Song {
 	public void unfavorite() { this.favorite = false; }		// Makes song not favorite
 	
 	public int getRating() { return rating; }	// Returns rating as a String
+
+	public String getGenre() { return genre.toLowerCase(); }	// Returns the genre of the album it comes from
 	
 	// Sets new rating and makes song favorite automatically if rating is 5
 	public void setRating (int newRating) {
@@ -64,11 +69,10 @@ public class Song {
 				stars = stars + '*';
 			}
 		}
-
 		if (rating > 0) {
-			return name + ", " + author + ", " + stars;
+			return name + ", " + author + ", " + stars + ", " + genre;
 		} else {
-			return name + ", " + author;
+			return name + ", " + author + ", " + genre;
 		}
 	}
 
@@ -87,13 +91,14 @@ public class Song {
 		dataString += "favorite:" + Boolean.toString(favorite) + ";";
 		dataString += "rating:" + Integer.toString(rating) + ";";
 		dataString += "plays:" + Integer.toString(plays) + ";";
+		dataString += "genre:" + genre + ";";
 
 		return dataString;
 	}
 
 	// Create a song object based on the dataString from songData()
 	public static Song songFromSongData(String songData) {
-		Song newSong = new Song(null, null);
+		Song newSong = new Song(null, null, null);
 		
 		// Split the songData string into its individual data segments
 		ArrayList<String[]> songDataList = new ArrayList<>();
@@ -122,10 +127,10 @@ public class Song {
 				newSong.rating = Integer.parseInt(value);
 			} else if (key.equals("plays")) {
 				newSong.plays = Integer.parseInt(value);
+			} else if (key.equals("genre")) {
+				newSong.genre = value;
 			}
 		}
-
-
 		return newSong;
 	}
 

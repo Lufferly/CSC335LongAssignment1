@@ -1,11 +1,7 @@
 package MusicStore;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 // The music store class. A repository for all the albums (and therefore songs) a user can get.
 //  Esentially an information getting class for the view.
@@ -166,7 +162,7 @@ public class MusicStore {
     //  The album data will not contain the album's songs
     public String getSongAlbumData(String songName, String songAuthor) {
         // Create a dummy song for comparing songs
-        Song querySong = new Song(songName, songAuthor);
+        Song querySong = new Song(songName, songAuthor, null);
         // Loop through all the songs in an album, if you find a matching song return the string version
         //  of that album
         for (Album thisAlbum : albums) {

@@ -1,20 +1,11 @@
 package view;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.random.*;
+import java.util.*;
 
-import MusicStore.Album;
-import MusicStore.MusicStore;
-import MusicStore.Song;
+import MusicStore.*;
 import userLibrary.LibraryModel;
 
 
@@ -250,12 +241,8 @@ public class View {
             System.out.println("Format should be view musicstore [album(s) or song(s)]");
             return;
         }
-
-        // What the user wants to see
-        String userInterest = userInput.get(1);
-
-        // All the things we need to print
-        ArrayList<String> returnedData;
+        String userInterest = userInput.get(1);     // What the user wants to see
+        ArrayList<String> returnedData;         // All the things we need to print
 
         if (userInterest.contains("album")) {  // View all the albums in the musicstore
             returnedData = musicStore.getAllAlbums();
@@ -294,9 +281,16 @@ public class View {
                 System.out.println(album);
             }
         } else if (userQuery.contains("song")) {
-            ArrayList<String> allSongs = userLibrary.getAllSongs();
-            for (String song : allSongs) {
-                System.out.println(song);
+            if (userInput.size() == 2) {            // Just view all songs
+                ArrayList<String> allSongs = userLibrary.getAllSongs();
+                for (String song : allSongs) {
+                    System.out.println(song);
+                }
+            } else if (userInput.size() > 3 && userInput.get(2).equals("genre")) {
+                ArrayList<String> allSongs = userLibrary.getSongsbyGenre(userInput.get(3));     // Get songs by genre
+                for (String song : allSongs) {
+                    System.out.println(song);
+                }
             }
         } else if (userQuery.contains("artist")) {
             ArrayList<String> allArtists = userLibrary.getAllArtists();
@@ -519,18 +513,19 @@ public class View {
         // If we found a song
         String chosenName = chosenSong.split(",")[0].trim();
         String chosenAuthor = chosenSong.split(",")[1].trim();
-        userLibrary.buySong(chosenName, chosenAuthor);      // Buy song by name & author
+        String chosenGenre = chosenSong.split(",")[2].trim();     
+        userLibrary.buySong(chosenName, chosenAuthor, chosenGenre);      // Buy song by name & author
 
         // Get the album data for the chosen song
-        String chosenSongAlbumData = musicStore.getSongAlbumData(chosenName, chosenAuthor);
+        String chosenSongAlbumData = musicStore.getSongAlbumData(chosenName, chosenAuthor);   
+
         // Construct the album
         Album newAlbum = Album.albumFromAlbumData(chosenSongAlbumData);
 
         // Add the album to the library, this will check for copies
         userLibrary.addAlbum(newAlbum);
         // Add the song to the album in the library
-        userLibrary.addSongToAlbum(new Song(chosenName, chosenAuthor), newAlbum);
-
+        userLibrary.addSongToAlbum(new Song(chosenName, chosenAuthor, newAlbum.getGenre()), newAlbum);
     }
 
     // Search in a given music store, returns a list of results
@@ -670,7 +665,6 @@ public class View {
 
         String playlistName = userInput.get(2);
         String songQuery = userInput.get(3);
-
         String songToAdd = getFromList(userLibrary.getAllSongs(), songQuery);   // Try and find the song to add
 
         if (songToAdd == null) {     // Check we could find a song
@@ -684,7 +678,7 @@ public class View {
 
     // Given a playlist and a song, attempt to remove that song from the playlist
     // This is kinda bad cause we dont consider only whats in the playlist,
-    //  but doing so would require some ugly backpassing between the library and view, maybe ill do it later
+    // but doing so would require some ugly backpassing between the library and view, maybe ill do it later
     public void removeSongFromPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
         if (userInput.size() < 4) {
             System.out.println("[!] Error! Invalid playlist create command! Not enough arguments!");
@@ -727,45 +721,11 @@ public class View {
             System.out.println("[!] Error: Please specify the name of the song you want to play");
             return;
         }
-        String songName = userInput.get(1);
-        ArrayList<String> matches = new ArrayList<String>();
-        for (String song : userLibrary.getAllSongs()) {
-            if (song.toLowerCase().contains(songName)) {
-                matches.add(song);
-            }
-        }
-
-        if (matches.size() > 1) {  // If we got multiple matches
-            System.out.println("[!] That came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you want to play:");
-            // Print out all of the possible options
-            int i = 1;  // Used for enumerating the options
-            for (String song : matches) {
-                System.out.print(i);
-                System.out.println(": " + song);
-                i += 1;
-            }
-            System.out.print("> ");
-            int userChoice =- 1;
-            try {       // Turn the user's choice into an integer, and subtract one
-                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (Exception NumberFormatException) {
-                System.out.println("[!] Error! Could not convert your input to a number!");
-                return;
-            }
-            if (((userChoice) >= matches.size()) || ((userChoice) < 0)) {       // Check the bounds is good
-                System.out.println("[!] Error! That number is out of bounds!");
-                return;
-            }
-            String chosenName = matches.get(userChoice).split(",")[0];
-            String chosenAuthor = matches.get(userChoice).split(",")[1];
-            userLibrary.playSong(chosenName, chosenAuthor);         // Play the chosen song
-        } else if (matches.size() == 1) {                   // If only one result just play it
-            String chosenName = matches.get(0).split(",")[0];
-            String chosenAuthor = matches.get(0).split(",")[1];
+        String chosenSong = getFromList(userLibrary.getAllSongs(), userInput.get(1));
+        if (chosenSong != null) {
+            String chosenName = chosenSong.split(",")[0].trim();
+            String chosenAuthor = chosenSong.split(",")[1].trim();
             userLibrary.playSong(chosenName, chosenAuthor);
-        } else {        // No results 
-            System.out.println("[!] Could not find a song on your library by that name!");
         }
     }
 
@@ -804,26 +764,25 @@ public class View {
         }
     }
 
-    // TODO: The variable names in this suck, this function probably needs a half rewrite
     // Finds a matching or containing string based on the query in list
     //  if multiple possibilities show up, ask the user to chose.
     private String getFromList(ArrayList<String> list, String query) {
         // Get all the possible matches for the song
-        ArrayList<String> possibleSongs = new ArrayList<String>();
-        for (String song: list) {
-            if (song.toLowerCase().contains(query)) {
-                possibleSongs.add(song);
+        ArrayList<String> matches = new ArrayList<String>();
+        for (String element: list) {
+            if (element.toLowerCase().contains(query)) {
+                matches.add(element);
             }
         }
-        if (possibleSongs.size() > 1) {  // If we got multiple matches
+        if (matches.size() > 1) {  // If we got multiple matches
             // Give the user an enumerated list of options and let them choose
             System.out.println("[!] That query came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you meant:");
+            System.out.println("Please enter the NUMBER of the element that you meant:");
             // Print out all of the possible options
             int i = 1;  // Used for enumerating the options
-            for (String song : possibleSongs) {
+            for (String element : matches) {
                 System.out.print(i);
-                System.out.println(": " + song);
+                System.out.println(": " + element);
                 i += 1;
             }
             System.out.print(" > ");
@@ -836,23 +795,23 @@ public class View {
                 System.out.println("[!] Error! Could not convert your input to a number!");
                 return null;
             }
-            if (((userChoice) >= possibleSongs.size()) || ((userChoice) < 0)) {     // Check the bounds is good
+            if (((userChoice) >= matches.size()) || ((userChoice) < 0)) {     // Check the bounds is good
                 System.out.println("[!] Error! That number is out of bounds!");
                 return null;
             }
-            String chosenSong = possibleSongs.get(userChoice);  
-            return chosenSong;      // return chosen song
-        } else if (possibleSongs.size() == 1) { // We only found one song
-            return possibleSongs.get(0);
+            String chosenElement = matches.get(userChoice);  
+            return chosenElement;      // return chosen element
+        } else if (matches.size() == 1) { // We only found one match
+            return matches.get(0);
         } else {
-            System.out.println("[!] Could not find a song by that name!");
+            System.out.println("[!] Could not find an element by that name!");
             return null;
         }
     }
 
     public void libraryShuffle(LibraryModel userLibrary) {
         userLibrary.shuffleSongs();
-        System.out.println("Songs shuffled successfully:");
+        System.out.println("Songs shuffled successfully!");
     }
 
     public void shufflePlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
