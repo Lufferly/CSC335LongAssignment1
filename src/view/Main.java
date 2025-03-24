@@ -197,13 +197,13 @@ public class Main {
         System.out.println("  > library album(s)          - View all albums in your personal library.");
         System.out.println("  > library song(s)           - View all songs in your personal library.");
         System.out.println("  > library artists(s)        - View all artists in your personal library.");
-        System.out.println("  > library favorite(s)       - View all favorite songs in your library.");
         System.out.println("  > library playlist(s)       - View all playlists in your library.");
         System.out.println("  > library plays             - View the total amount of plays and the 10 most played songs in the library.");
         System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
         System.out.println("  > library shuffle           - Shuffle the songs in the library in random order.");
         System.out.println("  > library sort [title, artist, or rating]           - Sort all the songs in the library and display them.");
         System.out.println("  > library song(s) genre *genre                      - Get all the songs by a given genre.");
+        System.out.println("  > library delete [album || song] title              - Delete a song or album from the library.");
         System.out.println("  > library search [song(s) or album(s)] [name or author] *searchQuery    - Search for songs or albums in your library.\n");
 
         // Playlist Commands

@@ -761,6 +761,8 @@ public class View {
                     String author = albumString.split(",")[1].trim();
                     userLibrary.deleteAlbum(title, author);
                 }
+            } else {
+                System.out.println("[!] Invalid delete command. Format should be: 'library delete [song || album] title'");
             }
         }
     }

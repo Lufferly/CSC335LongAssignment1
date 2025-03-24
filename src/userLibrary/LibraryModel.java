@@ -300,8 +300,10 @@ public class LibraryModel {
             toprated.addSongs(songToRate);
         } else if (newRating == 4) toprated.addSongs(songToRate);   // Add only to toprated
         else if (newRating>=0 && newRating<4) {  // Maybe song is downrated, remove from toprated
-            if (toprated.contains(songToRate)) 
+            if (toprated.contains(songToRate)) {
                 toprated.removeSong(songToRate.getName(), songToRate.getAuthor());
+            }
+            toprated.removeSong(songToRate.getName(), songToRate.getAuthor());
         }
         songToRate.setRating(newRating);        // Set new song rating
         for (Playlist p: userPlaylists) {
