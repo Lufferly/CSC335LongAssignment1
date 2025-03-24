@@ -47,10 +47,7 @@ public class Song {
 
 	public String getGenre() { return genre.toLowerCase(); }	// Returns the genre of the album it comes from
 	
-	// Sets new rating and makes song favorite automatically if rating is 5
-	public void setRating (int newRating) {
-		this.rating = newRating;
-	}
+	public void setRating (int newRating) { this.rating = newRating; } // Sets new rating
 	
 	// Check if two songs equal eachother
 	// They equal eachother if they have the same name and author

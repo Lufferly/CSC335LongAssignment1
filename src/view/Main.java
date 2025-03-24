@@ -106,12 +106,13 @@ public class Main {
                 if (userInput.size() < 2) {
                     System.out.println("[!] Error! Invalid playlist command!");
                     System.out.println("[!] The format is: >playlist create playlist_name # for creating a playlist");
-                    System.out.println("OR >playlist playlist_name   # for viewing songs in a playlist");
+                    System.out.println("OR >playlist playlist_name                    # for viewing songs in a playlist");
                     System.out.println("OR >playlist remove playlist_name song_name   # for removing songs from a playlist");
-                    System.out.println("OR >playlist add playlist_name song_name   # for adding songs to a playlist");
+                    System.out.println("OR >playlist add playlist_name song_name      # for adding songs to a playlist");
+                    System.out.println("OR >playlist shuffle playlist_name            # for shuffling songs in a playlist");
+                    System.out.println("OR >playlist sort criteris playlist_name      # for sorting songs in a playlist");
                     continue;
                 }
-
                 if (userInput.get(1).equals("create")) {    // For creating a playlist
                     System.out.println("creating...");
                     view.createPlaylist(userInput, userLibrary);
@@ -122,11 +123,11 @@ public class Main {
                     System.out.println("removing...");
                     view.removeSongFromPlaylist(userInput, userLibrary);
                 } else if (userInput.get(1).equals("shuffle")) {
+                    System.out.println("Shuffling...");
                     view.shufflePlaylist(userInput, userLibrary);
-                    System.out.println("Playlist shuffled successfully!");
                 } else if (userInput.get(1).equals("sort")) {
+                    System.out.println("Sorting...");
                     view.sortPlaylist(userInput, userLibrary);
-                    System.out.println("Playlist sorted successfully!");
                 } else {        // Try and view the given playlist
                     view.viewPlaylist(userInput, userLibrary);
                 }
