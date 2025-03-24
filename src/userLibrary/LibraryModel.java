@@ -595,23 +595,21 @@ public class LibraryModel {
     }
 
     public void sortPlaylistByRating(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByRating();
-            return;
-        }
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim()))
+            p.sortPlaylistByRating();
     }
 
     public void sortPlaylistByTitle(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByName();
-            return;
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim())) {
+            p.sortPlaylistByName();
         }
     }
 
     public void sortPlaylistByArtist(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByAuthor();
-            return;
-        }
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim())) 
+            p.sortPlaylistByAuthor();
     }
 }

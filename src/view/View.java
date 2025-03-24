@@ -832,9 +832,6 @@ public class View {
             if (userInput.get(2).contains("rating")) userLibrary.sortPlaylistByRating(playlistName);
             else if (userInput.get(2).contains("artist")) userLibrary.sortPlaylistByArtist(playlistName);
             else if (userInput.get(2).contains("title")) userLibrary.sortPlaylistByTitle(playlistName);
-            for (String song: userLibrary.getAllSongs()) {
-                System.out.println(song);
-            }
         }
     }
 }
