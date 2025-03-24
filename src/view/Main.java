@@ -28,10 +28,10 @@ public class Main {
 
             // Search functionality
             // should be in format:
-            // >search [album or song] [name or author] query
+            // >search [album or song] [name or author] query [-albuminfo (optional)]
             if (userInput.get(0).equals("search")) {
                 System.out.println("searching...");
-                view.search(userInput, musicStore);
+                view.search(userInput, musicStore, userLibrary);
             }
             // view is used for viewing the albums and songs in the music store
             else if (userInput.get(0).equals("musicstore")) {
@@ -51,6 +51,7 @@ public class Main {
                     System.out.println("[!] OR >library search [album(s) or song(s)] [name or author] searchQuery!");
                     System.out.println("[!] OR >library plays");
                     System.out.println("[!] OR >library recent");
+                    System.out.println("[!] OR library sort [title or artist or rating]");
                     System.out.println("[!] OR >library delete [album(s) or song(s)] deleteQuery!");
                     continue;
                 }
@@ -171,6 +172,8 @@ public class Main {
     
         // Search Commands
         System.out.println("SEARCH COMMANDS:");
+        System.out.println("  > search [album or song] [name or author] query [-albuminfo (optional)]");
+        System.out.println("    (-albuminfo is optional, and will give you additional info on the album the song comes from)");
         System.out.println("  > search album name [query]     - Search for an album by its name.");
         System.out.println("  > search album author [query]   - Search for albums by a specific artist.");
         System.out.println("  > search song name [query]      - Search for a song by its title.");
@@ -194,6 +197,7 @@ public class Main {
         System.out.println("  > library playlist(s)       - View all playlists in your library.");
         System.out.println("  > library plays             - View the total amount of plays and the 10 most played songs in the library.");
         System.out.println("  > library recent(s)         - View the most recent played songs in the library.");
+        System.out.println("  > library sort [title or artist or rating]  -View the library by its sorted titles, aritists, or ratings");
         System.out.println("  > library shuffle           - Shuffle the songs in the library in random order.");
         System.out.println("  > library sort [title, artist, or rating]           - Sort all the songs in the library and display them.");
         System.out.println("  > library song(s) genre *genre                          - Get all the songs by a given genre.");
@@ -217,7 +221,7 @@ public class Main {
         // General Commands
         System.out.println("GENERAL COMMANDS:");
         System.out.println("  > help                 - Display this help menu.");
-        System.out.println("  > exit                 - Quit the application.");
+        System.out.println("  > exit                 - Quit the application and save all user data.");
         System.out.println("  > user [username]      - Set your username to a new username.");
         System.out.println("  > user                 - Get your username.");
         System.out.println("====================================================\n");

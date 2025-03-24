@@ -291,7 +291,7 @@ public class LibraryModel {
     public void rateSong(String songName, String songAuthor, int newRating) {
         Song songToRate = getSongFromLibrary(songName, songAuthor);
         if (songToRate == null) {
-            System.out.print("[!] Error! Song does not exist in library!");
+            System.out.println("[!] Error! Song does not exist in library!");
             return;
         }
         if (newRating == 5) {    // If rating = 5
@@ -501,7 +501,7 @@ public class LibraryModel {
 
     // Sort songs by rating in ascending order (I don't agree, I think should be descending logically)
     public void sortByRating() {
-        Collections.sort(userSongs, Comparator.comparingInt(Song::getRating));
+        Collections.sort(userSongs, Comparator.comparingInt(Song::getRating).reversed());
     }
 
     // Delete song from the user songlist and all the library
