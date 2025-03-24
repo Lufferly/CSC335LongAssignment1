@@ -71,7 +71,7 @@ public class LibraryModel {
                         mostPlayed = playlistToAdd;
                     } else if (playlistToAdd.getName().equals("recentlyplayed")) {
                         recentlyPlayed = playlistToAdd;
-                    } else if (playlistToAdd.getName().equals("favorites")) {
+                    } else if (playlistToAdd.getName().equals("favourites")) {
                         favourites = playlistToAdd;
                     } else if (playlistToAdd.getName().equals("toprated")) {
                         toprated = playlistToAdd;
@@ -590,6 +590,27 @@ public class LibraryModel {
                     userPlaylists.remove(genrePlaylist);
                 }
             }
+        }
+    }
+
+    public void sortPlaylistByRating(String playlistName) {
+        for (Playlist p : userPlaylists) {
+            if (p.getName().equals(playlistName)) p.sortPlaylistByRating();
+            return;
+        }
+    }
+
+    public void sortPlaylistByTitle(String playlistName) {
+        for (Playlist p : userPlaylists) {
+            if (p.getName().equals(playlistName)) p.sortPlaylistByName();
+            return;
+        }
+    }
+
+    public void sortPlaylistByArtist(String playlistName) {
+        for (Playlist p : userPlaylists) {
+            if (p.getName().equals(playlistName)) p.sortPlaylistByAuthor();
+            return;
         }
     }
 }

@@ -24,7 +24,7 @@ public class View {
 
         String userString = null;
         while (validInput == false) {
-            System.out.print(" > ");
+            System.out.print("\n > ");
             userString = scanner.nextLine().trim();
             // Check we actually got something
             if (userString == null) {
@@ -744,7 +744,7 @@ public class View {
 
     public void libraryDelete(LibraryModel userLibrary, ArrayList<String> userInput) {
         if (userInput.size() < 4) {
-            System.out.println("[!] Invalid sort command. Format should be: 'library delete [song || album] title'");
+            System.out.println("[!] Invalid delete command. Format should be: 'library delete [song || album] title'");
         } else {
             if (userInput.get(2).contains("song")) {
                 String songString = getFromList(userLibrary.getAllSongs(), userInput.get(3));
@@ -821,6 +821,20 @@ public class View {
             String chosenName = getFromList(userLibrary.getAllPlaylists(), userInput.get(2));
             if (chosenName != null) userLibrary.shufflePlaylist(chosenName); // If name matches, shuffle
             else System.err.println("[!] Couldn't find any playlists by that name");
+        }
+    }
+
+    public void sortPlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
+        if (userInput.size() < 4) {
+            System.err.println("Invalid playlist sorting command. Should be: 'playlist sort [title || artist || rating] [name].");
+        } else {
+            String playlistName = userInput.get(3);
+            if (userInput.get(2).contains("rating")) userLibrary.sortPlaylistByRating(playlistName);
+            else if (userInput.get(2).contains("artist")) userLibrary.sortPlaylistByArtist(playlistName);
+            else if (userInput.get(2).contains("title")) userLibrary.sortPlaylistByTitle(playlistName);
+            for (String song: userLibrary.getAllSongs()) {
+                System.out.println(song);
+            }
         }
     }
 }
