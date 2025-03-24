@@ -126,7 +126,7 @@ public class Main {
                     System.out.println("Playlist shuffled successfully!");
                 } else if (userInput.get(1).equals("sort")) {
                     view.sortPlaylist(userInput, userLibrary);
-                    System.out.println("Playlist shuffled successfully!");
+                    System.out.println("Playlist sorted successfully!");
                 } else {        // Try and view the given playlist
                     view.viewPlaylist(userInput, userLibrary);
                 }

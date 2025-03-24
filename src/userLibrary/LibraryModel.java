@@ -595,23 +595,23 @@ public class LibraryModel {
     }
 
     public void sortPlaylistByRating(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByRating();
-            return;
-        }
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim()))
+            p.sortPlaylistByRating();
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 
     public void sortPlaylistByTitle(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByName();
-            return;
-        }
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim()))
+            p.sortPlaylistByName();
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 
     public void sortPlaylistByArtist(String playlistName) {
-        for (Playlist p : userPlaylists) {
-            if (p.getName().equals(playlistName)) p.sortPlaylistByAuthor();
-            return;
-        }
+        Playlist p = getPlaylistFromLibrary(playlistName);
+        if (p != null && p.getName().equals(playlistName.trim())) 
+            p.sortPlaylistByAuthor();
+        else System.err.println("[!] Error: Couldn't find any playlists by that name.");
     }
 }
