@@ -45,7 +45,7 @@ public class Song {
 	
 	public int getRating() { return rating; }	// Returns rating as a String
 
-	public String getGenre() { return genre; }	// Returns the genre of the album it comes from
+	public String getGenre() { return genre.toLowerCase(); }	// Returns the genre of the album it comes from
 	
 	// Sets new rating and makes song favorite automatically if rating is 5
 	public void setRating (int newRating) {
@@ -91,6 +91,7 @@ public class Song {
 		dataString += "favorite:" + Boolean.toString(favorite) + ";";
 		dataString += "rating:" + Integer.toString(rating) + ";";
 		dataString += "plays:" + Integer.toString(plays) + ";";
+		dataString += "genre:" + genre + ";";
 
 		return dataString;
 	}
@@ -126,6 +127,8 @@ public class Song {
 				newSong.rating = Integer.parseInt(value);
 			} else if (key.equals("plays")) {
 				newSong.plays = Integer.parseInt(value);
+			} else if (key.equals("genre")) {
+				newSong.genre = value;
 			}
 		}
 		return newSong;

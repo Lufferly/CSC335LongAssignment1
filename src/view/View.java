@@ -508,8 +508,7 @@ public class View {
         // Add the album to the library, this will check for copies
         userLibrary.addAlbum(newAlbum);
         // Add the song to the album in the library
-        userLibrary.addSongToAlbum(new Song(chosenName, chosenAuthor), newAlbum);
-
+        userLibrary.addSongToAlbum(new Song(chosenName, chosenAuthor, newAlbum.getGenre()), newAlbum);
     }
 
     // Search in a given music store, returns a list of results
@@ -679,45 +678,11 @@ public class View {
             System.out.println("[!] Error: Please specify the name of the song you want to play");
             return;
         }
-        String songName = userInput.get(1);
-        ArrayList<String> matches = new ArrayList<String>();
-        for (String song : userLibrary.getAllSongs()) {
-            if (song.toLowerCase().contains(songName)) {
-                matches.add(song);
-            }
-        }
-
-        if (matches.size() > 1) {  // If we got multiple matches
-            System.out.println("[!] That came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you want to play:");
-            // Print out all of the possible options
-            int i = 1;  // Used for enumerating the options
-            for (String song : matches) {
-                System.out.print(i);
-                System.out.println(": " + song);
-                i += 1;
-            }
-            System.out.print("> ");
-            int userChoice =- 1;
-            try {       // Turn the user's choice into an integer, and subtract one
-                userChoice = Integer.parseInt(scanner.nextLine()) - 1;
-            } catch (Exception NumberFormatException) {
-                System.out.println("[!] Error! Could not convert your input to a number!");
-                return;
-            }
-            if (((userChoice) >= matches.size()) || ((userChoice) < 0)) {       // Check the bounds is good
-                System.out.println("[!] Error! That number is out of bounds!");
-                return;
-            }
-            String chosenName = matches.get(userChoice).split(",")[0];
-            String chosenAuthor = matches.get(userChoice).split(",")[1];
-            userLibrary.playSong(chosenName, chosenAuthor);         // Play the chosen song
-        } else if (matches.size() == 1) {                   // If only one result just play it
-            String chosenName = matches.get(0).split(",")[0];
-            String chosenAuthor = matches.get(0).split(",")[1];
+        String chosenSong = getFromList(userLibrary.getAllSongs(), userInput.get(1));
+        if (chosenSong != null) {
+            String chosenName = chosenSong.split(",")[0].trim();
+            String chosenAuthor = chosenSong.split(",")[1].trim();
             userLibrary.playSong(chosenName, chosenAuthor);
-        } else {        // No results 
-            System.out.println("[!] Could not find a song on your library by that name!");
         }
     }
 
@@ -769,7 +734,7 @@ public class View {
         if (matches.size() > 1) {  // If we got multiple matches
             // Give the user an enumerated list of options and let them choose
             System.out.println("[!] That query came up with multiple results!");
-            System.out.println("Please enter the NUMBER of the song that you meant:");
+            System.out.println("Please enter the NUMBER of the element that you meant:");
             // Print out all of the possible options
             int i = 1;  // Used for enumerating the options
             for (String element : matches) {
@@ -796,7 +761,7 @@ public class View {
         } else if (matches.size() == 1) { // We only found one match
             return matches.get(0);
         } else {
-            System.out.println("[!] Could not find a song by that name!");
+            System.out.println("[!] Could not find an element by that name!");
             return null;
         }
     }
