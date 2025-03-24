@@ -736,6 +736,7 @@ public class View {
             if (userInput.get(2).contains("rating")) userLibrary.sortByRating();
             else if (userInput.get(2).contains("artist")) userLibrary.sortByArtist();
             else if (userInput.get(2).contains("title")) userLibrary.sortByTitle();
+            else System.out.println("[!] Invalid sort command. Format should be: 'library sort [title || artist || rating]'");
             for (String song: userLibrary.getAllSongs()) {
                 System.out.println(song);
             }
@@ -811,7 +812,7 @@ public class View {
 
     public void libraryShuffle(LibraryModel userLibrary) {
         userLibrary.shuffleSongs();
-        System.out.println("Songs shuffled successfully!");
+        System.out.println("Shuffling songs...");
     }
 
     public void shufflePlaylist(ArrayList<String> userInput, LibraryModel userLibrary) {
@@ -832,6 +833,7 @@ public class View {
             if (userInput.get(2).contains("rating")) userLibrary.sortPlaylistByRating(playlistName);
             else if (userInput.get(2).contains("artist")) userLibrary.sortPlaylistByArtist(playlistName);
             else if (userInput.get(2).contains("title")) userLibrary.sortPlaylistByTitle(playlistName);
+            else System.err.println("Invalid playlist sorting command. Should be: 'playlist sort [title || artist || rating] [name].");
         }
     }
 }

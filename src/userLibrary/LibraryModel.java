@@ -304,6 +304,9 @@ public class LibraryModel {
                 toprated.removeSong(songToRate.getName(), songToRate.getAuthor());
         }
         songToRate.setRating(newRating);        // Set new song rating
+        for (Playlist p: userPlaylists) {
+            if (p.contains(songToRate)) p.syncSongData(songToRate);  // Play song inside playlist
+        }
     }
 
     public ArrayList<String> getFavourites() {      // Get the list of favorite songs (Strings)
@@ -443,7 +446,7 @@ public class LibraryModel {
     // Update the mostPlayed playlist with the latest play count
     private void updateMostPlayed(Song song) {
         if (mostPlayed.contains(song)) {        // Song inside mostPlayed already
-            mostPlayed.playInsidePlaylist(song);    // Play the object inside the playlist
+            mostPlayed.syncSongData(song);;    // Play the object inside the playlist
             mostPlayed.sortByPlays();               // Re-sort list by plays
         } else {                                // Song not in mostplayed
             mostPlayed.addSongs(song);            // Add the song to the list with plays = plays inside the library

@@ -159,9 +159,17 @@ public class Playlist {
         return newPlaylist;
     }
 
-    public void playInsidePlaylist(Song songToPlay) {
-        for (Song s: songList) {
-            if (s.equals(songToPlay)) s.playsong();
+    public void syncSongData(Song librarySong) {
+        for (Song s : songList) {
+            if (s.equals(librarySong)) {
+                s.setRating(librarySong.getRating());
+                s.setPlays(librarySong.getPlays());
+                if (librarySong.isFavourite()) {
+                    s.makeFavorite();
+                } else {
+                    s.unfavorite();
+                }
+            }
         }
     }
 
