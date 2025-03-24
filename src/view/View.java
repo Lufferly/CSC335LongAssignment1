@@ -679,7 +679,7 @@ public class View {
 
         // Get the strings data, and pass it to the userLibrary to be added to a playlist (if it can)
         String[] songData = songToAdd.split(",");
-        userLibrary.addSongToPlaylist(songData[0], songData[1], playlistName);
+        userLibrary.addSongToPlaylist(songData[0].trim(), songData[1].trim(), playlistName);
     }
 
     // Given a playlist and a song, attempt to remove that song from the playlist
