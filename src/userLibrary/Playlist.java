@@ -73,13 +73,18 @@ public class Playlist {
     }
 
     // Sort songs alphabetically by song name
-    public void sortAlphabeticName() {
+    public void sortPlaylistByName() {
         Collections.sort(songList, Comparator.comparing(Song::getName, String.CASE_INSENSITIVE_ORDER));
     }
 
     // Sort songs alphabetically by author name
-    public void sortAlphabeticAuthor() {
+    public void sortPlaylistByAuthor() {
         Collections.sort(songList, Comparator.comparing(Song::getAuthor, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    // Sort songs by rating in ascending order (I don't agree, I think should be descending logically)
+    public void sortPlaylistByRating() {
+        Collections.sort(songList, Comparator.comparingInt(Song::getRating).reversed());
     }
 
     // Sort songs by play count in descending order
