@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import MusicStore.Album;
 import MusicStore.Song;
 import userLibrary.LibraryModel;
+import userLibrary.Playlist;
 
 class libraryTests {
 
@@ -448,6 +449,112 @@ class libraryTests {
 		
 		assertEquals(testLibrary.getAllAlbums().size(), 1);
 		assertTrue(testLibrary.getAllAlbums().get(0).equals("hello,world,punk,3000"));
+	}
+	
+	// I think this code became unused at some point...
+	@Test
+	void testGetPlaylistByNameNone() {
+		assertTrue(testLibrary.getPlaylistByName("nothin") == null);
+	}
+	
+	@Test
+	void testGetSongsByGenreNone() {
+		assertTrue(testLibrary.getSongsbyGenre("nothin").size() == 0);
+	}
+	
+	@Test
+	void testGetSongsByGenreSimple() {
+		testLibrary.addAlbum(testAlbum);
+		ArrayList<String> genreSongs = testLibrary.getSongsbyGenre("rock");
+		assertTrue(genreSongs.contains("x, a, rock"));
+		assertTrue(genreSongs.contains("y, a, rock"));
+		assertTrue(genreSongs.contains("z, a, rock"));
+		assertFalse(genreSongs.contains("this, world, punk"));
+	}
+	
+	@Test
+	void testGetSongsByGenreComplicated() {
+		testLibrary.addAlbum(testAlbum);
+		testLibrary.deleteSong("y", "a");
+		ArrayList<String> genreSongs = testLibrary.getSongsbyGenre("rock");
+		assertTrue(genreSongs.contains("x, a, rock"));
+		assertFalse(genreSongs.contains("y, a, rock"));
+		assertTrue(genreSongs.contains("z, a, rock"));
+		assertFalse(genreSongs.contains("this, world, punk"));
+	}
+	
+	@Test
+	void testSortByTitle() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		testLibrary.sortByTitle();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, sweet"));
+		assertTrue(sortedSongs.get(1).equals("x, a, rock"));
+		assertTrue(sortedSongs.get(2).equals("xxa, c, edm"));
+		assertTrue(sortedSongs.get(3).equals("y, a, rock"));
+		assertTrue(sortedSongs.get(4).equals("z, a, rock"));
+	}
+	
+	@Test
+	void testSortByArtist() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		testLibrary.sortByArtist();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, sweet"));
+		assertTrue(sortedSongs.get(1).equals("x, a, rock"));
+		assertTrue(sortedSongs.get(2).equals("y, a, rock"));
+		assertTrue(sortedSongs.get(3).equals("z, a, rock"));
+		assertTrue(sortedSongs.get(4).equals("xxa, c, edm"));
+	}
+	
+	@Test
+	void testSortByRating() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		// rate the songs (define the order
+		testLibrary.rateSong("b", "1", 5);
+		testLibrary.rateSong("z", "a", 3);
+		testLibrary.rateSong("xxa", "c", 2);
+		testLibrary.rateSong("y", "a", 1);
+		testLibrary.sortByRating();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, *****, sweet"));
+		assertTrue(sortedSongs.get(1).equals("z, a, ***, rock"));
+		assertTrue(sortedSongs.get(2).equals("xxa, c, **, edm"));
+		assertTrue(sortedSongs.get(3).equals("y, a, *, rock"));
+		assertTrue(sortedSongs.get(4).equals("x, a, rock"));
+	}
+	
+	// This automatically tests checkGenreForPlaylist
+	@Test
+	void testCreateGenrePlaylist() {
+		assertTrue(testLibrary.getAllPlaylists().size() == 4);  // No genre playlist
+		// Add a bunch of songs with the same genre
+		testLibrary.buySong("ghost1", "sev", "ambient");
+		testLibrary.buySong("ghost2", "sev", "ambient");
+		testLibrary.buySong("ghost3", "sev", "ambient");
+		testLibrary.buySong("ghost4", "sev", "ambient");
+		testLibrary.buySong("ghost5", "sev", "ambient");
+		testLibrary.buySong("ghost6", "sev", "ambient");
+		testLibrary.buySong("ghost7", "sev", "ambient");
+		testLibrary.buySong("ghost8", "sev", "ambient");
+		testLibrary.buySong("ghost9", "sev", "ambient");
+		// One away from new playlist
+		assertTrue(testLibrary.getAllPlaylists().size() == 4);
+		testLibrary.buySong("ghost10", "sev", "ambient");
+		assertTrue(testLibrary.getAllPlaylists().size() == 5);
+		assertTrue(testLibrary.getPlaylistByName("ambient") != null);
 	}
 	
 	// There really isn't a good way to test loading, but this is an attempt
