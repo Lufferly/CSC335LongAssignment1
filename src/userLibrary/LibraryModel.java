@@ -23,10 +23,10 @@ public class LibraryModel {
         userPlaylists = new ArrayList<Playlist>();
         userAlbums = new ArrayList<Album>();
         userSongs = new ArrayList<Song>();
-        mostPlayed = new Playlist("mostPlayed");
-        recentlyPlayed = new Playlist("recentlyPlayed");
+        mostPlayed = new Playlist("mostplayed");
+        recentlyPlayed = new Playlist("recentlyplayed");
         favourites = new Playlist("favourites");
-        toprated = new Playlist("topRated");
+        toprated = new Playlist("toprated");
         userPlaylists.add(mostPlayed);
         userPlaylists.add(recentlyPlayed);
         userPlaylists.add(favourites); 

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import MusicStore.Album;
 import MusicStore.Song;
 import userLibrary.LibraryModel;
+import userLibrary.Playlist;
 
 class libraryTests {
 
@@ -19,6 +20,8 @@ class libraryTests {
 	private Album testAlbum;
 	// Song not yet added to the library for testing
 	private Song testSong;
+	// Playlists that are included in every single library
+	private ArrayList<String> defaultPlaylists = new ArrayList<String>();
 	
 	public libraryTests() {
 		testLibrary = new LibraryModel("sev");
@@ -30,6 +33,11 @@ class libraryTests {
 		// Automatically add libraryAlbum to the library
 		testLibrary.buyAlbum(libraryAlbum.getName(), libraryAlbum.getAuthor());
 		
+		// The default playlists in every library
+		defaultPlaylists.add("mostplayed");
+		defaultPlaylists.add("recentlyplayed");
+		defaultPlaylists.add("favourites");
+		defaultPlaylists.add("toprated");
 	}
 	
 	@Test
@@ -68,7 +76,7 @@ class libraryTests {
 	@Test
 	void testGetAllSongsAfterAdd() {
 		testLibrary.buyAlbum(testAlbum.getName(), testAlbum.getAuthor());
-		testLibrary.buySong(testSong.getName(), testSong.getAuthor());
+		testLibrary.buySong(testSong.getName(), testSong.getAuthor(), testSong.getGenre());
 		
 		ArrayList<String> oracle = new ArrayList<String>();
 		for (String song : libraryAlbum.getSongs()) {
@@ -93,7 +101,7 @@ class libraryTests {
 	@Test
 	void testGetAllArtistsAfterAdd() {
 		testLibrary.buyAlbum(testAlbum.getName(), testAlbum.getAuthor());
-		testLibrary.buySong(testSong.getName(), testSong.getAuthor());
+		testLibrary.buySong(testSong.getName(), testSong.getAuthor(), testSong.getGenre());
 		
 		ArrayList<String> oracle = new ArrayList<String>();
 		oracle.add(libraryAlbum.getAuthor());
@@ -106,6 +114,11 @@ class libraryTests {
 	@Test
 	void testGetAllPlaylists() {
 		ArrayList<String> oracle = new ArrayList<String>();
+		
+		for (String playlist : defaultPlaylists) {
+			oracle.add(playlist);
+		}
+		
 		assertEquals(testLibrary.getAllPlaylists(), oracle);
 		
 		testLibrary.createPlaylist("hello");
@@ -119,6 +132,10 @@ class libraryTests {
 	@Test
 	void testCreatePlaylists() {
 		ArrayList<String> oracle = new ArrayList<String>();
+		
+		for (String playlist : defaultPlaylists) {
+			oracle.add(playlist);
+		}
 		
 		testLibrary.createPlaylist("hello");
 		testLibrary.createPlaylist("hello");
@@ -134,6 +151,9 @@ class libraryTests {
 	@Test
 	void testRemovePlaylist() {
 		ArrayList<String> oracle = new ArrayList<String>();
+		for (String playlist : defaultPlaylists) {
+			oracle.add(playlist);
+		}
 		
 		testLibrary.createPlaylist("hello");
 		testLibrary.createPlaylist("world");
@@ -143,7 +163,7 @@ class libraryTests {
 		assertEquals(testLibrary.getAllPlaylists(), oracle);
 		
 		testLibrary.removePlaylist("world");
-		oracle.remove(0);
+		oracle.remove(defaultPlaylists.size());
 		assertEquals(testLibrary.getAllPlaylists(), oracle);
 	}
 	
@@ -159,9 +179,9 @@ class libraryTests {
 		testLibrary.addSongToPlaylist("y", "a", "hello");
 		testLibrary.addSongToPlaylist("z", "a", "hello");
 		
-		oracle.add("x,a");
-		oracle.add("y,a");
-		oracle.add("z,a");
+		oracle.add("x, a, rock");
+		oracle.add("y, a, rock");
+		oracle.add("z, a, rock");
 		
 		assertEquals(testLibrary.getPlaylistSongs("hello"), oracle);
 		
@@ -169,8 +189,8 @@ class libraryTests {
 		testLibrary.addSongToPlaylist("y", "a", "hello");
 		testLibrary.addSongToPlaylist("z", "a", "hel");
 		
-		oracle.add("x,a");
-		oracle.add("y,a");
+		oracle.add("x, a, rock");
+		oracle.add("y, a, rock");
 		
 		assertEquals(testLibrary.getPlaylistSongs("hello"), oracle);
 	}
@@ -185,9 +205,9 @@ class libraryTests {
 		testLibrary.addSongToPlaylist("x", "a", "hello");
 		testLibrary.addSongToPlaylist("y", "a", "hello");
 		testLibrary.addSongToPlaylist("z", "a", "hello");
-		oracle.add("x,a");
-		oracle.add("y,a");
-		oracle.add("z,a");
+		oracle.add("x, a, rock");
+		oracle.add("y, a, rock");
+		oracle.add("z, a, rock");
 		assertEquals(testLibrary.getPlaylistSongs("hello"), oracle);
 		
 		testLibrary.removeSongFromPlaylist("x", "a", "hello");
@@ -210,7 +230,7 @@ class libraryTests {
 		testLibrary.favouriteSong("y", "a");
 		testLibrary.favouriteSong("m", "a");
 		testLibrary.favouriteSong("x", "b");
-		oracle.add("y,a");
+		oracle.add("y, a, rock");
 		
 		assertEquals(testLibrary.getFavourites(), oracle);
 	}
@@ -219,17 +239,17 @@ class libraryTests {
 	void testAddFavoritesAfterBuy() {
 		ArrayList<String> oracle = new ArrayList<String>();
 		testLibrary.favouriteSong("y", "a");
-		oracle.add("y,a");
+		oracle.add("y, a, rock");
 		
 		testLibrary.buyAlbum(testAlbum.getName(), testAlbum.getAuthor());
 		testLibrary.favouriteSong("code", "world");
-		oracle.add("code,world");
+		oracle.add("code, world, punk");
 		
 		assertEquals(testLibrary.getFavourites(), oracle);
 		
-		testLibrary.buySong(testSong.getName(), testSong.getAuthor());
+		testLibrary.buySong(testSong.getName(), testSong.getAuthor(), testSong.getGenre());
 		testLibrary.favouriteSong(testSong.getName(), testSong.getAuthor());
-		oracle.add(testSong.getName() + "," + testSong.getAuthor());
+		oracle.add(testSong.getName() + ", " + testSong.getAuthor() + ", " + testSong.getGenre());
 		
 		assertEquals(testLibrary.getFavourites(), oracle);
 	}
@@ -242,7 +262,7 @@ class libraryTests {
 		testLibrary.rateSong("z", "a", 1);
 		testLibrary.rateSong("y", "a", 5);
 		testLibrary.rateSong("x", "a", 3);
-		oracle.add("y,a,*****");
+		oracle.add("y, a, *****, rock");
 		
 		assertEquals(testLibrary.getFavourites(), oracle);
 		
@@ -250,10 +270,302 @@ class libraryTests {
 		testLibrary.rateSong("y", "a", 3);
 		testLibrary.rateSong("z", "a", 5);
 		oracle.clear();
-		oracle.add("y,a,***");
-		oracle.add("z,a,*****");
+		oracle.add("y, a, ***, rock");
+		oracle.add("z, a, *****, rock");
 		
 		assertEquals(testLibrary.getFavourites(), oracle);
 	}
 	
+	@Test
+	void testPlaySong() {
+		// 1_a album is automatically added to our test
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		
+		// Roundabout way
+		ArrayList<String> playedSongs = testLibrary.getMostPlayedSongs();
+		assertEquals(playedSongs.size(), 3);
+		assertTrue(playedSongs.get(0).equals("x, a, rock; (Plays: 1)"));
+		assertTrue(playedSongs.get(1).equals("y, a, rock; (Plays: 1)"));
+		assertTrue(playedSongs.get(2).equals("z, a, rock; (Plays: 1)"));
+		
+		
+	}
+	
+	@Test
+	void testPlaySongMultiple() {
+		// 1_a album is automatically added to our test
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		
+		// Roundabout way
+		ArrayList<String> playedSongs = testLibrary.getMostPlayedSongs();
+		assertEquals(playedSongs.size(), 3);
+		System.out.println(playedSongs.get(0));
+		assertTrue(playedSongs.get(0).equals("y, a, rock; (Plays: 3)"));
+		assertTrue(playedSongs.get(1).equals("x, a, rock; (Plays: 2)"));
+		assertTrue(playedSongs.get(2).equals("z, a, rock; (Plays: 1)"));
+	}
+	
+	@Test
+	void testMostPlayedNothing() {
+		assertEquals(testLibrary.getMostPlayedSongs(), new ArrayList<String>());
+	}
+	
+	@Test
+	void testMostPlayedSongs() {
+		// 1_a album is automatically added to our test
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("z", "a");
+		
+		ArrayList<String> mostPlayedSongs = testLibrary.getMostPlayedSongs();
+		assertEquals(mostPlayedSongs.size(), 3);
+		assertTrue(mostPlayedSongs.get(0).equals("x, a, rock; (Plays: 7)"));
+		assertTrue(mostPlayedSongs.get(1).equals("z, a, rock; (Plays: 5)"));
+		assertTrue(mostPlayedSongs.get(2).equals("y, a, rock; (Plays: 3)"));
+	}
+	
+	@Test
+	void testRecentlyPlayedNothing() {
+		assertEquals(testLibrary.getRecentlyPlayed(), new ArrayList<String>());
+	}
+	
+	@Test
+	void testRecenltyPlayedSimple() {
+		// 1_a album is automatically added to our test
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		
+		ArrayList<String> recentlyPlayedSongs = testLibrary.getRecentlyPlayed();
+		assertEquals(recentlyPlayedSongs.size(), 3);
+		assertTrue(recentlyPlayedSongs.get(0).equals("x, a, rock"));
+		assertTrue(recentlyPlayedSongs.get(1).equals("z, a, rock"));
+		assertTrue(recentlyPlayedSongs.get(2).equals("y, a, rock"));
+	}
+	
+	@Test
+	void testRecentlyPlayedComplicated() {
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("z", "a");
+		
+		ArrayList<String> recentlyPlayedSongs = testLibrary.getRecentlyPlayed();
+		assertEquals(recentlyPlayedSongs.size(), 3);
+		assertTrue(recentlyPlayedSongs.get(0).equals("z, a, rock"));
+		assertTrue(recentlyPlayedSongs.get(1).equals("x, a, rock"));
+		assertTrue(recentlyPlayedSongs.get(2).equals("y, a, rock"));
+	}
+	
+	@Test
+	void testGetAllPlaysNone() {
+		assertEquals(testLibrary.getAllPlays(), 0);
+	}
+	
+	@Test
+	void testGetAllPlays() {
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		testLibrary.playSong("z", "a");
+		testLibrary.playSong("x", "a");
+		testLibrary.playSong("y", "a");
+		
+		assertEquals(testLibrary.getAllPlays(), 7);
+	}
+	
+	@Test
+	void testDeleteSong() {
+		testLibrary.deleteSong("x", "a");
+		
+		for (String song : testLibrary.getAllSongs()) {
+			assertFalse(song.equals("x, a, rock"));
+		}
+	}
+	
+	@Test
+	void testDeleteManySongs() {
+		// So we know that we deleted songs
+		testLibrary.addSongToAlbum(testSong, libraryAlbum);
+		
+		testLibrary.deleteSong("x", "a");
+		testLibrary.deleteSong("y", "a");
+		
+		for (String song : testLibrary.getAllSongs()) {
+			assertFalse(song.equals("x, a, rock"));
+			assertFalse(song.equals("y, a, rock"));
+		}
+	}
+	
+	@Test
+	void testAddAlbum() {
+		assertEquals(testLibrary.getAllAlbums().size(), 1);
+		testLibrary.addAlbum(testAlbum);
+		assertEquals(testLibrary.getAllAlbums().size(), 2);
+	}
+	
+	@Test
+	void testDeleteAlbumOnly() {
+		testLibrary.deleteAlbum("1", "a");
+		assertEquals(testLibrary.getAllAlbums().size(), 0);
+	}
+	
+	@Test
+	void testDeleteAlbum() {
+		testLibrary.addAlbum(testAlbum);
+		testLibrary.deleteAlbum("1", "a");
+		
+		assertEquals(testLibrary.getAllAlbums().size(), 1);
+		assertTrue(testLibrary.getAllAlbums().get(0).equals("hello,world,punk,3000"));
+	}
+	
+	// I think this code became unused at some point...
+	@Test
+	void testGetPlaylistByNameNone() {
+		assertTrue(testLibrary.getPlaylistByName("nothin") == null);
+	}
+	
+	@Test
+	void testGetSongsByGenreNone() {
+		assertTrue(testLibrary.getSongsbyGenre("nothin").size() == 0);
+	}
+	
+	@Test
+	void testGetSongsByGenreSimple() {
+		testLibrary.addAlbum(testAlbum);
+		ArrayList<String> genreSongs = testLibrary.getSongsbyGenre("rock");
+		assertTrue(genreSongs.contains("x, a, rock"));
+		assertTrue(genreSongs.contains("y, a, rock"));
+		assertTrue(genreSongs.contains("z, a, rock"));
+		assertFalse(genreSongs.contains("this, world, punk"));
+	}
+	
+	@Test
+	void testGetSongsByGenreComplicated() {
+		testLibrary.addAlbum(testAlbum);
+		testLibrary.deleteSong("y", "a");
+		ArrayList<String> genreSongs = testLibrary.getSongsbyGenre("rock");
+		assertTrue(genreSongs.contains("x, a, rock"));
+		assertFalse(genreSongs.contains("y, a, rock"));
+		assertTrue(genreSongs.contains("z, a, rock"));
+		assertFalse(genreSongs.contains("this, world, punk"));
+	}
+	
+	@Test
+	void testSortByTitle() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		testLibrary.sortByTitle();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, sweet"));
+		assertTrue(sortedSongs.get(1).equals("x, a, rock"));
+		assertTrue(sortedSongs.get(2).equals("xxa, c, edm"));
+		assertTrue(sortedSongs.get(3).equals("y, a, rock"));
+		assertTrue(sortedSongs.get(4).equals("z, a, rock"));
+	}
+	
+	@Test
+	void testSortByArtist() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		testLibrary.sortByArtist();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, sweet"));
+		assertTrue(sortedSongs.get(1).equals("x, a, rock"));
+		assertTrue(sortedSongs.get(2).equals("y, a, rock"));
+		assertTrue(sortedSongs.get(3).equals("z, a, rock"));
+		assertTrue(sortedSongs.get(4).equals("xxa, c, edm"));
+	}
+	
+	@Test
+	void testSortByRating() {
+		testLibrary.buySong("xxa", "c", "edm");
+		testLibrary.buySong("b", "1", "sweet");
+		// rate the songs (define the order
+		testLibrary.rateSong("b", "1", 5);
+		testLibrary.rateSong("z", "a", 3);
+		testLibrary.rateSong("xxa", "c", 2);
+		testLibrary.rateSong("y", "a", 1);
+		testLibrary.sortByRating();
+		
+		// Check the order
+		ArrayList<String> sortedSongs = testLibrary.getAllSongs();
+		assertEquals(sortedSongs.size(), 5);
+		assertTrue(sortedSongs.get(0).equals("b, 1, *****, sweet"));
+		assertTrue(sortedSongs.get(1).equals("z, a, ***, rock"));
+		assertTrue(sortedSongs.get(2).equals("xxa, c, **, edm"));
+		assertTrue(sortedSongs.get(3).equals("y, a, *, rock"));
+		assertTrue(sortedSongs.get(4).equals("x, a, rock"));
+	}
+	
+	// This automatically tests checkGenreForPlaylist
+	@Test
+	void testCreateGenrePlaylist() {
+		assertTrue(testLibrary.getAllPlaylists().size() == 4);  // No genre playlist
+		// Add a bunch of songs with the same genre
+		testLibrary.buySong("ghost1", "sev", "ambient");
+		testLibrary.buySong("ghost2", "sev", "ambient");
+		testLibrary.buySong("ghost3", "sev", "ambient");
+		testLibrary.buySong("ghost4", "sev", "ambient");
+		testLibrary.buySong("ghost5", "sev", "ambient");
+		testLibrary.buySong("ghost6", "sev", "ambient");
+		testLibrary.buySong("ghost7", "sev", "ambient");
+		testLibrary.buySong("ghost8", "sev", "ambient");
+		testLibrary.buySong("ghost9", "sev", "ambient");
+		// One away from new playlist
+		assertTrue(testLibrary.getAllPlaylists().size() == 4);
+		testLibrary.buySong("ghost10", "sev", "ambient");
+		assertTrue(testLibrary.getAllPlaylists().size() == 5);
+		assertTrue(testLibrary.getPlaylistByName("ambient") != null);
+	}
+	
+	// There really isn't a good way to test loading, but this is an attempt
+	//@Test
+	//void testLoadUserLibrary() {
+		// Set the user up
+	//	testLibrary.addSongToAlbum(testSong, libraryAlbum);
+	//	testLibrary.createPlaylist("testPlaylist");
+	//	testLibrary.addSongToPlaylist(testSong.getName(), testSong.getAuthor(), "testPlaylist");
+		
+		// Simulate a save
+		
+	//}
 }

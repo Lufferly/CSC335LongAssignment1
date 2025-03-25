@@ -11,6 +11,15 @@ public class Song {
 	private int plays;
 	private String genre;		// Genre of the song
 	
+	public Song(String songName, String authorName) {
+		this.name = songName;
+		this.author = authorName;
+		this.genre = null;
+		favorite = false;
+		rating = 0;
+		plays = 0;
+	}
+	
 	public Song(String songName, String authorName, String genre) {
 		this.name = songName;
 		this.author = authorName;
@@ -45,7 +54,7 @@ public class Song {
 	
 	public int getRating() { return rating; }	// Returns rating as a String
 
-	public String getGenre() { return genre.toLowerCase(); }	// Returns the genre of the album it comes from
+	public String getGenre() { return this.genre == null ? null : this.genre.toLowerCase(); }	// Returns the genre of the album it comes from
 	
 	public void setRating (int newRating) { this.rating = newRating; } // Sets new rating
 	
