@@ -51,6 +51,7 @@ public class Playlist {
     }
 
     // Print the complete playlist (song strings)
+    // This is a debugging function
     public void printPlaylist() {
         if (songList.isEmpty()) {
             System.out.println("Playlist is empty" +'\n');

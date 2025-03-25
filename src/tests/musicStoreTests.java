@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
+import MusicStore.Album;
 import MusicStore.MusicStore;
 
 class musicStoreTests {
@@ -20,8 +21,8 @@ class musicStoreTests {
 		ArrayList<String> allAlbums = testMusicStore.getAllAlbums();
 		assertEquals(allAlbums.size(), 2);
 		
-		assertEquals(allAlbums.get(0), "1,a,Rock,1000");
-		assertEquals(allAlbums.get(1), "hello,world,Punk,3000");
+		assertEquals(allAlbums.get(0), "1,a,rock,1000");
+		assertEquals(allAlbums.get(1), "hello,world,punk,3000");
 	}
 	
 	@Test
@@ -29,18 +30,18 @@ class musicStoreTests {
 		ArrayList<String> allSongs = testMusicStore.getAllSongs();
 		assertEquals(allSongs.size(), 6);
 		
-		assertEquals(allSongs.get(0), "x,a");
-		assertEquals(allSongs.get(1), "y,a");
-		assertEquals(allSongs.get(2), "z,a");
-		assertEquals(allSongs.get(3), "this,world");
-		assertEquals(allSongs.get(4), "code,world");
-		assertEquals(allSongs.get(5), "stinks!,world");
+		assertEquals(allSongs.get(0), "x, a, rock");
+		assertEquals(allSongs.get(1), "y, a, rock");
+		assertEquals(allSongs.get(2), "z, a, rock");
+		assertEquals(allSongs.get(3), "this, world, punk");
+		assertEquals(allSongs.get(4), "code, world, punk");
+		assertEquals(allSongs.get(5), "stinks!, world, punk");
 	}
 	
 	@Test
 	void testSearchForAlbumByName() {
 		ArrayList<String> test1Oracle = new ArrayList<String>();
-		test1Oracle.add("hello,world,Punk,3000\n    this,world\n    code,world\n    stinks!,world\n");
+		test1Oracle.add("hello,world,punk,3000\n    this, world, punk\n    code, world, punk\n    stinks!, world, punk\n");
 		assertEquals(testMusicStore.searchForAlbumByName("hello"), test1Oracle);
 		assertEquals(testMusicStore.searchForAlbumByName("h"), test1Oracle);
 		assertEquals(testMusicStore.searchForAlbumByName("lo"), test1Oracle);
@@ -54,18 +55,29 @@ class musicStoreTests {
 	@Test
 	void testSearchForSongByName() {
 		ArrayList<String> test1Oracle = new ArrayList<String>();
-		test1Oracle.add("code,world,hello");
-		assertEquals(testMusicStore.searchForSongsByName("code"), test1Oracle);
-		assertEquals(testMusicStore.searchForSongsByName("od"), test1Oracle);
-		assertEquals(testMusicStore.searchForSongsByName("c"), test1Oracle);
+		test1Oracle.add("code, world, punk");
+		assertEquals(testMusicStore.searchForSongsByName("code", false), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByName("od", false), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByName("c", false), test1Oracle);
 		
-		assertEquals(testMusicStore.searchForSongsByName("fjeqo"), new ArrayList<String>());
+		assertEquals(testMusicStore.searchForSongsByName("fjeqo", false), new ArrayList<String>());
+	}
+	
+	@Test
+	void testSearchForSongByNameExtraAlbumInfo() {
+		ArrayList<String> test1Oracle = new ArrayList<String>();
+		test1Oracle.add("code, world, punk, Album:hello,world,punk,3000");
+		assertEquals(testMusicStore.searchForSongsByName("code", true), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByName("od", true), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByName("c", true), test1Oracle);
+		
+		assertEquals(testMusicStore.searchForSongsByName("fjeqo", false), new ArrayList<String>());
 	}
 	
 	@Test 
 	void testSearchForAlbumByAuthor() {
 		ArrayList<String> test1Oracle = new ArrayList<String>();
-		test1Oracle.add("hello,world,Punk,3000\n    this,world\n    code,world\n    stinks!,world\n");
+		test1Oracle.add("hello,world,punk,3000\n    this, world, punk\n    code, world, punk\n    stinks!, world, punk\n");
 		assertEquals(testMusicStore.searchForAlbumByAuthor("world"), test1Oracle);
 		assertEquals(testMusicStore.searchForAlbumByAuthor("w"), test1Oracle);
 		assertEquals(testMusicStore.searchForAlbumByAuthor("rl"), test1Oracle);
@@ -76,13 +88,48 @@ class musicStoreTests {
 	@Test
 	void testSearchForSongByAuthor() {
 		ArrayList<String> test1Oracle = new ArrayList<String>();
-		test1Oracle.add("this,world,hello");
-		test1Oracle.add("code,world,hello");
-		test1Oracle.add("stinks!,world,hello");
-		assertEquals(testMusicStore.searchForSongsByAuthor("world"), test1Oracle);
-		assertEquals(testMusicStore.searchForSongsByAuthor("o"), test1Oracle);
-		assertEquals(testMusicStore.searchForSongsByAuthor("ld"), test1Oracle);
+		test1Oracle.add("this, world, punk");
+		test1Oracle.add("code, world, punk");
+		test1Oracle.add("stinks!, world, punk");
+		assertEquals(testMusicStore.searchForSongsByAuthor("world", false), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByAuthor("o", false), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByAuthor("ld", false), test1Oracle);
 		
-		assertEquals(testMusicStore.searchForSongsByAuthor("fjeqo"), new ArrayList<String>());
+		assertEquals(testMusicStore.searchForSongsByAuthor("fjeqo", false), new ArrayList<String>());
+	}
+	
+	@Test
+	void testSearchForAlbumByAuthorExtraAlbumInfo() {
+		ArrayList<String> test1Oracle = new ArrayList<String>();
+		test1Oracle.add("this, world, punk, Album:hello,world,punk,3000");
+		test1Oracle.add("code, world, punk, Album:hello,world,punk,3000");
+		test1Oracle.add("stinks!, world, punk, Album:hello,world,punk,3000");
+		assertEquals(testMusicStore.searchForSongsByAuthor("world", true), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByAuthor("o", true), test1Oracle);
+		assertEquals(testMusicStore.searchForSongsByAuthor("ld", true), test1Oracle);
+		
+		assertEquals(testMusicStore.searchForSongsByAuthor("fjeqo", false), new ArrayList<String>());
+	}
+	
+	@Test
+	void testGetSongAlbumDataOne() {
+		String albumData = testMusicStore.getSongAlbumData("x", "a");
+		Album loadedAlbum = Album.albumFromAlbumData(albumData);
+		Album correctAlbum = new Album("data/1_a.txt");
+		assertTrue(correctAlbum.equals(loadedAlbum));
+	}
+	
+	@Test
+	void testGetSongAlbumDataTwo() {
+		String albumData = testMusicStore.getSongAlbumData("code", "world");
+		Album loadedAlbum = Album.albumFromAlbumData(albumData);
+		Album correctAlbum = new Album("data/hello_world.txt");
+		assertTrue(correctAlbum.equals(loadedAlbum));
+	}
+	
+	@Test
+	void testGetSongAlbumDataNotFound() {
+		String nullAlbumData = testMusicStore.getSongAlbumData("not", "here");
+		assertEquals(nullAlbumData, null);
 	}
 }

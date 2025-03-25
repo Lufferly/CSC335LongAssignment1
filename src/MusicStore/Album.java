@@ -53,7 +53,7 @@ public class Album {
         }
 		this.name = firstLine[0];
 		this.author = firstLine[1];
-		this.genre = firstLine[2];
+		this.genre = firstLine[2].toLowerCase();
 		this.year = firstLine[3];
 
 		// Fill in the songs from the rest of the file
@@ -163,6 +163,7 @@ public class Album {
 	}
 
 	// Prints out a representation of the object
+	// This is used for debugging
 	public void print() {
 		System.out.println("Author:" + author + 
 			"\nName: " + name + 
