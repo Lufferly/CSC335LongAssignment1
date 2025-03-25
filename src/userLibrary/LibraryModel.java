@@ -513,6 +513,21 @@ public class LibraryModel {
         Song songToRemove = getSongFromLibrary(title, author);      // Object to remove
         if (songToRemove != null) {
             userSongs.remove(songToRemove);             // Remove form user library
+            ArrayList<Album> albumsToDelete = new ArrayList<Album>();
+            // Iterate over all of our albums, and if the song is in there remove it from the album
+            for (Album album: userAlbums) {
+                if (album.hasSong(songToRemove)) {
+                    album.removeSong(songToRemove);
+                    // Check if we need to now remove this album
+                    if (album.numSongs() == 0) {
+                        albumsToDelete.add(album);
+                    }
+                }
+            }
+            // delete the albums we need to
+            for (Album albumtoDelete : albumsToDelete) {
+                userAlbums.remove(albumtoDelete);
+            }
             // Iterate over all playlists and if the song is there remove
             for (Playlist p: userPlaylists) {
                 if (p.contains(songToRemove)) p.removeSong(title, author);
